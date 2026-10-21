@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CLASS WORLD v0.4 | 문코인 꿈별마을</title>
+<title>CLASS WORLD v0.6 | 꿈별학교 디지털 교실</title>
 <style>
 :root{--ink:#3b4264;--sub:#76829f;--blue:#5d85d8;--paper:#fffefb;--line:#dfdfe8}
 *{box-sizing:border-box}body{margin:0;background:#e8eef8;color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}
@@ -92,12 +92,44 @@ body{background:linear-gradient(130deg,#f4e9f5,#e4f1f9 50%,#ecf5e5)}
 .v05Welcome{position:absolute;left:50%;top:15%;transform:translateX(-50%);z-index:2;border-radius:15px;background:#fffaf4df;padding:8px 14px;color:#5a7099;font-weight:900;font-size:12px;white-space:nowrap;pointer-events:none}
 @media(max-width:1000px){.layout{grid-template-columns:1fr}.stage{height:70vh;min-height:440px}.v05Online{margin-left:0}}
 @media(max-width:540px){.stage{height:60vh;min-height:385px}.v05MiniWrap{top:52px;right:7px;padding:4px}#v05Mini{width:112px;height:76px}.v05MiniLabel,.v05Legend{font-size:8px}.v05Welcome{font-size:10px;white-space:normal;width:max-content;max-width:62vw;text-align:center}.v05Toolbar{padding:7px 9px}}
+
+/* CLASS WORLD v0.6 — visual classroom and lesson controls */
+:root{--cw06-ink:#464767;--cw06-lav:#8d7db9;--cw06-glass:#f7f3ff}
+body{background:radial-gradient(circle at 18% 12%,#fff4df 0,transparent 30%),linear-gradient(135deg,#ebecfa,#e0f1ed 50%,#f9edf4)}
+.side{border-color:#ffffff;box-shadow:0 16px 38px #6f7d9e2e}
+.gameTop{background:linear-gradient(90deg,#fff9e8,#fff6fa,#eff9f8)}
+.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tabs button{font-size:12px;padding:11px 3px}
+.tabs [data-tab="classroom"]{background:#eee7fc;color:#7b67a4}
+.tabs [data-tab="classroom"].active{background:#8e82bb;color:white}
+.cw06Ribbon{background:linear-gradient(90deg,#f7ecff,#f2f9ee);border:1px solid #e5d9f4;border-radius:13px;padding:11px 12px;margin-bottom:12px}
+.cw06Ribbon strong{color:#67598e;font-size:13px}
+.cw06Mini{color:#827495;font-size:11px;margin-top:5px;line-height:1.5}
+.cw06Status{display:inline-flex;gap:6px;align-items:center;border-radius:20px;background:#f0eafa;padding:5px 10px;color:#8165a1;font-size:11px;font-weight:900}
+.cw06Status.live{background:#e5f4e5;color:#44856b}.cw06Status.paused{background:#fff2d9;color:#a57933}
+.cw06Status.ended{background:#edf0f6;color:#647089}
+.cw06Stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:11px 0}
+.cw06Stat{text-align:center;background:white;border:1px solid #e8e3f1;border-radius:11px;padding:11px 3px}
+.cw06Stat strong{display:block;font-size:20px;color:#657baf}
+.cw06Stat small{font-size:10px;color:#8791a5}
+.cw06Buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin:9px 0 14px}
+.cw06Buttons button{border:0;border-radius:11px;background:#ece7f8;color:#6e608f;padding:10px 7px;font-size:12px;font-weight:900}
+.cw06Buttons button.main{background:#8079c2;color:white}
+.cw06Buttons button:disabled{opacity:.48}
+.cw06SeatGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.cw06Seat{border-radius:8px;border:1px solid #e9e2ed;background:#fff;padding:6px 3px;font-size:10px;text-align:center;color:#7e7794;font-weight:800}
+.cw06Seat.done{background:#dcf5e4;color:#3d815e;border-color:#c3e4cc}
+.cw06DeskInfo{background:#fff6e3;border:1px solid #f3e2ba;border-radius:11px;padding:11px;color:#947446;font-size:12px;margin:8px 0}
+.cw06Float{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:2;background:#fffdf3ef;box-shadow:0 4px 15px #344e6333;border:2px solid #fff;border-radius:30px;padding:7px 12px;font-size:12px;font-weight:900;color:#6a608c;pointer-events:none;white-space:nowrap;max-width:85%;overflow:hidden;text-overflow:ellipsis}
+.cw06MapNotice{position:absolute;bottom:118px;right:12px;max-width:220px;background:#fff9f4ec;color:#746284;padding:9px 11px;border-radius:13px;font-size:11px;font-weight:800;box-shadow:0 5px 20px #7b7a873b;pointer-events:none}
+.cw06TeacherWarning{background:#fff7dc;border-radius:10px;color:#936c27;padding:9px;font-size:11px;line-height:1.6;margin-top:9px}
+@media(max-width:540px){.tabs button{font-size:11px}.cw06SeatGrid{grid-template-columns:repeat(5,1fr)}.cw06Float{top:11px;font-size:10px;max-width:62%}.cw06MapNotice{right:8px;bottom:112px;font-size:10px;max-width:155px}}
 </style>
 </head>
 <body>
 <header>
  <div class="brand"><div class="logo">✦</div><div><div class="eyebrow">WELCOME TO OUR LITTLE WORLD</div><h1>CLASS WORLD <span style="color:#91a2ce">꿈별학교</span></h1></div></div>
- <div class="headerControls"><span class="coins" id="coinHud">🌙 0 MC</span><select class="pill" id="role" aria-label="모드"><option value="teacher">👩‍🏫 교사 모드</option><option value="student">🧒 학생 모드</option></select><select class="pill" id="studentChoice" aria-label="체험 학생" hidden><option>학생 1</option><option>학생 2</option><option>학생 3</option><option>학생 4</option><option>학생 5</option></select></div>
+ <div class="headerControls"><span class="coins" id="coinHud">🌙 0 MC</span><select class="pill" id="role" aria-label="모드"><option value="teacher">👩‍🏫 교사 모드</option><option value="student">🧒 학생 모드</option></select><select class="pill" id="studentChoice" aria-label="체험 학생" hidden><option>학생 1</option><option>학생 2</option><option>학생 3</option><option>학생 4</option><option>학생 5</option><option>학생 6</option><option>학생 7</option><option>학생 8</option><option>학생 9</option><option>학생 10</option><option>학생 11</option><option>학생 12</option><option>학생 13</option><option>학생 14</option><option>학생 15</option><option>학생 16</option><option>학생 17</option><option>학생 18</option><option>학생 19</option><option>학생 20</option><option>학생 21</option><option>학생 22</option><option>학생 23</option><option>학생 24</option><option>학생 25</option><option>학생 26</option><option>학생 27</option><option>학생 28</option><option>학생 29</option><option>학생 30</option></select></div>
 </header>
 <div class="layout">
  <div class="gameShell">
@@ -284,15 +316,15 @@ function renderMission(){
   const fields=[];state.mission.options.forEach((v,i)=>{card.append(build('label',{class:'label'},`${i+1}번 보기`));const inp=build('input',{class:'field',maxlength:'100'});inp.value=v;card.append(inp);fields.push(inp)});
   card.append(build('label',{class:'label'},'정답 선택'));const sel=build('select',{class:'field'});for(let i=0;i<4;i++){const o=build('option',{value:String(i)},`${i+1}번`);if(i===state.mission.correct)o.selected=true;sel.append(o)}card.append(sel);
   const pub=build('button',{class:'primary'},'📬 새 미션 배포');pub.onclick=()=>{if(!q.value.trim()||fields.some(i=>!i.value.trim()))return alert('문제와 보기 4개를 입력해 주세요.');if(!confirm('기존 제출 결과를 초기화하고 새 미션을 배포할까요?'))return;state.mission={id:Date.now(),q:q.value.trim(),options:fields.map(i=>i.value.trim()),correct:Number(sel.value)};state.answers={};save();renderMission()};card.append(pub);el.append(card);
-  const progress=build('div',{class:'paper'});progress.append(build('h3',{},'📊 학생 제출 현황'));for(let i=1;i<=5;i++){const name='학생 '+i;const s=state.answers[name];const row=build('div',{class:'result'});row.append(build('span',{},name),build('strong',{},s===undefined?'대기 중':s===state.mission.correct?'✅ 정답':'↩ 다시 배우기'));progress.append(row)}el.append(progress);
+  const progress=build('div',{class:'paper'});progress.append(build('h3',{},'📊 학생 제출 현황'));for(let i=1;i<=30;i++){const name='학생 '+i;const s=state.answers[name];const row=build('div',{class:'result'});row.append(build('span',{},name),build('strong',{},s===undefined?'대기 중':s===state.mission.correct?'✅ 정답':'↩ 다시 배우기'));progress.append(row)}el.append(progress);
   const tools=build('div',{class:'paper'});tools.append(build('h3',{},'🌙 문코인 지급 (가상 학생 테스트 전용)'));
-  const who=build('select',{class:'field'});for(let i=1;i<=5;i++)who.append(build('option',{},'학생 '+i));tools.append(who);
+  const who=build('select',{class:'field'});for(let i=1;i<=30;i++)who.append(build('option',{},'학생 '+i));tools.append(who);
   const give=build('button',{class:'secondary'},'테스트 문코인 +50 MC');give.onclick=()=>{state.coins[who.value]=coinsOf(who.value)+50;save();renderMission();updateCoin();alert(who.value+'에게 50 MC를 지급했습니다. (이 브라우저에서만 적용)')};tools.append(give,build('p',{},'실제 교사 권한 인증과 학급 동기화는 추후 서버 연결이 필요합니다.'));el.append(tools)
  }else{
   const name=actorName(),ans=state.answers[name];let card=build('div',{class:'paper'});let row=build('div',{class:'row'});row.append(build('span',{class:'chip'},'미션 • 도전 1'),build('span',{class:'chip'},`✨ ${state.xp[name]||0} XP`));card.append(row,build('h2',{style:'margin-top:13px'},state.mission.q));
   const choices=[];state.mission.options.forEach((v,i)=>{const l=build('label',{class:'option'});const r=build('input',{type:'radio',name:'answer',value:String(i)});if(ans===i)r.checked=true;if(ans!==undefined)r.disabled=true;l.append(r,build('span',{},`${i+1}. ${v}`));card.append(l);choices.push(r)});
   if(ans===undefined){const b=build('button',{class:'primary'},'🎁 미션 제출하기');b.onclick=()=>{const n=choices.findIndex(x=>x.checked);if(n<0)return alert('정답을 선택해 주세요.');state.answers[name]=n;if(n===state.mission.correct&&!state.rewards[name+'|'+state.mission.id]){state.xp[name]=(state.xp[name]||0)+20;state.coins[name]=coinsOf(name)+20;state.rewards[name+'|'+state.mission.id]=true;}save();updateCoin();renderMission()};card.append(b)}else{const msg=ans===state.mission.correct?'🎉 정답! 20 XP + 문코인 20 MC 획득!':'💡 제출했어요. 다음엔 더 잘할 수 있어요!';card.append(build('p',{style:'font-weight:900;margin-top:15px'},msg))}
-  el.append(card,build('p',{},'이 버전에서는 하나의 브라우저에서 5명의 가상 학생을 바꾸어 체험할 수 있어요.'))
+  el.append(card,build('p',{},'이 버전에서는 하나의 브라우저에서 30명의 가상 학생을 바꾸어 체험할 수 있어요.'))
  }
 }
 function renderAvatar(){
@@ -786,12 +818,14 @@ frame=function(now){
  else if(iy>0)CW05.facing='down';else if(iy<0)CW05.facing='up';
  if(moved)CW05.phase+=dt*13;
  const x=player.x*TILE,y=player.y*TILE;
- if(!cw05LastCamera)cw05LastCamera={x,y};
+ const cameraTargetX=currentMap==='classroom'?MW*TILE/2:x;
+ const cameraTargetY=currentMap==='classroom'?MH*TILE/2:y;
+ if(!cw05LastCamera)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  const damping=Math.min(1,dt*11);
- cw05LastCamera.x+=(x-cw05LastCamera.x)*damping;
- cw05LastCamera.y+=(y-cw05LastCamera.y)*damping;
+ cw05LastCamera.x+=(cameraTargetX-cw05LastCamera.x)*damping;
+ cw05LastCamera.y+=(cameraTargetY-cw05LastCamera.y)*damping;
  // Teleport (map change) snaps camera to new avatar spawn.
- if(Math.abs(cw05LastCamera.x-x)>1100||Math.abs(cw05LastCamera.y-y)>1100)cw05LastCamera={x,y};
+ if(Math.abs(cw05LastCamera.x-cameraTargetX)>1100||Math.abs(cw05LastCamera.y-cameraTargetY)>1100)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  ctx.clearRect(0,0,width,height);
  ctx.save();ctx.translate(width/2,height/2);ctx.scale(CW05.zoom,CW05.zoom);
  ctx.translate(Math.round(-cw05LastCamera.x),Math.round(-cw05LastCamera.y));
@@ -894,6 +928,237 @@ worldBase=function(){
 };
 player={x:maps.plaza.spawn[0],y:maps.plaza.spawn[1]};
 cw05LastCamera={x:player.x*TILE,y:player.y*TILE};
+
+/* CLASS WORLD v0.6: immersive classroom, interactions, local teacher/student lesson flow.
+ * This is an offline educational prototype. Role switching is NOT authenticated.
+ * Legacy coin, mission, inventory and avatar save key classworld2d-v03 remains unchanged. */
+const CW06_LESSON_KEY='classworld2d-v06-classroom';
+function cw06DefaultLesson(){return {status:'ready',title:'배드민턴 경기 전략',objective:'경기 상황에 맞게 빈 공간을 찾아 움직여요.',board:'오늘의 미션을 확인하고 내 자리에서 퀴즈에 도전해 보세요.',updated:0}}
+let cw06Lesson=cw06DefaultLesson();
+try{const stored=JSON.parse(localStorage.getItem(CW06_LESSON_KEY)||'null');if(stored&&typeof stored==='object'){
+ for(const k of ['title','objective','board'])if(typeof stored[k]==='string')cw06Lesson[k]=stored[k].slice(0,240);
+ if(['ready','running','paused','ended'].includes(stored.status))cw06Lesson.status=stored.status;
+}}catch(e){console.warn('수업 상태 불러오기 실패',e)}
+function cw06SaveLesson(){cw06Lesson.updated=Date.now();try{localStorage.setItem(CW06_LESSON_KEY,JSON.stringify(cw06Lesson))}catch(e){console.warn('수업 상태 저장 실패',e)}}
+function cw06IsTeacher(){return $('#role').value==='teacher'}
+function cw06IsRunning(){return cw06Lesson.status==='running'}
+function cw06StatusText(){return ({ready:'수업 준비',running:'수업 진행 중',paused:'잠시 멈춤',ended:'수업 종료'})[cw06Lesson.status]}
+function cw06LessonStats(){let n=0,correct=0;for(let i=1;i<=30;i++){const a=state.answers['학생 '+i];if(a!==undefined){n++;if(a===state.mission.correct)correct++}}return {n,correct}}
+const cw06Seats=[];
+for(let r=0;r<5;r++)for(let c=0;c<6;c++)cw06Seats.push({kind:'desk',number:r*6+c+1,x:3.1+c*3.15,y:6.35+r*1.43});
+const cw06Objects=[{kind:'board',x:11,y:4.35},{kind:'podium',x:11,y:5.45},...cw06Seats];
+const cw06ClassTab=document.createElement('button');cw06ClassTab.dataset.tab='classroom';cw06ClassTab.textContent='🏫 교실';
+$('.tabs').insertBefore(cw06ClassTab,$('.tabs').firstChild);
+const cw06ClassPanel=document.createElement('section');cw06ClassPanel.id='classroom';cw06ClassPanel.className='panel';
+$('.side').append(cw06ClassPanel);
+cw06ClassTab.addEventListener('click',()=>{switchTab('classroom');cw06RenderClassroomPanel()});
+const cw06ModeTitle=$('.sideTitle strong');
+const cw06Flag=document.createElement('div');cw06Flag.className='cw06Float';cw06Flag.textContent='🏫 내 교실이 열렸어요!';
+$('#stage').append(cw06Flag);
+const cw06MapNotice=document.createElement('div');cw06MapNotice.className='cw06MapNotice';
+cw06MapNotice.textContent='👆 칠판·교탁·책상을 눌러 보세요';$('#stage').append(cw06MapNotice);
+let cw06Selected={kind:'board'};
+function cw06ChangeStatus(next){if(!cw06IsTeacher())return;cw06Lesson.status=next;cw06SaveLesson();cw06RenderClassroomPanel();renderMission();cw06SyncHud()}
+function cw06Add(parent,tag,cls,textContent){const e=document.createElement(tag);if(cls)e.className=cls;if(textContent!==undefined)e.textContent=textContent;parent.append(e);return e}
+function cw06RenderClassroomPanel(){
+ const el=cw06ClassPanel;el.replaceChildren();const teacher=cw06IsTeacher();const counts=cw06LessonStats();
+ cw06Add(el,'h2','',teacher?'🪄 우리 반 수업 운영':'🌷 오늘의 우리 반');
+ const banner=cw06Add(el,'div','cw06Ribbon');
+ cw06Add(banner,'strong','',cw06Lesson.title);
+ cw06Add(banner,'div','cw06Mini',cw06Lesson.objective);
+ cw06Add(el,'div','cw06Status '+(cw06Lesson.status==='running'?'live':cw06Lesson.status),'● '+cw06StatusText());
+ if(teacher){
+  const stats=cw06Add(el,'div','cw06Stats');
+  for(const [value,label] of [[String(counts.n),'제출 완료'],[String(30-counts.n),'미제출'],[String(counts.correct),'정답']]){
+   const card=cw06Add(stats,'div','cw06Stat');cw06Add(card,'strong','',value);cw06Add(card,'small','',label);
+  }
+  const controls=cw06Add(el,'div','cw06Buttons');
+  const buttons=[['▶ 수업 시작','running','main'],['⏸ 잠시 멈춤','paused',''],['■ 수업 종료','ended',''],['↺ 준비 상태','ready','']];
+  for(const [name,status,cls] of buttons){const b=cw06Add(controls,'button',cls,name);b.type='button';b.disabled=cw06Lesson.status===status;b.onclick=()=>cw06ChangeStatus(status)}
+  const form=cw06Add(el,'div','paper');cw06Add(form,'h3','','✏️ 전자칠판 내용');
+  const f=[['수업 제목','title',60],['학습 목표','objective',140],['칠판 안내','board',240]];
+  const inputRefs={};
+  for(const [labelText,key,max] of f){cw06Add(form,'label','label',labelText);const field=cw06Add(form,key==='board'?'textarea':'input','field');
+   field.value=cw06Lesson[key];field.maxLength=max;field.setAttribute('aria-label',labelText);if(key==='board'){field.rows=3;field.style.resize='vertical'}inputRefs[key]=field}
+  const saveButton=cw06Add(form,'button','primary','💾 칠판 내용 저장');saveButton.type='button';saveButton.onclick=()=>{
+   for(const key of Object.keys(inputRefs))cw06Lesson[key]=inputRefs[key].value.trim().slice(0,240)||cw06DefaultLesson()[key];
+   cw06SaveLesson();cw06RenderClassroomPanel();cw06SyncHud();
+  };
+  const notice=cw06Add(el,'div','cw06TeacherWarning','🌙 퀴즈 문제는 기존 [미션] 탭에서 작성·배포해 주세요. 화면의 교사 모드는 데모이며 실제 사용자 인증은 아직 없습니다.');
+  const seats=cw06Add(el,'div','paper');cw06Add(seats,'h3','','💺 우리 반 좌석 · 30석');
+  const grid=cw06Add(seats,'div','cw06SeatGrid');
+  for(let i=1;i<=30;i++){const seat=cw06Add(grid,'button','cw06Seat'+(state.answers['학생 '+i]!==undefined?' done':''),String(i).padStart(2,'0'));seat.title='학생 '+i;seat.type='button';seat.onclick=()=>cw06OpenObject(cw06Seats[i-1])}
+  cw06Add(seats,'p','','초록색 좌석은 이번 미션을 제출한 가상 학생이에요.');
+ }else{
+  const guide=cw06Add(el,'div','paper');
+  cw06Add(guide,'h3','','📢 전자칠판 알림');cw06Add(guide,'p','',cw06Lesson.board);
+  const st=state.answers[actorName()];
+  const status=cw06Add(guide,'div','cw06DeskInfo',st===undefined?'✍️ 내 책상에서 오늘의 미션을 시작해 보세요.':'✅ 오늘의 미션을 제출했어요!');
+  const b=cw06Add(guide,'button','primary',cw06IsRunning()?'🎯 내 자리에서 미션 풀기':'🔒 수업 시작을 기다려요');
+  b.disabled=!cw06IsRunning();b.onclick=()=>switchTab('mission');
+  cw06Add(el,'p','','선생님이 수업을 시작하면 과제를 제출할 수 있어요. 가상 학생 체험용 화면입니다.');
+ }
+ const info=cw06Add(el,'div','paper');cw06Add(info,'h3','','👆 선택한 교실 물건');
+ const obj=cw06Selected;
+ let caption=obj.kind==='board'?'전자칠판 · 오늘의 목표와 안내문':obj.kind==='podium'?'교탁 · 수업 제어 화면':`학생 ${obj.number}번 책상 · ${state.answers['학생 '+obj.number]===undefined?'제출 대기':'제출 완료'}`;
+ cw06Add(info,'p','',caption);
+ if(obj.kind==='desk'&&!teacher&&obj.number!==Number(actorName().replace('학생 ','')))cw06Add(info,'p','','다른 친구의 책상이에요. 나의 과제는 내 자리에서 해결할 수 있어요.');
+}
+function cw06SyncHud(){
+ const inRoom=currentMap==='classroom';cw06Flag.hidden=!inRoom;cw06MapNotice.hidden=!inRoom;
+ $('#v05Mini').parentElement.style.display=inRoom?'none':'';
+ $('#stage').style.background=inRoom?'linear-gradient(145deg,#f8e9d5,#e8d0c5)':'';
+ v05Welcome.style.display=inRoom?'none':'';
+ cw06Flag.textContent='🏫 '+cw06Lesson.title+' · '+cw06StatusText();
+ cw06ModeTitle.textContent=inRoom?'🏫 우리 반 수업 가방':'🎒 나의 모험 가방';
+ if(inRoom)$('#hint').textContent='🪄 칠판·교탁·책상을 클릭하거나 E키로 상호작용';
+}
+function cw06OpenObject(item){
+ cw06Selected={...item};
+ const isTeacher=cw06IsTeacher();
+ if(item.kind==='desk'&&!isTeacher&&item.number===Number(actorName().replace('학생 ',''))){
+  if(cw06IsRunning()){switchTab('mission');renderMission();return}
+ }
+ if(item.kind==='board'&&!isTeacher){switchTab('classroom');cw06RenderClassroomPanel();return}
+ switchTab('classroom');cw06RenderClassroomPanel();
+}
+function cw06NearbyObject(){
+ let chosen=null,dist=2.1;
+ for(const o of cw06Objects){const d=Math.hypot(o.x-player.x,o.y-player.y);if(d<dist){dist=d;chosen=o}}return chosen
+}
+const cw06OldInteract=interact;
+interact=function(){if(currentMap!=='classroom')return cw06OldInteract();const portal=nearby();if(portal){goMap(portal.to);return}
+ const object=cw06NearbyObject();if(object){cw06OpenObject(object);return}switchTab('classroom');cw06RenderClassroomPanel()};
+$('#game').addEventListener('click',e=>{
+ if(currentMap!=='classroom'||!cw05LastCamera||$('#creatorOverlay').classList.contains('open'))return;
+ const bounds=canvas.getBoundingClientRect();const worldX=(e.clientX-bounds.left-width/2)/CW05.zoom+cw05LastCamera.x;
+ const worldY=(e.clientY-bounds.top-height/2)/CW05.zoom+cw05LastCamera.y;
+ let best=null,dist=1.23;
+ for(const object of cw06Objects){const d=Math.hypot(object.x*TILE-worldX,object.y*TILE-worldY)/TILE;
+  const cutoff=object.kind==='board'?4.15:object.kind==='podium'?1.7:1.15;
+  if(d<cutoff&&(best===null||d<dist)){best=object;dist=d}}
+ if(best){cw06OpenObject(best)}
+});
+function cw06Gradient(x,y,w,h,a,b){const g=ctx.createLinearGradient(x,y,x,y+h);g.addColorStop(0,a);g.addColorStop(1,b);ctx.fillStyle=g;ctx.fillRect(x,y,w,h)}
+function cw06Plant(x,y,s=1){ctx.save();ctx.translate(x,y);ctx.scale(s,s);rect(-11,-6,22,18,'#c9977f');rect(-14,-8,28,5,'#edc0a2');
+ for(let j=0;j<6;j++){ctx.save();ctx.translate(0,-13);ctx.rotate((j-2.5)*.33);ctx.fillStyle=j%2?'#7fbaa5':'#96c8a0';ctx.beginPath();ctx.ellipse(0,-19,8,24,0,0,Math.PI*2);ctx.fill();ctx.restore()}ctx.restore()}
+function cw06Window(x,y){rounded(x-7,y-7,124,85,9,'#a385a5');rounded(x,y,110,68,5,'#fcf4e9');
+ cw06Gradient(x+5,y+5,100,58,'#a8dbe4','#e8f3d6');rect(x+51,y+5,7,58,'#fff9ed');rect(x+5,y+31,100,6,'#fff9ed');
+ ctx.fillStyle='#fffbe376';ctx.beginPath();ctx.moveTo(x+105,y+70);ctx.lineTo(x+170,y+190);ctx.lineTo(x+20,y+192);ctx.lineTo(x+25,y+70);ctx.fill();
+ rect(x-4,y+65,118,10,'#d3b5af');rounded(x-7,y+70,124,8,3,'#ead9cc')}
+function cw06DeskPaint(o){const x=o.x*TILE,y=o.y*TILE; // desk, label, books, seat shadows
+ ctx.fillStyle='#5b4c7750';ctx.beginPath();ctx.ellipse(x,y+23,48,11,0,0,Math.PI*2);ctx.fill();
+ rounded(x-35,y+8,70,22,7,'#b48f9b');rounded(x-29,y+5,58,20,6,'#d2b5bb');
+ rounded(x-42,y-21,84,33,6,'#ae8b72');rounded(x-40,y-24,80,30,6,'#e7c8a2');rect(x-35,y-17,65,5,'#f3dfbd');
+ rounded(x-25,y-20,21,14,2,'#b4d5dd');rect(x-24,y-18,17,3,'#ebf8fa');
+ rounded(x+19,y-18,12,11,2,'#dc9fbc');
+ rounded(x-12,y-7,30,14,5,'#fffaf1');txt(String(o.number).padStart(2,'0'),x+3,y+3,10,'#755f79');
+ if(state.answers['학생 '+o.number]!==undefined){rounded(x+24,y-40,24,19,7,'#72ba94');txt('✓',x+36,y-26,14,'#ffffff')}
+}
+function cw06DrawClassroom(){const w=MW*TILE,h=MH*TILE;
+ // Rich wood-plank floor with side borders and warm afternoon lighting
+ cw06Gradient(0,0,w,h,'#f9eddc','#e9d3ba');
+ for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
+  const X=x*TILE,Y=y*TILE;if(y>4){rect(X,Y,TILE+1,TILE+1,(x+y)%2?'#f4e5cc':'#f7e9d4');rect(X,Y+TILE-2,TILE,2,'#e7d0b5');rect(X+TILE-1,Y,1,TILE,'#eadbc5')}
+ }
+ // Padded wall and ceiling rails
+ cw06Gradient(0,0,w,4.5*TILE,'#faeaf1','#f9f0e4');
+ rect(0,3.95*TILE,w,12,'#dcb5b0');rect(0,4.2*TILE,w,7,'#bcb1b9');
+ for(let x=0;x<w;x+=65){rect(x,3.9*TILE,21,4,'#f6d1b8')}
+ // base boards + wall trim
+ rect(0,0,18,h,'#c9acbc');rect(w-18,0,18,h,'#c9acbc');
+ // Windows with sunbeams
+ cw06Window(55,62);cw06Window(824,62);
+ // bulletin area
+ rounded(205,68,123,111,9,'#ae93ae');rounded(212,75,109,97,7,'#e2c5e0');
+ rounded(225,83,76,22,4,'#fffaf0');txt('우리 반 소식',263,99,12,'#8a7388');
+ for(let j=0;j<3;j++){rounded(224,114+j*17,77,11,2,['#ffefb9','#dcf1e0','#f6d2db'][j]);rect(226,118+j*17,49,2,'#cfb8c1')}
+ // Blackboard / smart display with soft frame, actual objective (not clipped)
+ rounded(355,75,301,127,11,'#c9a99e');rounded(362,82,287,109,7,'#5a958c');rounded(373,92,265,85,5,'#467e78');
+ txt('✦ 오늘의 수업 ✦',505,116,18,'#fef4d8');
+ const label=cw06Lesson.title.slice(0,20);txt(label,505,145,18,'#effaf0');
+ txt('눌러서 수업 자료 보기',505,168,12,'#e2f4e7');
+ rounded(390,191,226,9,3,'#ae837a');
+ // Clock & floating decorations
+ rounded(711,93,68,68,25,'#fff6e4');ctx.strokeStyle='#b39caa';ctx.lineWidth=4;ctx.strokeRect(732,114,26,26);
+ txt('✦',745,157,12,'#e9a4b6');
+ // Teacher podium and laptop
+ rounded(456,220,102,64,8,'#b28384');rounded(460,213,94,54,8,'#e4bc9d');rounded(470,205,75,16,6,'#f6d6ac');
+ rounded(487,181,42,31,4,'#8a9caf');rounded(491,185,34,24,2,'#d1e9e6');
+ txt('교탁',506,249,13,'#8d6370');
+ // Rugs in central walkway and pastel stars
+ rounded(477,299,63,350,26,'#dfcde0');rounded(487,313,43,327,21,'#f4e8f2');
+ for(let j=0;j<8;j++){txt('✦',509,341+j*38,15,'#d5b4d0')}
+ for(const o of cw06Seats)cw06DeskPaint(o);
+ // Cabinet, book shelf and plant islands
+ rounded(34,244,55,232,7,'#cf9d92');for(let j=0;j<4;j++){rounded(41,251+j*53,41,43,4,'#f8e3cd');txt(['📗','📘','📒','📙'][j],61,280+j*53,16,'#8f7a89')}
+ cw06Plant(72,565,1.2);cw06Plant(932,560,1.1);
+ rounded(913,244,58,207,7,'#c0a4c4');for(let j=0;j<4;j++){rounded(922,251+j*48,41,36,4,'#fff5e5');txt(['🎨','⭐','🌙','📚'][j],941,276+j*48,19)}
+ // Classroom door and entry marker behind character spawn
+ rounded(459,630,95,60,8,'#d7b7ba');rounded(468,640,77,50,6,'#a58ba5');
+ rounded(475,640,64,23,5,'#fff8e8');txt('🚪 광장',506,656,13,'#7c6688');
+ rounded(466,291,81,22,8,'#f4dfe9');txt('🌷 우리 반',507,307,11,'#806b92');
+}
+const cw06OldWorldBase=worldBase;
+worldBase=function(){if(currentMap==='classroom')cw06DrawClassroom();else cw06OldWorldBase()};
+const cw06OldSolid=solid;
+solid=function(x,y){if(currentMap!=='classroom')return cw06OldSolid(x,y);
+ if(x<.8||x>MW-1.15||y<4.9||y>13.12)return true;
+ if(x<2.1&&y>5.1&&y<11.0)return true;
+ if(x>19.5&&y>5.1&&y<10.4)return true;
+ if(Math.abs(x-11)<1.3&&Math.abs(y-5.3)<.62)return true;
+ for(const seat of cw06Seats){if(Math.abs(x-seat.x)<1.03&&Math.abs(y-seat.y)<.44)return true}
+ return false;
+};
+const cw06OldGoMap=goMap;
+goMap=function(id){cw06OldGoMap(id);if(id==='classroom'){
+ maps.classroom.spawn=[11,12.65]; // fresh entry position, accessible corridor
+ if(player.y===11)player.y=12.65;
+ cw05LastCamera={x:MW*TILE/2,y:MH*TILE/2};
+ switchTab('classroom');cw06RenderClassroomPanel();
+ }else if(targetTab==='classroom')switchTab('mission');
+ cw06SyncHud()};
+// Keep v0.5 zoom but afford a larger view of the classroom at its default.
+const cw06OriginalMini=cw05MiniDraw;
+cw05MiniDraw=function(now){if(currentMap!=='classroom')return cw06OriginalMini(now);
+ const c=$('#v05Mini'),g=c.getContext('2d'),w=c.width,h=c.height;
+ g.clearRect(0,0,w,h);g.fillStyle='#f1ddc3';g.fillRect(0,0,w,h);
+ g.fillStyle='#e4bed1';g.fillRect(0,0,w,h*.29);g.fillStyle='#4c958d';g.fillRect(w*.34,h*.12,w*.32,h*.14);
+ for(const s of cw06Seats){g.fillStyle=state.answers['학생 '+s.number]!==undefined?'#81c99c':'#b48f7a';g.fillRect((s.x-.7)/MW*w,(s.y-.25)/MH*h,1.4/MW*w,.6/MH*h)}
+ g.fillStyle='#fff';g.beginPath();g.arc(player.x/MW*w,player.y/MH*h,5,0,Math.PI*2);g.fill();g.strokeStyle='#6b6199';g.stroke();
+};
+const cw06OldRenderMission=renderMission;
+renderMission=function(){cw06OldRenderMission();
+ if($('#role').value!=='student'||currentMap!=='classroom')return;
+ if(cw06IsRunning())return;
+ const panel=$('#mission');const warning=document.createElement('div');warning.className='cw06TeacherWarning';
+ warning.textContent='🔒 '+cw06StatusText()+': 선생님이 수업을 진행 중으로 바꾸면 미션을 제출할 수 있어요.';
+ panel.prepend(warning);
+ const submit=Array.from(panel.querySelectorAll('button')).find(b=>b.textContent.includes('미션 제출하기'));
+ if(submit)submit.disabled=true;
+ panel.querySelectorAll('input[type="radio"]').forEach(x=>x.disabled=true);
+};
+// Extend existing demo role change without changing coins and player save keys.
+const cw06OldChangeMode=changeMode;
+changeMode=function(){cw06OldChangeMode();cw06RenderClassroomPanel();cw06SyncHud()};
+$('#studentChoice').addEventListener('change',()=>{cw06RenderClassroomPanel()});
+$('#role').addEventListener('change',()=>{cw06RenderClassroomPanel();cw06SyncHud()});
+window.addEventListener('storage',event=>{
+ if(event.key===CW06_LESSON_KEY){try{const v=JSON.parse(event.newValue||'null');if(v&&['ready','running','paused','ended'].includes(v.status)){
+  cw06Lesson={...cw06DefaultLesson(),...v};cw06RenderClassroomPanel();cw06SyncHud();renderMission();
+ }}catch{}}
+});
+const cw06BaseRenderAvatar=renderAvatar;
+renderAvatar=function(){cw06BaseRenderAvatar()};
+document.title='CLASS WORLD v0.6 | 꿈별학교 디지털 교실';
+document.querySelector('.sideTitle .tiny').textContent='CLASS WORLD v0.6';
+document.querySelector('.footnote').textContent='🌱 v0.6은 가상 학생 체험판입니다. 다른 기기 간 동기화·교사 인증은 아직 없습니다. 문코인은 실제 화폐가 아니며 실제 학생 개인정보를 입력하지 마세요.';
+maps.classroom.desc='🌸 30석 교실! 전자칠판·교탁·책상을 클릭해 수업 기능을 열어보세요.';
+maps.classroom.spawn=[11,12.65];
+cw06RenderClassroomPanel();
+// Show the classroom first; all v0.5 world exits, shops, avatars, missions remain available.
+goMap('classroom');
+window.CW06_TEST={getLesson:()=>({...cw06Lesson}),getSave:()=>state,getSeats:()=>cw06Seats.length,setRole(role){$('#role').value=role;changeMode()},openObject:cw06OpenObject,setStatus:cw06ChangeStatus,goMap};
 </script>
 </body>
 </html>
