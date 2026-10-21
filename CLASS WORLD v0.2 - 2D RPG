@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLASS WORLD | 꿈별학교</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eaf0fa;color:#32405b;font-family:"Malgun Gothic",system-ui,sans-serif}
+header{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;gap:10px;border-bottom:3px solid #d5e0f1}
+.brand{font-weight:900;font-size:21px;color:#6772cf}
+.brand span{font-size:12px;color:#8992ab;margin-left:8px}
+button,select,input{font:inherit;border-radius:10px;border:1px solid #ccd5e6;padding:9px;background:white;color:#39465f}
+button{cursor:pointer}
+button:hover{filter:brightness(.96)}
+.primary{background:#7977d7;color:white;border:0;font-weight:bold}
+main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:14px;max-width:1500px;margin:auto}
+.game{min-width:0;background:white;padding:10px;border-radius:19px;box-shadow:0 3px 12px #8c99b326}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px;font-weight:bold;font-size:14px}
+#world{width:100%;height:auto;display:block;image-rendering:pixelated;border-radius:13px;background:#a7d5a1}
+.control{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:10px}
+.pad{display:grid;grid-template-columns:repeat(3,43px);gap:3px;touch-action:none}
+.pad button{background:#e4e4ff;border:0;padding:9px}
+.pad button:first-child{grid-column:2}
+.pad button:nth-child(2){grid-column:1;grid-row:2}
+.pad button:nth-child(3){grid-column:2;grid-row:2}
+.pad button:nth-child(4){grid-column:3;grid-row:2}
+.panel{background:white;border-radius:19px;padding:18px;box-shadow:0 3px 12px #8c99b326;max-height:calc(100vh - 95px);overflow:auto}
+h2{margin:0 0 10px;color:#646ac0;font-size:19px}
+h3{font-size:15px;margin:15px 0 9px}
+small,.muted{color:#8793aa;font-size:12px}
+.card{border:1px solid #e3e7f3;border-radius:13px;padding:12px;margin:12px 0;background:#f9faff}
+label{display:block;margin:9px 0 4px;font-size:13px}
+.field{width:100%;margin:3px 0 7px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tag{background:#eeecff;border-radius:9px;padding:7px;font-size:12px}
+#notice{color:#38966c;font-weight:bold;font-size:13px;margin-top:10px}
+.choice{display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:9px;margin:5px 0}
+.choice input{width:auto}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.roomBtn{background:#f0eeff;color:#595db1;border:1px solid #dcdafa}
+#roomTitle{color:#6471a1}
+@media(max-width:850px){
+main{grid-template-columns:1fr;padding:8px}
+header{padding:10px}
+.brand{font-size:17px}
+.brand span{display:none}
+.panel{max-height:none}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">🌸 CLASS WORLD <span>꿈별학교 v0.2</span></div>
+<select id="role">
+<option value="teacher">👩‍🏫 교사 모드</option>
+<option value="student">🧑‍🎓 학생 모드</option>
+</select>
+</header>
+<main>
+<section class="game">
+<div class="topbar">
+<span id="roomTitle">🌳 꿈별마을 광장</span>
+<span>⭐ <span id="xp">0</span> XP</span>
+</div>
+<canvas id="world" width="920" height="560"></canvas>
+<div class="control">
+<div>
+<small>방향키 / WASD 이동 · 건물 클릭 또는 가까이서 E</small>
+<div class="row" style="margin-top:8px">
+<button class="roomBtn" data-room="광장">🌳 광장</button>
+<button class="roomBtn" data-room="교실">🏫 교실</button>
+<button class="roomBtn" data-room="도서관">📚 도서관</button>
+<button class="roomBtn" data-room="체육관">🏸 체육관</button>
+<button class="roomBtn" data-room="AI 연구소">🤖 AI 연구소</button>
+</div>
+</div>
+<div class="pad">
+<button data-key="ArrowUp">▲</button>
+<button data-key="ArrowLeft">◀</button>
+<button data-key="ArrowDown">▼</button>
+<button data-key="ArrowRight">▶</button>
+</div>
+</div>
+</section>
+
+<aside class="panel">
+<h2>🎀 나의 캐릭터</h2>
+<p class="muted">꾸민 캐릭터는 이 브라우저에 저장돼요.</p>
+<div class="grid">
+<div><label>헤어스타일</label>
+<select id="hair" class="field">
+<option value="0">단정한 머리</option>
+<option value="1">양갈래</option>
+<option value="2">긴 머리</option>
+<option value="3">동그란 머리</option>
+<option value="4">삐죽삐죽</option>
+</select></div>
+<div><label>머리 색상</label>
+<select id="hairColor" class="field">
+<option value="#52372f">초코 브라운</option>
+<option value="#d5954e">밀크 브라운</option>
+<option value="#343449">블랙</option>
+<option value="#e6b74a">골드</option>
+<option value="#e28db8">핑크</option>
+</select></div>
+<div><label>얼굴 표정</label>
+<select id="face" class="field">
+<option value="0">방긋 웃기</option>
+<option value="1">반짝 눈</option>
+<option value="2">수줍은 미소</option>
+</select></div>
+<div><label>옷 색상</label>
+<select id="clothes" class="field">
+<option value="#8680dc">라벤더</option>
+<option value="#ee8f9d">딸기우유</option>
+<option value="#74b9a5">민트</option>
+<option value="#e6ba65">레몬</option>
+<option value="#79a7df">하늘색</option>
+</select></div>
+</div>
+<label>액세서리</label>
+<select id="accessory" class="field">
+<option value="0">없음</option>
+<option value="1">리본</option>
+<option value="2">안경</option>
+<option value="3">마법사 모자</option>
+</select>
+<div class="card" id="teacher">
+<h3>📋 교사 미션 관리</h3>
+<label>미션 제목</label>
+<input id="question" class="field" value="배드민턴 단식 코트의 특징은?">
+<label>선택지 4개</label>
+<input id="opt0" class="field" value="복식보다 좌우 폭이 좁다">
+<input id="opt1" class="field" value="복식보다 좌우 폭이 넓다">
+<input id="opt2" class="field" value="복식과 완전히 같다">
+<input id="opt3" class="field" value="네트가 없다">
+<label>정답</label>
+<select id="correct" class="field">
+<option value="0">1번</option>
+<option value="1">2번</option>
+<option value="2">3번</option>
+<option value="3">4번</option>
+</select>
+<button class="primary field" id="publish">🚀 새 미션 배포</button>
+<h3>📊 학생 결과</h3>
+<div id="results"></div>
+</div>
+<div class="card" id="student" hidden>
+<h3>🎯 오늘의 퀘스트</h3>
+<label>체험용 학생 캐릭터</label>
+<select id="studentName" class="field">
+<option>학생 1</option><option>학생 2</option>
+<option>학생 3</option><option>학생 4</option>
+<option>학생 5</option>
+</select>
+<h3 id="missionTitle"></h3>
+<div id="choices"></div>
+<button class="primary field" id="submit">정답 제출하기</button>
+<div id="notice"></div>
+</div>
+<div class="card">
+<h3>💬 마을 안내</h3>
+<div id="message" class="muted">광장의 건물을 누르면 새로운 공간으로 이동해요!</div>
+</div>
+<small>현재 버전은 시제품입니다. 학생 계정과 여러 기기 동기화는 아직 지원하지 않으며 실제 학생 개인정보를 입력하면 안 됩니다.</small>
+</aside>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const canvas=$("world"),ctx=canvas.getContext("2d");
+ctx.imageSmoothingEnabled=false;
+const W=920,H=560;
+
+const read=(key,fallback)=>{
+ try{return JSON.parse(localStorage.getItem(key))??fallback}
+ catch{return fallback}
+};
+const save=(key,value)=>{
+ try{localStorage.setItem(key,JSON.stringify(value))}catch{}
+};
+
+let style=read("cw2-style",{
+ hair:"0",hairColor:"#52372f",face:"0",
+ clothes:"#8680dc",accessory:"0"
+});
+for(const id of Object.keys(style)){
+ if($(id))$(id).value=style[id];
+ $(id)?.addEventListener("change",()=>{
+  style[id]=$(id).value;
+  save("cw2-style",style);
+ });
+}
+
+let room="광장";
+let player={x:460,y:425,dir:0};
+let xp=read("cw2-xp",0);
+$("xp").textContent=xp;
+
+const missionDefault={
+ q:"배드민턴 단식 코트의 특징은?",
+ opts:[
+ "복식보다 좌우 폭이 좁다",
+ "복식보다 좌우 폭이 넓다",
+ "복식과 완전히 같다",
+ "네트가 없다"
+ ],correct:0
+};
+let mission=read("cw2-mission",missionDefault);
+let answers=read("cw2-answers",{});
+
+const buildings=[
+ {name:"교실",x:65,y:88,w:220,h:162,wall:"#f4c5a9",roof:"#e89196"},
+ {name:"도서관",x:355,y:65,w:215,h:178,wall:"#e6d4a7",roof:"#b9a0db"},
+ {name:"체육관",x:640,y:95,w:205,h:158,wall:"#a9d6e0",roof:"#78afd2"},
+ {name:"AI 연구소",x:655,y:334,w:198,h:150,wall:"#b1dabb",roof:"#7bb99b"}
+];
+
+function rect(x,y,w,h,color){
+ ctx.fillStyle=color;
+ ctx.fillRect(Math.round(x),Math.round(y),w,h);
+}
+function circle(x,y,r,color){
+ ctx.fillStyle=color;
+ ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+}
+function text(s,x,y,size=17,color="#46536b"){
+ ctx.font=`bold ${size}px "Malgun Gothic",sans-serif`;
+ ctx.textAlign="center";
+ ctx.fillStyle=color;
+ ctx.fillText(s,x,y);
+}
+function outline(x,y,w,h,color="#fff"){
+ ctx.strokeStyle=color;ctx.lineWidth=3;
+ ctx.strokeRect(x,y,w,h);
+}
+
+function drawGround(){
+ rect(0,0,W,H,"#a9d4a2");
+ for(let y=0;y<H;y+=40)
+  for(let x=0;x<W;x+=40){
+   if((x+y/2)%80===0)rect(x+7,y+9,4,4,"#99c897");
+  }
+ rect(305,0,270,560,"#ebdfc3");
+ rect(0,265,W,70,"#ebdfc3");
+ for(let x=0;x<W;x+=40){
+  rect(x+5,298,25,3,"#ddd2b9");
+ }
+ for(const [x,y] of [[45,355],[240,450],[590,440],[875,270]]){
+  circle(x,y,29,"#79ae78");
+  circle(x-9,y-8,21,"#8ec68a");
+  circle(x+10,y-6,17,"#95d38e");
+  rect(x-5,y+19,10,15,"#a17855");
+ }
+}
+
+function drawBuilding(b){
+ const {x,y,w,h,wall,roof,name}=b;
+ rect(x+9,y+14,w,h,"#82b68f");
+ rect(x,y+30,w,h-30,wall);
+ outline(x,y+30,w,h-30,"#fff5df");
+ rect(x-10,y+13,w+20,33,roof);
+ rect(x+12,y,w-24,30,roof);
+ rect(x+17,y+65,32,45,"#fff3d5");
+ rect(x+21,y+70,24,34,"#83bed2");
+ rect(x+w-49,y+65,32,45,"#fff3d5");
+ rect(x+w-45,y+70,24,34,"#83bed2");
+ rect(x+w/2-22,y+h-58,44,58,"#927b88");
+ rect(x+w/2-17,y+h-53,34,53,"#f8e1b1");
+ circle(x+w/2+11,y+h-27,3,"#99725d");
+ rect(x+w/2-55,y+39,110,28,"#fff9ed");
+ text(name,x+w/2,y+59,16);
+ text(name==="교실"?"🏫":name==="도서관"?"📚":name==="체육관"?"🏸":"🤖",x+w/2,y+110,29);
+}
+
+function drawRoom(){
+ rect(0,0,W,H,"#f0dec3");
+ for(let y=0;y<H;y+=50)
+  for(let x=0;x<W;x+=50){
+   ctx.strokeStyle="#decdb9";
+   ctx.strokeRect(x,y,50,50);
+  }
+ rect(0,0,W,85,"#c0d7db");
+ rect(0,85,W,10,"#fff2d8");
+ rect(330,8,260,65,"#557871");
+ text(room,460,52,27,"#fff8eb");
+
+ if(room==="교실"){
+  for(let row=0;row<3;row++)
+   for(let col=0;col<4;col++){
+    const x=135+col*165,y=165+row*105;
+    rect(x+6,y+8,105,62,"#b88f70");
+    rect(x,y,105,56,"#e4ba89");
+    outline(x,y,105,56,"#fff5cf");
+    rect(x+38,y+15,30,20,"#f9ede0");
+   }
+ }else if(room==="도서관"){
+  for(let i=0;i<4;i++){
+   const x=85+i*195;
+   rect(x,155,130,250,"#9b795f");
+   for(let j=0;j<5;j++){
+    rect(x+12,170+j*45,22,32,"#d88b8b");
+    rect(x+40,170+j*45,24,32,"#87b9c5");
+    rect(x+70,170+j*45,24,32,"#d9bf7d");
+   }
+  }
+ }else if(room==="체육관"){
+  rect(85,130,750,350,"#a9c4a0");
+  ctx.strokeStyle="#fff";
+  ctx.lineWidth=5;
+  ctx.strokeRect(110,145,700,320);
+  rect(458,145,5,320,"#fff");
+  rect(105,301,710,5,"#fff");
+  text("오늘의 체육 미션!",460,120,19);
+ }else{
+  for(let i=0;i<4;i++){
+   const x=120+i*185;
+   rect(x,210,130,65,"#a4bacc");
+   rect(x+20,168,90,55,"#6f879f");
+   rect(x+28,175,74,41,"#c8f3ff");
+   rect(x+47,285,55,10,"#a6d9ad");
+  }
+  text("AI 수업 도우미는 다음 업데이트에서 연결됩니다",460,380,19);
+ }
+ rect(382,505,155,43,"#8ea1ce");
+ text("🚪 광장으로",460,534,17,"#fff");
+}
+
+function drawAvatar(x,y,s=1,custom=style,label="나"){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ // Shadow
+ ctx.fillStyle="#526c7470";
+ ctx.beginPath();ctx.ellipse(0,13,23,9,0,0,Math.PI*2);ctx.fill();
+ // Legs and shoes
+ rect(-14,0,11,14,"#514969");
+ rect(3,0,11,14,"#514969");
+ rect(-17,9,16,7,"#765e75");
+ rect(3,9,16,7,"#765e75");
+ // Clothes
+ rect(-21,-33,42,37,custom.clothes);
+ rect(-24,-31,9,27,"#f5cba9");
+ rect(15,-31,9,27,"#f5cba9");
+ rect(-5,-30,10,24,"#fff3e3");
+ // Head
+ circle(0,-55,26,"#f7d3b2");
+ const hc=custom.hairColor;
+ if(custom.hair==="0"){
+  circle(0,-72,27,hc);
+  rect(-25,-70,50,18,hc);
+ }else if(custom.hair==="1"){
+  circle(-31,-65,13,hc);
+  circle(31,-65,13,hc);
+  circle(0,-75,27,hc);
+  rect(-24,-71,48,16,hc);
+ }else if(custom.hair==="2"){
+  rect(-28,-74,56,48,hc);
+  circle(0,-77,28,hc);
+  circle(0,-55,24,"#f7d3b2");
+  rect(-22,-74,44,15,hc);
+ }else if(custom.hair==="3"){
+  circle(0,-76,30,hc);
+  circle(0,-55,24,"#f7d3b2");
+  rect(-23,-73,46,13,hc);
+ }else{
+  for(let i=-2;i<=2;i++)circle(i*12,-82-(i%2)*8,13,hc);
+  rect(-25,-78,50,22,hc);
+ }
+ // Eyes
+ if(player.dir!==2||label!=="나"){
+  if(custom.face==="1"){
+   circle(-9,-53,4,"#4c4553");
+   circle(9,-53,4,"#4c4553");
+   circle(-8,-55,1.5,"white");
+   circle(10,-55,1.5,"white");
+  }else{
+   rect(-13,-55,6,4,"#4c4553");
+   rect(7,-55,6,4,"#4c4553");
+  }
+  if(custom.face==="2"){
+   circle(-17,-45,5,"#eda8a7");
+   circle(17,-45,5,"#eda8a7");
+  }
+  ctx.strokeStyle="#a56c69";ctx.lineWidth=2;
+  ctx.beginPath();ctx.arc(0,-47,5,0,Math.PI);ctx.stroke();
+ }
+ if(custom.accessory==="1"){
+  circle(21,-82,8,"#ea7398");
+  circle(34,-82,8,"#ea7398");
+  circle(28,-82,5,"#ffe7f1");
+ }else if(custom.accessory==="2"){
+  ctx.strokeStyle="#5c5667";ctx.lineWidth=3;
+  ctx.strokeRect(-19,-60,16,12);
+  ctx.strokeRect(3,-60,16,12);
+  rect(-3,-56,6,2,"#5c5667");
+ }else if(custom.accessory==="3"){
+  rect(-30,-83,60,8,"#8b79d2");
+  ctx.fillStyle="#8b79d2";
+  ctx.beginPath();ctx.moveTo(-20,-83);
+  ctx.lineTo(0,-120);ctx.lineTo(20,-83);ctx.fill();
+  circle(3,-107,4,"#fff2a6");
+ }
+ ctx.restore();
+ ctx.fillStyle="#ffffffed";
+ ctx.fillRect(x-40*s,y-119*s,80*s,18*s);
+ text(label,x,y-105*s,12*s,"#555b8c");
+}
+
+let walk=0;
+function draw(){
+ if(room==="광장"){
+  drawGround();
+  for(const b of buildings)drawBuilding(b);
+  drawAvatar(310,400,.72,{
+   hair:"1",hairColor:"#d5954e",face:"0",
+   clothes:"#e98ba1",accessory:"1"
+  },"별이");
+  drawAvatar(595,306,.72,{
+   hair:"3",hairColor:"#343449",face:"1",
+   clothes:"#79a7df",accessory:"2"
+  },"꿈이");
+ }else drawRoom();
+
+ drawAvatar(player.x,player.y+Math.sin(walk)*2,1,style,"나");
+}
+
+function setRoom(next){
+ room=next;
+ player.x=460;player.y=425;
+ $("roomTitle").textContent=(next==="광장"?"🌳 ":"✨ ")+
+ (next==="광장"?"꿈별마을 광장":next);
+ $("message").textContent=next==="광장"?
+ "건물을 클릭하거나 가까이서 E를 눌러 입장해요.":
+ "이 공간은 앞으로 학습 기능이 추가될 예정이에요.";
+}
+document.querySelectorAll("[data-room]").forEach(b=>{
+ b.onclick=()=>setRoom(b.dataset.room);
+});
+
+canvas.addEventListener("click",e=>{
+ const r=canvas.getBoundingClientRect();
+ const x=(e.clientX-r.left)*W/r.width;
+ const y=(e.clientY-r.top)*H/r.height;
+ if(room!=="광장"){
+  if(y>475)setRoom("광장");
+ }else{
+  const b=buildings.find(b=>
+   x>=b.x-10&&x<=b.x+b.w+10&&
+   y>=b.y&&y<=b.y+b.h);
+  if(b)setRoom(b.name);
+ }
+});
+
+const keys=new Set();
+function interactiveTarget(el){
+ return el&&["INPUT","TEXTAREA","SELECT"].includes(el.tagName);
+}
+addEventListener("keydown",e=>{
+ if(interactiveTarget(e.target))return;
+ const k=e.key.toLowerCase();
+ if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){
+  keys.add(k);e.preventDefault();
+ }
+ if(k==="e"){
+  if(room!=="광장")setRoom("광장");
+  else{
+   const b=buildings.find(b=>
+    Math.hypot(player.x-(b.x+b.w/2),player.y-(b.y+b.h))<105);
+   if(b)setRoom(b.name);
+  }
+ }
+});
+addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
+addEventListener("blur",()=>keys.clear());
+
+document.querySelectorAll("[data-key]").forEach(b=>{
+ const k=b.dataset.key.toLowerCase();
+ b.addEventListener("pointerdown",e=>{
+  keys.add(k);b.setPointerCapture(e.pointerId);
+ });
+ for(const event of ["pointerup","pointercancel","lostpointercapture"])
+  b.addEventListener(event,()=>keys.delete(k));
+});
+
+let last=performance.now();
+function loop(now){
+ const dt=Math.min((now-last)/1000,.05);last=now;
+ let dx=0,dy=0;
+ if(keys.has("arrowleft")||keys.has("a"))dx--;
+ if(keys.has("arrowright")||keys.has("d"))dx++;
+ if(keys.has("arrowup")||keys.has("w"))dy--;
+ if(keys.has("arrowdown")||keys.has("s"))dy++;
+ const length=Math.hypot(dx,dy)||1;
+ player.x=Math.max(35,Math.min(885,player.x+dx/length*190*dt));
+ player.y=Math.max(135,Math.min(530,player.y+dy/length*190*dt));
+ if(dx||dy){
+  walk+=dt*12;
+  player.dir=dy<0?2:dy>0?0:dx<0?1:3;
+ }
+ draw();
+ requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function renderMission(){
+ $("missionTitle").textContent=mission.q;
+ $("choices").replaceChildren();
+ mission.opts.forEach((option,i)=>{
+  const label=document.createElement("label");
+  label.className="choice";
+  const radio=document.createElement("input");
+  radio.type="radio";radio.name="answer";radio.value=i;
+  const t=document.createElement("span");
+  t.textContent=(i+1)+". "+option;
+  label.append(radio,t);
+  $("choices").append(label);
+ });
+ const results=$("results");
+ results.replaceChildren();
+ for(let i=1;i<=5;i++){
+  const name="학생 "+i,answer=answers[name];
+  const div=document.createElement("div");
+  div.className="tag";div.style.margin="5px 0";
+  div.textContent=name+" · "+
+   (answer===undefined?"미제출":
+    answer===mission.correct?"✅ 완료":"🔄 복습 필요");
+  results.append(div);
+ }
+}
+$("role").onchange=()=>{
+ const teacher=$("role").value==="teacher";
+ $("teacher").hidden=!teacher;
+ $("student").hidden=teacher;
+ $("notice").textContent="";
+};
+$("publish").onclick=()=>{
+ const q=$("question").value.trim();
+ const opts=[0,1,2,3].map(i=>$("opt"+i).value.trim());
+ if(!q||opts.some(x=>!x)){
+  alert("문제와 선택지 4개를 모두 입력해 주세요.");
+  return;
+ }
+ mission={q,opts,correct:Number($("correct").value)};
+ answers={};
+ save("cw2-mission",mission);
+ save("cw2-answers",answers);
+ renderMission();
+ alert("새 학급 미션이 배포되었습니다!");
+};
+$("submit").onclick=()=>{
+ const selected=document.querySelector('input[name="answer"]:checked');
+ if(!selected){
+  $("notice").textContent="먼저 답을 선택해 주세요!";
+  return;
+ }
+ const name=$("studentName").value;
+ const wasCorrect=answers[name]===mission.correct;
+ const answer=Number(selected.value);
+ answers[name]=answer;
+ save("cw2-answers",answers);
+ if(answer===mission.correct&&!wasCorrect){
+  xp+=20;
+  save("cw2-xp",xp);
+  $("xp").textContent=xp;
+ }
+ $("notice").textContent=answer===mission.correct?
+  "🎉 정답! 20 XP 획득 조건을 달성했어요!":
+  "답안이 저장되었어요. 다시 생각해봐요!";
+ renderMission();
+};
+renderMission();
+draw();
+</script>
+</body>
+</html>
