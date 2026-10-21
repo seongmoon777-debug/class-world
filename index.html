@@ -72,6 +72,26 @@ body{background:linear-gradient(130deg,#f4e9f5,#e4f1f9 50%,#ecf5e5)}
 .cwPreviewLabel{cursor:pointer;color:#8669a5}
 .cwPreviewLabel:hover{text-decoration:underline}
 
+
+/* v0.5 — expanded map, zoom camera, world HUD */
+:root{--v05-cyan:#79baca}
+.layout{max-width:1660px;grid-template-columns:minmax(0,1fr) 320px;gap:12px;align-items:start}
+.stage{height:min(78vh,790px);min-height:460px}
+.gameShell{border-radius:20px}
+.gameTop{padding:10px 13px}
+.quick{padding:8px 12px}
+.quick button{padding:7px 9px;font-size:11px}
+.v05Toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:9px 13px;border-top:1px solid #e8ecf6;background:#fdfaff;color:#5b6689;font-size:11px;font-weight:800}
+.v05Toolbar button{border:1px solid #ced7eb;background:white;color:#536b9f;padding:6px 10px;border-radius:9px;font-weight:900}
+.v05Toolbar .v05ZoomText{min-width:42px;text-align:center}
+.v05Online{margin-left:auto;border-radius:20px;background:#eef6ec;color:#58836c;padding:5px 9px;font-size:11px}
+.v05MiniWrap{position:absolute;top:54px;right:12px;background:#fffef0ee;border:2px solid #ffffff;border-radius:13px;box-shadow:0 4px 14px #23364e22;padding:6px;pointer-events:none;z-index:2}
+.v05MiniLabel{font-size:10px;font-weight:900;color:#55708a;margin-bottom:4px;text-align:center}
+#v05Mini{width:158px;height:107px;display:block;border-radius:8px;background:#a9d6ac}
+.v05Legend{font-size:10px;color:#58708b;text-align:center;padding-top:3px}
+.v05Welcome{position:absolute;left:50%;top:15%;transform:translateX(-50%);z-index:2;border-radius:15px;background:#fffaf4df;padding:8px 14px;color:#5a7099;font-weight:900;font-size:12px;white-space:nowrap;pointer-events:none}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.stage{height:70vh;min-height:440px}.v05Online{margin-left:0}}
+@media(max-width:540px){.stage{height:60vh;min-height:385px}.v05MiniWrap{top:52px;right:7px;padding:4px}#v05Mini{width:112px;height:76px}.v05MiniLabel,.v05Legend{font-size:8px}.v05Welcome{font-size:10px;white-space:normal;width:max-content;max-width:62vw;text-align:center}.v05Toolbar{padding:7px 9px}}
 </style>
 </head>
 <body>
@@ -550,6 +570,330 @@ document.querySelector('.sideTitle .tiny').textContent='CLASS WORLD v0.4';
 document.querySelector('.floatBottom').textContent='🌷 2D RPG · 문코인 꿈별마을';
 renderShop();
 
+
+/* CLASS WORLD v0.5: expanded map, zoom, walk cycles, local multi-tab demo.
+ * Safe for v0.4 saved profiles and Moon Coin: dataKey and save logic remain unchanged.
+ * The cross-tab demo does not connect different students' devices. */
+const CW05={zoom:(()=>{try{return Number(localStorage.getItem('cw05-zoom'))||0.71}catch{return 0.71}})(),phase:0,facing:'down',moving:false,miniTime:0,remote:new Map(),onlineLast:0};
+CW05.zoom=Math.max(.57,Math.min(1.12,CW05.zoom));
+const v05Bar=document.createElement('div');v05Bar.className='v05Toolbar';
+v05Bar.innerHTML='<span>🔎 시야</span><button type="button" id="cwZoomOut" aria-label="더 넓게 보기">−</button><span id="cwZoomLabel" class="v05ZoomText">71%</span><button type="button" id="cwZoomIn" aria-label="확대하기">+</button><button type="button" id="cwZoomReset">기본</button><span class="v05Online" id="cwOnline">🟢 이 브라우저의 1개 탭</span>';
+document.querySelector('.gameShell').append(v05Bar);
+const v05MiniWrap=document.createElement('div');v05MiniWrap.className='v05MiniWrap';
+v05MiniWrap.innerHTML='<div class="v05MiniLabel">🗺️ 마을 미니맵</div><canvas id="v05Mini" width="210" height="140"></canvas><div class="v05Legend">● 나 · ◆ 건물 · ● 다른 탭</div>';
+document.querySelector('#stage').append(v05MiniWrap);
+const v05Welcome=document.createElement('div');v05Welcome.className='v05Welcome';v05Welcome.textContent='🌷 더 넓어진 꿈별마을을 걸어보세요!';document.querySelector('#stage').append(v05Welcome);
+function cw05SetZoom(v){CW05.zoom=Math.max(.57,Math.min(1.12,v));try{localStorage.setItem('cw05-zoom',CW05.zoom.toFixed(2))}catch{};document.querySelector('#cwZoomLabel').textContent=Math.round(CW05.zoom*100)+'%'}
+document.querySelector('#cwZoomOut').onclick=()=>cw05SetZoom(CW05.zoom-.08);
+document.querySelector('#cwZoomIn').onclick=()=>cw05SetZoom(CW05.zoom+.08);
+document.querySelector('#cwZoomReset').onclick=()=>cw05SetZoom(.71);
+cw05SetZoom(CW05.zoom);
+
+const CW05_DIM={plaza:[44,32]};
+const CW05_PORTALS=[
+ {x:7,y:6,to:'classroom',label:'우리 반 교실'},
+ {x:22,y:6,to:'library',label:'별빛 도서관'},
+ {x:37,y:6,to:'gym',label:'튼튼 체육관'},
+ {x:7,y:19,to:'lab',label:'AI 연구소'},
+ {x:22,y:19,to:'salon',label:'달빛 미용실'},
+ {x:37,y:19,to:'outfit',label:'꿈꾸는 의상실'},
+ {x:36,y:27,to:'accessory',label:'별빛 소품상점'}
+];
+portals.plaza=CW05_PORTALS;
+maps.plaza.spawn=[22,25];
+const cw05OldWorld=worldBase;
+const cw05OldSolid=solid;
+function cw05Path(x,y){
+  return (x>=20&&x<=23)||(y>=12&&y<=14)||(y>=23&&y<=25)||(x>=5&&x<=9&&y>=6&&y<=24)||(x>=35&&x<=39&&y>=6&&y<=28);
+}
+function cw05House(p,i){
+ const x=(p.x+.5)*TILE,y=(p.y+.5)*TILE;
+ const roof=['#e994a4','#9baded','#e4af7b','#a7a4d9','#e8aaca','#d7b77c','#90bed6'][i];
+ const wall=['#ffe3cd','#e5eaff','#fff1cc','#e5d9fb','#fae6ec','#fbeed0','#dceaf5'][i];
+ const shadow=['#c17e85','#7f94cd','#c28b60','#9081b9','#b981a5','#aa9362','#729eb7'][i];
+ rounded(x-88,y-101,178,134,12,shadow);
+ rounded(x-84,y-91,170,121,10,wall);
+ // roof tiers and roof shingles
+ rounded(x-98,y-123,198,62,12,roof);
+ rounded(x-87,y-133,176,30,10,roof);
+ for(let k=0;k<5;k++){rect(x-76+k*36,y-92,28,4,'#ffffff47');rect(x-75+k*36,y-114,17,3,'#fff5da56')}
+ // windows and planter boxes
+ for(let side of [-1,1]){
+  const wx=x+side*57-13;
+  rounded(wx,y-50,26,37,5,'#fff8e8');rounded(wx+4,y-46,18,27,3,'#9fc9dd');
+  rect(wx+2,y-15,23,5,'#b7918a');flower(wx+13,y-21,'#ffccd6');
+ }
+ rounded(x-19,y-40,38,73,6,'#887a94');
+ rect(x-12,y-34,24,61,'#b8a5b7');rect(x+7,y-3,4,5,'#ffedbd');
+ rounded(x-78,y-144,156,25,9,'#fffaf0');
+ txt(maps[p.to].icon+' '+maps[p.to].name,x,y-127,13,'#5c6684');
+ // steps below the entry point
+ rounded(x-25,y+31,50,9,4,'#e6d1b7');
+}
+function cw05ExpandedPlaza(){
+ const [w,h]=CW05_DIM.plaza;
+ ctx.fillStyle='#b7e0b3';ctx.fillRect(0,0,w*TILE,h*TILE);
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+  const X=x*TILE,Y=y*TILE,alt=(x+y)%2;
+  const path=cw05Path(x,y);
+  rect(X,Y,TILE+1,TILE+1,path?(alt?'#e7d8c5':'#e0d1b8'):(alt?'#aed8ad':'#bce2b8'));
+  if(path){if((x*3+y*7)%7===0)rect(X+13,Y+22,13,3,'#cbb9a1');}
+  else if((x*17+y*7)%13===0)flower(X+17,Y+15,['#fbb7cf','#ffe7a6','#e9c8f8'][(x+y)%3]);
+  else if((x*9+y*13)%17===0)rect(X+25,Y+12,8,3,'#96c894');
+ }
+ // Garden plots and hedges: kept outside the main routes.
+ for(const [bx,by] of [[1,9],[13,18],[28,18],[1,27],[28,27]]){
+  rounded(bx*TILE,by*TILE,4*TILE,3*TILE,13,'#83c99b');
+  for(let j=0;j<10;j++)flower((bx+.6+(j%5)*.65)*TILE,(by+.55+Math.floor(j/5)*1.25)*TILE,['#f7b4c9','#fff3b9','#dcbaf1'][j%3]);
+ }
+ for(let x=1;x<w;x+=5){tree(x*TILE,1*TILE);tree((x+.5)*TILE,(h-.7)*TILE)}
+ for(let y=3;y<h-2;y+=5){tree(.9*TILE,y*TILE);tree((w-.8)*TILE,y*TILE)}
+ // Park benches and glowing lamps.
+ for(const [x,y] of [[17,17],[27,17],[17,28]]){rounded(x*TILE,y*TILE,110,14,5,'#b08e77');rect(x*TILE+12,y*TILE+13,8,12,'#806658');rect(x*TILE+90,y*TILE+13,8,12,'#806658')}
+ for(const [x,y] of [[16,13],[28,13],[16,25],[28,25]])cwLamp(x*TILE,y*TILE);
+ // Large new center pond and moon fountain.
+ const fx=22*TILE,fy=12*TILE;
+ rounded(fx-112,fy-60,224,115,26,'#bfc9bf');
+ rounded(fx-101,fy-53,202,100,24,'#78bdd1');
+ rounded(fx-86,fy-40,171,73,28,'#a3dce3');
+ const t=performance.now()/550;
+ cwPuddle(fx,fy,t);
+ ctx.save();ctx.fillStyle='#fff1ae';ctx.beginPath();ctx.arc(fx,fy-17,27,0,Math.PI*2);ctx.fill();ctx.fillStyle='#a3dce3';ctx.beginPath();ctx.arc(fx+13,fy-25,24,0,Math.PI*2);ctx.fill();ctx.restore();
+ // Houses have priority over plants (drawn last).
+ CW05_PORTALS.forEach((p,i)=>cw05House(p,i));
+ // Pretty ornamental sign toward the bottom path
+ rounded(20*TILE,28*TILE,4*TILE,31,9,'#fff6dc');txt('🌙 문코인 꿈별마을',22*TILE,28.45*TILE,14,'#7b6c92');
+}
+worldBase=function(){if(currentMap==='plaza')cw05ExpandedPlaza();else cw05OldWorld()};
+solid=function(x,y){
+ if(currentMap!=='plaza')return cw05OldSolid(x,y);
+ const [w,h]=CW05_DIM.plaza;
+ if(x<.5||x>w-.7||y<1.1||y>h-1)return true;
+ // Keep upper parts of houses solid; doorway row remains approachable.
+ for(const p of CW05_PORTALS){if(Math.abs(x-p.x)<1.6&&y>p.y-2.5&&y<p.y-.1)return true;}
+ return false;
+};
+
+// Layered hand-drawn sprite with genuinely alternating feet, arm swing and bob.
+// Faces are distinct for up/left/right/down; direction stays still when stopped.
+sprite=function(cx,cy,av,step=0,small=false,dir=null,moving=null){
+ const npc=small;
+ const faceDir=dir||(npc?'down':CW05.facing);
+ const walking=moving===null?(npc?true:CW05.moving):moving;
+ const phase=walking?step:0;
+ const swing=walking?Math.sin(phase):0;
+ const bounce=walking?Math.abs(Math.sin(phase)) * 1.8:0;
+ const arm=walking?Math.round(swing*4):0;
+ const leg=walking?Math.round(swing*4):0;
+ const z=npc?1.26:1.88;
+ ctx.save();ctx.translate(Math.round(cx),Math.round(cy-bounce));ctx.scale(z,z);
+ if(faceDir==='left')ctx.scale(-1,1);
+ const P=(x,y,w,h,c)=>rect(x,y,w,h,c);
+ const cloth=clothColors[av.cloth%clothColors.length],hair=hairColors[av.hairColor%hairColors.length];
+ const skin='#f6d2b4',sole='#655d7c',outline='#4b4864';
+ ctx.fillStyle='#627d7250';ctx.beginPath();ctx.ellipse(0,4+bounce,17,5,0,0,Math.PI*2);ctx.fill();
+ // crossed legs, left and right move in opposite directions
+ P(-10,-9+leg,8,13,sole);P(3,-9-leg,8,13,sole);
+ P(-12,2+leg,11,5,'#9d8092');P(3,2-leg,11,5,'#9d8092');
+ // torso sways slightly independently from the legs
+ const sway=walking?Math.round(Math.sin(phase)*.8):0;
+ P(-14+sway,-27,28,22,cloth);
+ P(-11+sway,-23,22,3,'#ffffff66');
+ if(faceDir!=='up'){P(-5+sway,-23,10,17,'#fff4db');P(-9+sway,-8,18,3,'#d7b4ba')}
+ else{P(-11,-23,22,16,'#897bac');P(-7,-21,14,13,cloth)}
+ // upper arms counter-rotate with opposite step; sleeve + visible hands
+ P(-19,-26-arm,6,10,cloth);P(13,-26+arm,6,10,cloth);
+ P(-19,-17-arm,6,8,skin);P(13,-17+arm,6,8,skin);
+ // Head geometry and directional cheek / side profile.
+ P(-16,-49,32,32,'#ad8491');P(-15,-48,30,30,skin);
+ if(av.hair===0){P(-17,-51,34,12,hair);P(-17,-40,5,21,hair);P(12,-40,5,21,hair)}
+ else if(av.hair===1){P(-18,-51,36,15,hair);P(-22,-48,9,11,hair);P(13,-49,9,11,hair);P(-7,-57,15,9,hair)}
+ else if(av.hair===2){P(-18,-49,36,12,hair);P(-25,-39,9,21,hair);P(16,-39,9,21,hair)}
+ else if(av.hair===3){P(-17,-46,34,9,hair);P(-10,-54,18,9,hair);P(9,-44,6,10,hair)}
+ else{P(-17,-51,34,12,hair);P(-18,-39,6,30,hair);P(12,-39,6,30,hair);P(-8,-56,18,8,hair)}
+ P(-12,-48,5,3,'#ffffff44');
+ if(faceDir==='down'){
+  P(-10,-33,6,av.face===2?7:5,outline);P(5,-33,6,av.face===2?7:5,outline);
+  P(-8,-33,2,2,'#fff');P(7,-33,2,2,'#fff');
+  P(-13,-25,6,2,'#efabb5');P(7,-25,6,2,'#efabb5');
+  if(av.face!==0)P(-2,-24,5,2,'#ab7981');
+ }else if(faceDir==='right'){
+  P(7,-33,6,5,outline);P(10,-33,2,2,'#fff');P(12,-25,4,2,'#efabb5');
+ }else if(faceDir==='up'){
+  P(-15,-48,30,19,hair);P(-9,-29,18,3,'#ffffff21');
+ }
+ if(av.acc===1){P(11,-52,9,5,'#e478a2');P(16,-57,6,15,'#f4aacc');P(13,-50,5,5,'#fff1ef')}
+ if(av.acc===2&&faceDir!=='up'){
+  ctx.strokeStyle='#586b89';ctx.lineWidth=1.6;
+  if(faceDir==='down'){ctx.strokeRect(-12,-37,11,9);ctx.strokeRect(2,-37,11,9);P(-1,-34,3,2,'#586b89')}
+  else ctx.strokeRect(4,-37,12,9);
+ }
+ if(av.acc===3){P(-21,-56,42,6,'#7b8fce');P(-16,-61,32,7,'#667ac1');P(-4,-65,12,5,'#ffe7a5')}
+ ctx.restore();
+};
+
+// Same-origin BroadcastChannel lets two tabs test avatar presence locally.
+// No real networking, no school accounts, and no real multi-device synchronization.
+const CW05_TAB=(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():String(Math.random());
+let cw05Channel=null;
+try{if('BroadcastChannel' in window)cw05Channel=new BroadcastChannel('classworld-v05-local-presence')}catch{}
+if(cw05Channel){
+ cw05Channel.onmessage=(e)=>{
+  const m=e.data;
+  if(!m||m.id===CW05_TAB||typeof m.id!=='string')return;
+  if(m.type==='bye'){CW05.remote.delete(m.id);return}
+  if(m.type!=='here'||!maps[m.map]||!Number.isFinite(m.x)||!Number.isFinite(m.y))return;
+  const old=CW05.remote.get(m.id)||{rx:m.x,ry:m.y,phase:0};
+  CW05.remote.set(m.id,{...old,id:m.id,name:String(m.name||'모험가').slice(0,12),map:m.map,x:m.x,y:m.y,av:m.av||baseAvatar,dir:['up','down','left','right'].includes(m.dir)?m.dir:'down',moving:Boolean(m.moving),last:Date.now()});
+ };
+ setInterval(()=>{
+  if(document.visibilityState==='hidden')return;
+  try{cw05Channel.postMessage({type:'here',id:CW05_TAB,name:nickname(),map:currentMap,x:player.x,y:player.y,av:currentAvatar(),dir:CW05.facing,moving:CW05.moving})}catch{}
+ },180);
+ window.addEventListener('pagehide',()=>{try{cw05Channel.postMessage({type:'bye',id:CW05_TAB})}catch{}});
+}
+function cw05MiniDraw(now){
+ const c=document.querySelector('#v05Mini');if(!c)return;
+ const x=c.getContext('2d'),w=c.width,h=c.height;
+ x.clearRect(0,0,w,h);
+ x.fillStyle='#a3d6a7';x.fillRect(0,0,w,h);
+ const [mw,mh]=currentMap==='plaza'?CW05_DIM.plaza:[MW,MH];
+ const Sx=w/mw,Sy=h/mh;
+ x.fillStyle='#e5d9bb';
+ if(currentMap==='plaza'){
+  x.fillRect(20*Sx,0,4*Sx,h);x.fillRect(0,12*Sy,w,3*Sy);x.fillRect(0,23*Sy,w,3*Sy);
+  for(const p of CW05_PORTALS){x.fillStyle='#7e7eb0';x.fillRect((p.x-1.4)*Sx,(p.y-2.5)*Sy,3*Sx,2.8*Sy)}
+ }else{x.fillRect(0,2*Sy,w,1.4*Sy)}
+ for(const p of CW05.remote.values())if(p.map===currentMap&&Date.now()-p.last<4200){x.fillStyle='#d56d9e';x.beginPath();x.arc(p.x*Sx,p.y*Sy,4,0,Math.PI*2);x.fill()}
+ x.fillStyle='#fff';x.beginPath();x.arc(player.x*Sx,player.y*Sy,5,0,Math.PI*2);x.fill();
+ x.strokeStyle='#506da4';x.lineWidth=2;x.stroke();
+}
+
+// Use one game rendering loop (replace frame callback, not request a second loop).
+// This version follows position smoothly; 71% default means more terrain visible.
+let cw05LastCamera=null;
+frame=function(now){
+ const dt=Math.min(Math.max((now-last)/1000,0),.055);last=now;
+ let ix=(pressed.has('right')?1:0)-(pressed.has('left')?1:0);
+ let iy=(pressed.has('down')?1:0)-(pressed.has('up')?1:0);
+ const len=Math.hypot(ix,iy)||1;
+ const dx=ix/len*3.6*dt,dy=iy/len*3.6*dt;
+ let moved=false;
+ if(!solid(player.x+dx,player.y)&&ix){player.x+=dx;moved=true}
+ if(!solid(player.x,player.y+dy)&&iy){player.y+=dy;moved=true}
+ CW05.moving=moved;
+ if(ix>0)CW05.facing='right';else if(ix<0)CW05.facing='left';
+ else if(iy>0)CW05.facing='down';else if(iy<0)CW05.facing='up';
+ if(moved)CW05.phase+=dt*13;
+ const x=player.x*TILE,y=player.y*TILE;
+ if(!cw05LastCamera)cw05LastCamera={x,y};
+ const damping=Math.min(1,dt*11);
+ cw05LastCamera.x+=(x-cw05LastCamera.x)*damping;
+ cw05LastCamera.y+=(y-cw05LastCamera.y)*damping;
+ // Teleport (map change) snaps camera to new avatar spawn.
+ if(Math.abs(cw05LastCamera.x-x)>1100||Math.abs(cw05LastCamera.y-y)>1100)cw05LastCamera={x,y};
+ ctx.clearRect(0,0,width,height);
+ ctx.save();ctx.translate(width/2,height/2);ctx.scale(CW05.zoom,CW05.zoom);
+ ctx.translate(Math.round(-cw05LastCamera.x),Math.round(-cw05LastCamera.y));
+ worldBase();
+ // Familiar NPCs now animate their walking legs, and new tab players interpolate.
+ if(currentMap==='plaza'){
+  for(const [x,y,name,i] of [[17,22,'안내요정',1],[27,22,'마을친구',2]]){
+    let a={hair:i,face:1,hairColor:i,cloth:i,acc:0};
+    sprite((x+.5)*TILE,(y+.75)*TILE,a,now/320+i,true,'down',true);
+    label((x+.5)*TILE,(y+.75)*TILE,name);
+  }
+ }
+ let count=0;
+ for(const p of CW05.remote.values()){
+  if(Date.now()-p.last>4200){CW05.remote.delete(p.id);continue}
+  if(p.map!==currentMap)continue;
+  count++;
+  const a=Math.min(1,dt*10);
+  p.rx+=(p.x-p.rx)*a;p.ry+=(p.y-p.ry)*a;
+  if(p.moving)p.phase+=dt*13;
+  const px=(p.rx+.5)*TILE,py=(p.ry+.7)*TILE;
+  sprite(px,py,p.av,p.phase,true,p.dir,p.moving);label(px,py,p.name,'#fceaf6');
+ }
+ const playerX=(player.x+.5)*TILE,playerY=(player.y+.7)*TILE;
+ sprite(playerX,playerY,currentAvatar(),CW05.phase,false,CW05.facing,CW05.moving);
+ label(playerX,playerY,nickname(),'#fff8ee');
+ ctx.restore();
+ const near=nearby();
+ $('#interact').textContent=near?'🚪 '+(near.to==='plaza'?'나가기':'입장'):'✨ 대화 E';
+ if(now-CW05.miniTime>160){cw05MiniDraw(now);CW05.miniTime=now}
+ if(now-CW05.onlineLast>800){document.querySelector('#cwOnline').textContent='🟢 이 브라우저 탭 '+(count+1)+'개 연결';CW05.onlineLast=now}
+ requestAnimationFrame(frame);
+};
+const cw05OriginalGoMap=goMap;
+goMap=function(id){cw05OriginalGoMap(id);const px=player.x*TILE,py=player.y*TILE;cw05LastCamera={x:px,y:py}};
+// Hide the float tip after first load; show compact version information.
+document.querySelector('.sideTitle .tiny').textContent='CLASS WORLD v0.5';
+document.querySelector('.floatBottom').textContent='👣 자연스러운 걷기 · 더 넓은 2D 월드';
+document.title='CLASS WORLD v0.5 | 문코인 꿈별마을';
+
+// Pre-render the large plaza on an offscreen canvas just once.
+// This keeps the 44x32 map smooth on school notebooks and when testing two tabs.
+function cw05MakeMapCache(){
+ const cv=document.createElement('canvas');cv.width=44*TILE;cv.height=32*TILE;
+ const g=cv.getContext('2d');g.imageSmoothingEnabled=false;
+ const R=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h))};
+ const C=(x,y,r,c)=>{g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill()};
+ const F=(x,y,i)=>{R(x-3,y,7,5,['#ffc4d4','#ffedae','#e4c7fa'][i%3]);R(x,y-4,4,13,['#ffc4d4','#ffedae','#e4c7fa'][i%3]);R(x,y,3,3,'#fff8cf')};
+ const RR=(x,y,w,h,r,c)=>{g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill()};
+ const T=(str,x,y,size=14,c='#546580')=>{g.fillStyle=c;g.textAlign='center';g.font='900 '+size+'px system-ui';g.fillText(str,x,y)};
+ const Tree=(x,y)=>{R(x-6,y-25,12,34,'#997865');RR(x-23,y-60,46,42,14,'#6da88c');RR(x-18,y-72,36,32,13,'#89c59c');R(x-5,y-65,7,5,'#c2e6bb');g.fillStyle='#668d7655';g.beginPath();g.ellipse(x,y+9,25,9,0,0,Math.PI*2);g.fill()};
+ for(let y=0;y<32;y++)for(let x=0;x<44;x++){
+  const X=x*TILE,Y=y*TILE,alt=(x+y)%2,path=cw05Path(x,y);
+  R(X,Y,TILE+1,TILE+1,path?(alt?'#e5d6bf':'#ded0b6'):(alt?'#afd8ad':'#bce2b6'));
+  if(path){if((x*3+y*7)%7===0)R(X+13,Y+22,13,3,'#c4b49b')}
+  else if((x*17+y*7)%13===0)F(X+17,Y+15,x+y);
+ }
+ for(const [bx,by] of [[1,9],[13,18],[28,18],[1,27],[28,27]]){
+  RR(bx*TILE,by*TILE,4*TILE,3*TILE,12,'#89c698');
+  for(let j=0;j<10;j++)F((bx+.6+(j%5)*.65)*TILE,(by+.55+Math.floor(j/5)*1.25)*TILE,j);
+ }
+ for(let x=1;x<44;x+=5){Tree(x*TILE,1*TILE);Tree((x+.5)*TILE,31.3*TILE)}
+ for(let y=3;y<30;y+=5){Tree(.9*TILE,y*TILE);Tree(43.2*TILE,y*TILE)}
+ for(const [x,y] of [[17,17],[27,17],[17,28]]){
+  RR(x*TILE,y*TILE,110,14,5,'#b08e77');R(x*TILE+12,y*TILE+13,8,12,'#806658');R(x*TILE+90,y*TILE+13,8,12,'#806658');
+ }
+ for(const [x,y] of [[16,13],[28,13],[16,25],[28,25]]){
+  R(x*TILE-4,y*TILE-44,8,49,'#82758c');R(x*TILE-13,y*TILE-62,26,7,'#6a7685');RR(x*TILE-10,y*TILE-56,20,14,3,'#ffeab5');
+ }
+ const fx=22*TILE,fy=12*TILE;
+ RR(fx-112,fy-60,224,115,26,'#bfc9bf');RR(fx-101,fy-53,202,100,24,'#78bdd1');RR(fx-86,fy-40,171,73,28,'#a3dce3');
+ C(fx,fy-17,27,'#fff1ae');C(fx+13,fy-25,24,'#a3dce3');
+ CW05_PORTALS.forEach((p,i)=>{
+  const x=(p.x+.5)*TILE,y=(p.y+.5)*TILE;
+  const roof=['#e994a4','#9baded','#e4af7b','#a7a4d9','#e8aaca','#d7b77c','#90bed6'][i];
+  const wall=['#ffe3cd','#e5eaff','#fff1cc','#e5d9fb','#fae6ec','#fbeed0','#dceaf5'][i];
+  const shadow=['#c17e85','#7f94cd','#c28b60','#9081b9','#b981a5','#aa9362','#729eb7'][i];
+  RR(x-88,y-101,178,134,12,shadow);RR(x-84,y-91,170,121,10,wall);
+  RR(x-98,y-123,198,62,12,roof);RR(x-87,y-133,176,30,10,roof);
+  for(let k=0;k<5;k++){R(x-76+k*36,y-92,28,4,'#ffffff55');R(x-75+k*36,y-114,17,3,'#fff5da77')}
+  for(const side of [-1,1]){
+   const wx=x+side*57-13;RR(wx,y-50,26,37,5,'#fff8e8');RR(wx+4,y-46,18,27,3,'#9fc9dd');R(wx+2,y-15,23,5,'#b7918a');F(wx+13,y-21,1)
+  }
+  RR(x-19,y-40,38,73,6,'#887a94');R(x-12,y-34,24,61,'#b8a5b7');R(x+7,y-3,4,5,'#ffedbd');
+  RR(x-78,y-144,156,25,9,'#fffaf0');T(maps[p.to].icon+' '+maps[p.to].name,x,y-127,13);
+  RR(x-25,y+31,50,9,4,'#e6d1b7');
+ });
+ RR(20*TILE,28*TILE,4*TILE,31,9,'#fff6dc');T('🌙 문코인 꿈별마을',22*TILE,28.45*TILE,14,'#7b6c92');
+ return cv;
+}
+const cw05CachedMap=cw05MakeMapCache();
+worldBase=function(){
+ if(currentMap!=='plaza'){cw05OldWorld();return}
+ ctx.drawImage(cw05CachedMap,0,0);
+ const fx=22*TILE,fy=12*TILE,time=performance.now()/550;
+ ctx.save();ctx.globalAlpha=.75;
+ rect(fx-45+Math.sin(time)*10,fy+11,25,3,'#effcff');
+ rect(fx+15-Math.sin(time)*9,fy+23,28,3,'#effcff');
+ ctx.restore();
+};
+player={x:maps.plaza.spawn[0],y:maps.plaza.spawn[1]};
+cw05LastCamera={x:player.x*TILE,y:player.y*TILE};
 </script>
 </body>
 </html>
