@@ -1,0 +1,324 @@
+
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLASS WORLD v0.1</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,'Malgun Gothic',sans-serif;background:#0b1525;color:#f2f7ff}
+header{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#111f35;border-bottom:1px solid #344763;gap:12px}
+header b{font-size:20px}
+header small{font-size:12px;color:#a7c4e3}
+select,input,button{font:inherit;border:1px solid #4c6682;border-radius:9px;padding:10px;background:#1b2c44;color:white;min-width:0}
+button{cursor:pointer;background:#3569b7;border:0;font-weight:700}
+button:hover{background:#437bd0}
+main{display:grid;grid-template-columns:minmax(0,1fr) 340px;height:calc(100vh - 62px);min-height:540px}
+#scene{min-height:360px;position:relative;overflow:hidden;background:#a7d1ef}
+#scene canvas{display:block;width:100%;height:100%}
+.hint{position:absolute;left:14px;top:15px;color:#15345b;background:#ffffffd9;padding:9px 13px;border-radius:12px;font-size:13px}
+.dpad{position:absolute;bottom:19px;left:16px;display:grid;grid-template-columns:repeat(3,45px);grid-template-rows:repeat(2,45px);gap:4px;user-select:none;touch-action:none}
+.dpad button{padding:0;border-radius:12px;background:#1b355ccc}
+.dpad [data-k="ArrowUp"]{grid-column:2}
+.dpad [data-k="ArrowLeft"]{grid-column:1;grid-row:2}
+.dpad [data-k="ArrowDown"]{grid-column:2;grid-row:2}
+.dpad [data-k="ArrowRight"]{grid-column:3;grid-row:2}
+aside{overflow-y:auto;background:#132239;border-left:1px solid #344763;padding:20px}
+h2{font-size:20px;margin:0 0 8px}
+h3{font-size:15px;margin:20px 0 10px;color:#b7dafd}
+p{font-size:13px;color:#abc2dc;line-height:1.65;margin:4px 0 14px}
+label{display:block;color:#c6dcf3;font-size:12px;margin:10px 0 6px}
+.wide{width:100%}
+.card{background:#1c304d;padding:14px;border:1px solid #375172;border-radius:14px;margin:13px 0}
+.muted{color:#a9bfda;font-size:12px}
+.option{display:flex;gap:10px;align-items:center;padding:10px 0;cursor:pointer}
+.option input{accent-color:#61b6ff}
+.chip{display:inline-block;border-radius:8px;background:#38597e;color:#d8eeff;font-size:12px;padding:5px 9px}
+#notice{min-height:20px;color:#a9f3ba;font-size:13px;margin-top:10px}
+#results{font-size:13px;line-height:1.9}
+@media(max-width:760px){
+header{padding:0 12px}
+header b{font-size:16px}
+header small{display:none}
+main{display:block;height:auto}
+#scene{height:57vh;min-height:330px}
+aside{border-left:0;padding:16px;min-height:400px}
+.hint{font-size:11px;max-width:70%}
+}
+</style>
+</head>
+<body>
+<header>
+  <div><b>🌎 CLASS WORLD</b> <small>우리 반이 하나의 세계로 · v0.1 체험판</small></div>
+  <select id="role">
+    <option value="teacher">👩‍🏫 교사 모드</option>
+    <option value="student">🧑‍🎓 학생 모드</option>
+  </select>
+</header>
+<main>
+  <section id="scene">
+    <div class="hint">🏫 방향키 / WASD로 이동<br>📱 터치 버튼도 이용할 수 있어요</div>
+    <div class="dpad">
+      <button data-k="ArrowUp">▲</button>
+      <button data-k="ArrowLeft">◀</button>
+      <button data-k="ArrowDown">▼</button>
+      <button data-k="ArrowRight">▶</button>
+    </div>
+  </section>
+  <aside>
+    <h2 id="panelTitle">교사 관리실</h2>
+    <p id="panelDescription">미션을 만들고, 학생 활동 결과를 확인하세요.</p>
+    <div id="teacher">
+      <div class="card">
+        <h3>📝 학급 미션 만들기</h3>
+        <label for="q">문제</label>
+        <input class="wide" id="q" value="배드민턴 단식에서 사용하는 코트는?">
+        <label>4개 선택지</label>
+        <input class="wide" id="a0" value="복식보다 좌우가 좁다">
+        <input class="wide" id="a1" value="복식보다 좌우가 넓다">
+        <input class="wide" id="a2" value="모든 선을 사용한다">
+        <input class="wide" id="a3" value="코트가 없다">
+        <label for="correct">정답 번호</label>
+        <select class="wide" id="correct">
+          <option value="0">1번</option>
+          <option value="1">2번</option>
+          <option value="2">3번</option>
+          <option value="3">4번</option>
+        </select>
+        <button class="wide" style="margin-top:12px" id="publish">🚀 미션 배포하기</button>
+      </div>
+      <h3>📊 학생 제출 현황</h3>
+      <div id="results" class="card"></div>
+    </div>
+    <div id="student" hidden>
+      <div class="card">
+        <label for="studentName">학생 캐릭터</label>
+        <select class="wide" id="studentName">
+          <option>학생 1</option><option>학생 2</option>
+          <option>학생 3</option><option>학생 4</option>
+          <option>학생 5</option>
+        </select>
+        <p>체험용 가상 학생입니다.</p>
+      </div>
+      <div class="card">
+        <span class="chip">🎯 오늘의 미션</span>
+        <h3 id="missionTitle"></h3>
+        <div id="choices"></div>
+        <button id="submit" class="wide">정답 제출</button>
+        <div id="notice"></div>
+      </div>
+    </div>
+    <p class="muted">체험판: 동일 브라우저 안에서만 데이터 저장. 실제 학생 정보 입력 금지.</p>
+  </aside>
+</main>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+
+const root=document.getElementById('scene');
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#a7d1ef');
+
+const camera=new THREE.OrthographicCamera(-10,10,7,-7,.1,120);
+camera.position.set(14,17,19);
+camera.lookAt(0,0,0);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+root.prepend(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight('#ffffff','#8fa7c0',2.4));
+const light=new THREE.DirectionalLight('#ffffff',2.1);
+light.position.set(-5,15,10);
+scene.add(light);
+
+const mat=c=>new THREE.MeshStandardMaterial({color:c,roughness:.82});
+
+function box(w,h,d,x,y,z,color){
+ const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));
+ mesh.position.set(x,y,z);
+ scene.add(mesh);
+ return mesh;
+}
+
+box(18,.3,14,0,-.18,0,'#e8dab9');
+box(18,2.6,.25,0,1.2,-7,'#c7dfdf');
+box(.25,2.6,14,-9,1.2,0,'#d6e7e3');
+box(.25,2.6,14,9,1.2,0,'#d6e7e3');
+box(5,1.8,.12,0,1.7,-6.78,'#254d58');
+box(5.25,.12,.25,0,.8,-6.72,'#caa779');
+
+for(let x=-6;x<=6;x+=4){
+ for(let z=-3;z<=3;z+=3){
+  box(2,.18,1.15,x,.74,z,'#bd885e');
+  for(let dx of [-.75,.75])box(.13,.7,.13,x+dx,.33,z,'#845d4b');
+  box(.7,.8,.6,x,.41,z+1.2,'#81a7d0');
+ }
+}
+
+box(3,.2,1.2,5,.85,-5,'#d09d66');
+box(.8,.5,.8,5,1.18,-5,'#518ba3');
+
+function avatar(col){
+ const g=new THREE.Group();
+ const body=new THREE.Mesh(new THREE.BoxGeometry(.8,1,.5),mat(col));
+ body.position.y=.83;
+ g.add(body);
+ const head=new THREE.Mesh(new THREE.SphereGeometry(.37,12,10),mat('#f8d9b1'));
+ head.position.y=1.62;
+ g.add(head);
+ const hair=new THREE.Mesh(
+  new THREE.SphereGeometry(.38,12,10,0,Math.PI*2,0,1.1),
+  mat('#332d35')
+ );
+ hair.position.y=1.75;
+ g.add(hair);
+ scene.add(g);
+ return g;
+}
+
+const player=avatar('#486ef1');
+player.position.set(0,0,5);
+
+const friends=[[-4,4],[-1,3],[2,5],[5,3]].map((p,i)=>{
+ const colors=['#eb6e88','#52ba9e','#e8aa46','#a47fe9'];
+ const a=avatar(colors[i]);
+ a.position.set(p[0],0,p[1]);
+ return a;
+});
+
+function resize(){
+ const w=root.clientWidth,h=root.clientHeight;
+ camera.left=-10*(w/h)/1.45;
+ camera.right=10*(w/h)/1.45;
+ camera.top=7;
+ camera.bottom=-7;
+ camera.updateProjectionMatrix();
+ renderer.setSize(w,h);
+}
+window.addEventListener('resize',resize);
+resize();
+
+const keys=new Set();
+
+addEventListener('keydown',e=>{
+ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(e.key)&&e.target.tagName!=='INPUT'){
+  keys.add(e.key);
+  e.preventDefault();
+ }
+});
+addEventListener('keyup',e=>keys.delete(e.key));
+
+for(const b of document.querySelectorAll('[data-k]')){
+ const k=b.dataset.k;
+ b.addEventListener('pointerdown',e=>{
+  keys.add(k);
+  b.setPointerCapture(e.pointerId);
+ });
+ for(const type of ['pointerup','pointercancel','lostpointercapture'])
+  b.addEventListener(type,()=>keys.delete(k));
+}
+
+let last=performance.now();
+function loop(t){
+ requestAnimationFrame(loop);
+ const dt=Math.min((t-last)/1000,.05);
+ last=t;
+ let x=0,z=0;
+ if(keys.has('ArrowLeft')||keys.has('a')||keys.has('A'))x--;
+ if(keys.has('ArrowRight')||keys.has('d')||keys.has('D'))x++;
+ if(keys.has('ArrowUp')||keys.has('w')||keys.has('W'))z--;
+ if(keys.has('ArrowDown')||keys.has('s')||keys.has('S'))z++;
+ const n=Math.hypot(x,z)||1;
+ player.position.x=THREE.MathUtils.clamp(player.position.x+x/n*dt*4,-8,8);
+ player.position.z=THREE.MathUtils.clamp(player.position.z+z/n*dt*4,-6,6);
+ if(x||z)player.rotation.y=Math.atan2(x,z);
+ renderer.render(scene,camera);
+}
+requestAnimationFrame(loop);
+
+const $=id=>document.getElementById(id);
+const defaultMission={
+ q:'배드민턴 단식에서 사용하는 코트는?',
+ a:['복식보다 좌우가 좁다','복식보다 좌우가 넓다','모든 선을 사용한다','코트가 없다'],
+ correct:0
+};
+
+const load=(key,fallback)=>{
+ try{return JSON.parse(localStorage.getItem(key))??fallback}
+ catch{return fallback}
+};
+
+let mission=load('cw-mission',defaultMission);
+let answers=load('cw-answers',{});
+
+function save(){
+ localStorage.setItem('cw-mission',JSON.stringify(mission));
+ localStorage.setItem('cw-answers',JSON.stringify(answers));
+}
+
+function render(){
+ const isTeacher=$('role').value==='teacher';
+ $('teacher').hidden=!isTeacher;
+ $('student').hidden=isTeacher;
+ $('panelTitle').textContent=isTeacher?'👩‍🏫 교사 관리실':'🧑‍🎓 학생 미션';
+ $('panelDescription').textContent=isTeacher?'학급 미션을 만들고 진행 상황을 확인하세요.':'가상 교실에서 미션을 해결해보세요!';
+ player.children[0].material.color.set(isTeacher?'#486ef1':'#e99c52');
+ $('missionTitle').textContent=mission.q;
+ const list=$('choices');
+ list.replaceChildren();
+ mission.a.forEach((a,i)=>{
+  const l=document.createElement('label');
+  l.className='option';
+  const radio=document.createElement('input');
+  radio.type='radio';
+  radio.name='choice';
+  radio.value=i;
+  const text=document.createElement('span');
+  text.textContent=(i+1)+'. '+a;
+  l.append(radio,text);
+  list.append(l);
+ });
+ const results=$('results');
+ results.replaceChildren();
+ for(const name of ['학생 1','학생 2','학생 3','학생 4','학생 5']){
+  const line=document.createElement('div');
+  const answer=answers[name];
+  line.textContent=name+' · '+(answer===undefined?'미제출':answer===mission.correct?'✅ 정답':'❌ 오답');
+  results.append(line);
+ }
+ $('notice').textContent='';
+}
+
+$('role').addEventListener('change',render);
+
+$('publish').addEventListener('click',()=>{
+ const q=$('q').value.trim();
+ const a=[0,1,2,3].map(i=>$('a'+i).value.trim());
+ if(!q||a.some(x=>!x)){
+  alert('문제와 선택지 4개를 모두 입력해 주세요.');
+  return;
+ }
+ mission={q,a,correct:Number($('correct').value)};
+ answers={};
+ save();
+ render();
+ alert('✅ 새 미션을 배포했습니다!');
+});
+
+$('submit').addEventListener('click',()=>{
+ const picked=document.querySelector('input[name="choice"]:checked');
+ if(!picked){
+  $('notice').textContent='답을 선택해 주세요.';
+  return;
+ }
+ const name=$('studentName').value;
+ answers[name]=Number(picked.value);
+ save();
+ $('notice').textContent=answers[name]===mission.correct?'🎉 정답! 미션 완료!':'💡 답안이 저장되었습니다.';
+});
+
+render();
+</script>
+</body>
+</html>
