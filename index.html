@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CLASS WORLD v0.3 | 문코인 꿈별마을</title>
+<title>CLASS WORLD v0.4 | 문코인 꿈별마을</title>
 <style>
 :root{--ink:#3b4264;--sub:#76829f;--blue:#5d85d8;--paper:#fffefb;--line:#dfdfe8}
 *{box-sizing:border-box}body{margin:0;background:#e8eef8;color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}
@@ -53,6 +53,25 @@ h2{font-size:16px;margin:0 0 9px}h3{font-size:13px;margin:10px 0;color:#576684}p
 .dialog input,.dialog select{padding:10px;width:100%;border:1px solid #d3d9e8;border-radius:9px;background:white;color:#44516c}
 #creatorPreview{width:116px;height:133px;display:block;margin:8px auto;image-rendering:pixelated}
 @media(max-width:650px){.coins{padding:7px;font-size:11px}.dialog{padding:12px}}
+/* v0.4 polish */
+:root{--paper:#fffdf9;--line:#d9e4ed}
+body{background:linear-gradient(130deg,#f4e9f5,#e4f1f9 50%,#ecf5e5)}
+.logo{background:linear-gradient(145deg,#8d9bdf,#b59edc);box-shadow:0 5px 0 #6d73b8}
+.gameShell,.side{box-shadow:0 13px 32px #8393b732}
+.stage{background:#b0d9b7}
+.gameTop{background:linear-gradient(90deg,#fff9ed,#fcf6ff)}
+.quick button{transition:transform .14s,background .14s}
+.quick button:hover{transform:translateY(-2px);background:#e2eafa}
+.quick button.active{background:#8579c5;border-color:#8579c5}
+.side{background:#fffdfb}
+.paper{background:#f9f8fe}
+.cwTryOn{background:#fff1f6;border:1px solid #edc9df;border-radius:15px;padding:13px;display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.cwTryOn strong{display:block;font-size:13px;color:#9b628b}
+.cwTryOn small{display:block;margin-top:6px;max-width:175px;line-height:1.4;color:#8b7890}
+.cwTryCanvas{width:85px;height:98px;image-rendering:pixelated;background:#ecf6ec;border:3px solid white;border-radius:12px;flex-shrink:0}
+.cwPreviewLabel{cursor:pointer;color:#8669a5}
+.cwPreviewLabel:hover{text-decoration:underline}
+
 </style>
 </head>
 <body>
@@ -66,7 +85,7 @@ h2{font-size:16px;margin:0 0 9px}h3{font-size:13px;margin:10px 0;color:#576684}p
   <div class="stage" id="stage"><canvas id="game"></canvas><div class="floatTop" id="hint">🚶 방향키 / WASD로 이동 · E로 상호작용</div><div class="pad" id="pad"><button data-key="up">▲</button><button data-key="left">◀</button><button data-key="down">▼</button><button data-key="right">▶</button></div><button class="actionBtn" id="interact" title="주변 공간에 입장">✨ 입장 E</button><div class="floatBottom">📱 터치 버튼으로도 이동해요</div></div>
   <div class="quick" id="quick"></div>
  </div>
- <aside class="side"><div class="sideTitle"><strong>🎒 나의 모험 가방</strong><span class="tiny">CLASS WORLD v0.3</span></div><div class="tabs"><button data-tab="mission" class="active">📜 미션</button><button data-tab="avatar">🎒 옷장</button><button data-tab="shop">🛍️ 상점</button></div>
+ <aside class="side"><div class="sideTitle"><strong>🎒 나의 모험 가방</strong><span class="tiny">CLASS WORLD v0.4</span></div><div class="tabs"><button data-tab="mission" class="active">📜 미션</button><button data-tab="avatar">🎒 옷장</button><button data-tab="shop">🛍️ 상점</button></div>
   <section id="mission" class="panel active"></section><section id="avatar" class="panel"></section><section id="shop" class="panel"></section><section id="world" class="panel"></section>
  </aside>
 </div>
@@ -337,6 +356,200 @@ let last=performance.now();function frame(now){const dt=Math.min((now-last)/1000
  const current=currentAvatar();sprite((player.x+.5)*TILE,(player.y+.7)*TILE,current,dx||dy?now/130:0);label((player.x+.5)*TILE,(player.y+.7)*TILE,actorName(),'#fff8ee');
  ctx.restore();const near=nearby();$('#interact').textContent=near?'🚪 '+(near.to==='plaza'?'나가기':'입장'):'✨ 대화 E';requestAnimationFrame(frame)}
 renderQuick();renderWorld();renderMission();renderAvatar();goMap('plaza');ensureProfile();requestAnimationFrame(frame);
+/* CLASS WORLD v0.4 — original 2D visual refresh.
+ * Additive: v0.3 mission, Moon Coin, inventory, save keys remain unchanged.
+ */
+const CW04 = { facing:'down', moving:false, tick:0, preview:null };
+const cwOldWorldBase = worldBase;
+function cwPixel(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))}
+function cwLine(x,y,w,h,c){cwPixel(x,y,w,h,c)}
+function cwPuddle(x,y,time){
+  ctx.save();ctx.globalAlpha=.55;
+  rounded(x-37,y-15,74,29,12,'#7dbbd5');
+  rounded(x-30,y-12,60,22,10,'#a5dce5');
+  cwPixel(x-22+Math.sin(time)*4,y-5,21,3,'#f5fdff');
+  cwPixel(x+10-Math.sin(time)*3,y+4,17,2,'#f5fdff');
+  ctx.restore();
+}
+function cwBush(x,y){
+ cwPixel(x-25,y+5,50,11,'#659f78');
+ for(const [dx,dy,r,c] of [[-19,-5,13,'#7eba89'],[-4,-16,15,'#96d29b'],[13,-8,13,'#77b78b']]){
+   ctx.fillStyle=c;ctx.beginPath();ctx.arc(x+dx,y+dy,r,0,Math.PI*2);ctx.fill();
+ }
+ for(const [dx,dy,c] of [[-13,-13,'#ffcbda'],[5,-18,'#fff3b2'],[17,-5,'#dcb6ef']])flower(x+dx,y+dy,c);
+}
+function cwLamp(x,y){
+ cwPixel(x-4,y-42,8,49,'#82758c');cwPixel(x-9,y+5,18,5,'#655d73');
+ cwPixel(x-10,y-54,20,14,'#f2db9b');cwPixel(x-14,y-59,28,6,'#6a7685');
+ cwPixel(x-7,y-51,14,9,'#fff8d4');
+ ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#fff5ab';ctx.beginPath();ctx.arc(x,y-47,29,0,Math.PI*2);ctx.fill();ctx.restore();
+}
+function cwBanner(x,y,t){
+ cwPixel(x-4,y-37,8,43,'#977965');
+ rounded(x-38,y-53,78,26,7,'#fff3d5');txt(t,x,y-35,12,'#856984');
+}
+worldBase=function(){
+ cwOldWorldBase();const t=performance.now()/480;
+ if(currentMap==='plaza'){
+  // Paths, tiny sparkling flowers and soft cobbles.
+  for(let i=0;i<38;i++){
+   const x=24+(i*131)%950,y=25+(i*89)%630;
+   if((x>405&&x<605)||(y>310&&y<410))continue;
+   if(i%4===0)cwPixel(x,y,13,4,'#96bf94');
+   else if(i%3===0)flower(x,y,['#ffd2e0','#f3d7ff','#fff1b4'][i%3]);
+  }
+  for(let i=0;i<12;i++){
+   const x=(i%3)*61+416,y=Math.floor(i/3)*32+328;
+   cwPixel(x,y,26,3,'#bba993');
+  }
+  cwBush(93,309);cwBush(272,485);cwBush(716,295);cwBush(937,520);
+  cwLamp(332,304);cwLamp(689,420);
+  cwBanner(320,520,'🌙 DREAM');
+  // Fountain water, stone edging, a moon-shaped sculpture.
+  rounded(447,329,119,80,16,'#b4c4bb');
+  rounded(457,337,99,61,16,'#77bcd2');
+  rounded(468,346,77,44,14,'#b4e6ee');
+  cwPuddle(507,368,t);
+  ctx.save();ctx.translate(505,360);ctx.fillStyle='#fff2bd';ctx.beginPath();ctx.arc(0,-15,19,0,Math.PI*2);ctx.fill();ctx.fillStyle='#a5deeb';ctx.beginPath();ctx.arc(9,-20,18,0,Math.PI*2);ctx.fill();ctx.restore();
+  cwPixel(477+Math.sin(t)*4,378,19,3,'#effcff');
+  cwPixel(518-Math.sin(t)*4,386,21,3,'#effcff');
+  // Decorative flags along the central avenue.
+  for(let k=0;k<4;k++){
+   const x=365+k*86;cwPixel(x,430,3,32,'#b99775');
+   cwPixel(x+4,431,19,15,['#efabb9','#b2c8f0','#ddc6ee','#ffe2ac'][k]);
+  }
+ }else{
+  // Indoor decoration intentionally avoids desks and movement corridors.
+  rounded(390,535,232,49,12,'#dec8b9');
+  rounded(403,541,204,35,9,'#f5e3d8');
+  cwPixel(397,541,13,33,'#d8c0cd');cwPixel(599,541,13,33,'#d8c0cd');
+  cwBush(103,551);cwBush(907,551);
+  cwLamp(110,153);cwLamp(915,153);
+  if(currentMap==='salon'){
+    cwBanner(507,246,'✂ 달빛 미용실');
+    rounded(424,345,154,66,9,'#f5d9e6');rounded(435,353,132,50,9,'#fff7fb');
+    txt('HAIR & BEAUTY',501,380,14,'#a7799f');
+  }else if(currentMap==='outfit'){
+    cwBanner(507,246,'👗 꿈꾸는 의상실');
+    rounded(433,376,143,53,9,'#d0b99b');txt('FITTING ROOM',503,408,13,'#fff9f0');
+  }else if(currentMap==='accessory'){
+    cwBanner(507,248,'✦ 별빛 소품상점');
+    for(let i=0;i<6;i++){
+     cwPixel(367+i*55,432,36,9,'#d5badd');cwPixel(378+i*55,424,13,9,'#f6e9b4');
+    }
+  }else if(currentMap==='library'){
+    rounded(384,430,250,50,8,'#c5a589');
+    rounded(395,437,227,33,8,'#e0c8a7');txt('📖 조용히 책을 읽어요',510,459,15,'#806951');
+  }else if(currentMap==='classroom'){
+    rounded(405,214,205,40,7,'#fff5e4');txt('함께 배우는 우리 반 ✿',507,241,15,'#9c7992');
+  }else if(currentMap==='gym'){
+    cwBanner(509,209,'🏸 TEAMWORK');
+  }else if(currentMap==='lab'){
+    cwBanner(507,229,'✦ AI LAB');
+  }
+ }
+};
+
+// Directional, layered chibi avatar. No third-party game sprites or licensed assets.
+sprite=function(cx,cy,av,step=0,small=false){
+ const size=small?1.35:1.9;
+ const playerSprite=!small;
+ const facing=playerSprite?CW04.facing:'down';
+ const walking=playerSprite&&CW04.moving;
+ const phase=walking?Math.sin(step*2.2):0;
+ const foot=walking?Math.round(phase*3):0;
+ ctx.save();ctx.translate(Math.round(cx),Math.round(cy));ctx.scale(size,size);
+ if(facing==='left')ctx.scale(-1,1);
+ ctx.fillStyle='#4c6f6b55';ctx.beginPath();ctx.ellipse(0,3,16,5,0,0,Math.PI*2);ctx.fill();
+ const px=(x,y,w,h,c)=>cwPixel(x,y,w,h,c);
+ const col=clothColors[av.cloth%clothColors.length];
+ const hc=hairColors[av.hairColor%hairColors.length];
+ const dark='#574f71',skin='#f5d2b7',shade='#e8b99c';
+ // Legs, small boots and moving alternating feet.
+ px(-10,-9+foot,8,12,dark);px(2,-9-foot,8,12,dark);
+ px(-11,0+foot,10,5,'#6d607d');px(2,0-foot,10,5,'#6d607d');
+ // Backpack/back of dress depending on facing.
+ if(facing==='up'){px(-14,-22,28,21,'#78658d');px(-9,-18,18,15,col)}
+ else {px(-12,-23,24,18,col);px(-10,-21,20,3,'#ffffff7d');px(-4,-19,8,15,'#fff1da');px(-9,-7,18,3,'#e8dee4')}
+ const arm=walking?Math.round(phase*3):0;
+ px(-16,-22-arm,5,13,skin);px(11,-22+arm,5,13,skin);
+ px(-17,-24-arm,6,5,col);px(11,-24+arm,6,5,col);
+ // Big face, hair fringe and hair volume.
+ px(-14,-44,28,29,'#a27c7b');
+ px(-13,-43,26,27,skin);
+ if(av.hair===0){px(-15,-45,30,12,hc);px(-15,-37,5,20,hc);px(10,-37,5,20,hc)}
+ if(av.hair===1){px(-17,-45,34,14,hc);px(-18,-42,8,9,hc);px(10,-46,8,9,hc);px(-8,-50,16,6,hc)}
+ if(av.hair===2){px(-17,-44,34,13,hc);px(-24,-37,9,17,hc);px(15,-37,9,17,hc);px(-25,-44,10,8,hc);px(15,-44,10,8,hc)}
+ if(av.hair===3){px(-15,-43,30,7,hc);px(-10,-49,20,8,hc);px(6,-43,7,10,hc)}
+ if(av.hair===4){px(-16,-45,32,13,hc);px(-17,-37,6,29,hc);px(11,-37,6,29,hc);px(-7,-50,15,6,hc)}
+ px(-11,-43,5,3,'#ffffff3b');
+ if(facing!=='up'){
+  if(facing==='down'){
+   px(-9,-30,5,5,'#41445a');px(5,-30,5,5,'#41445a');
+   px(-8,-30,2,2,'#fff');px(6,-30,2,2,'#fff');
+   px(-12,-24,5,2,'#efa6ae');px(8,-24,5,2,'#efa6ae');
+   if(av.face===1){px(-2,-23,5,2,'#a26e72')}
+   if(av.face===2){px(-7,-31,6,6,'#424058');px(4,-31,6,6,'#424058');px(-5,-31,2,2,'#fff');px(5,-31,2,2,'#fff')}
+  }else{
+   px(5,-30,5,5,'#41445a');px(7,-30,2,2,'#fff');
+   px(9,-24,4,2,'#eca9b4');
+  }
+ }
+ // Layered accessories.
+ if(av.acc===1){px(9,-47,8,6,'#e878ae');px(16,-50,6,12,'#f5b6d5');px(13,-45,5,5,'#ffe4f0')}
+ if(av.acc===2&&facing!=='up'){
+  ctx.strokeStyle='#536486';ctx.lineWidth=1.5;
+  if(facing==='down'){ctx.strokeRect(-11,-33,10,9);ctx.strokeRect(2,-33,10,9);px(-1,-30,3,2,'#536486')}
+  else ctx.strokeRect(3,-33,12,9);
+ }
+ if(av.acc===3){px(-19,-51,38,6,'#718bd1');px(-14,-56,28,7,'#6175b7');px(-5,-59,11,4,'#ffe8a7')}
+ ctx.restore();
+};
+// Face the direction of the latest movement; keep last direction while standing.
+const cwOriginalFrame=frame;
+// Instead of replacing the game's loop, track the same movement controls.
+function cwObserveInput(){
+ const x=(pressed.has('right')?1:0)-(pressed.has('left')?1:0);
+ const y=(pressed.has('down')?1:0)-(pressed.has('up')?1:0);
+ CW04.moving=Boolean(x||y);
+ if(x>0)CW04.facing='right';else if(x<0)CW04.facing='left';
+ else if(y>0)CW04.facing='down';else if(y<0)CW04.facing='up';
+ requestAnimationFrame(cwObserveInput);
+}
+requestAnimationFrame(cwObserveInput);
+
+// Keep the original shop checkout logic; add a visual try-on that spends no MC.
+const cwOriginalRenderShop=renderShop;
+renderShop=function(){
+ cwOriginalRenderShop();
+ const el=document.querySelector('#shop');
+ if(!shops[currentMap])return;
+ const wrap=document.createElement('div');wrap.className='cwTryOn';
+ const info=document.createElement('div');info.innerHTML='<strong>🪞 거울 미리보기</strong><small>아이템 이름을 누르면 구매 전에 착용 모습을 볼 수 있어요.</small>';
+ const preview=document.createElement('canvas');preview.width=116;preview.height=132;preview.className='cwTryCanvas';
+ wrap.append(info,preview);el.insertBefore(wrap,el.children[2]||null);
+ drawPreview(preview,currentAvatar());
+ el.querySelectorAll('.shopItem').forEach(row=>{
+  const label=row.querySelector('strong');if(!label)return;
+  label.classList.add('cwPreviewLabel');label.title='미리보기';
+  label.onclick=()=>{
+    let sample={...currentAvatar()};
+    for(const key of shops[currentMap]){
+      const index=itemLabels[key].indexOf(label.textContent);
+      if(index>=0){sample[key]=index;break}
+    }
+    drawPreview(preview,sample);
+    info.querySelector('small').textContent='✨ '+label.textContent+' · 미리보기만 제공 (문코인 차감 없음)';
+  };
+ });
+};
+
+// Update the title and information without touching save data.
+document.title='CLASS WORLD v0.4 | 문코인 꿈별마을';
+document.querySelector('.sideTitle .tiny').textContent='CLASS WORLD v0.4';
+document.querySelector('.floatBottom').textContent='🌷 2D RPG · 문코인 꿈별마을';
+renderShop();
+
 </script>
 </body>
 </html>
