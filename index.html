@@ -1,576 +1,342 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CLASS WORLD | 꿈별학교</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLASS WORLD v0.3 | 문코인 꿈별마을</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#eaf0fa;color:#32405b;font-family:"Malgun Gothic",system-ui,sans-serif}
-header{background:#fff;display:flex;justify-content:space-between;align-items:center;padding:12px 20px;gap:10px;border-bottom:3px solid #d5e0f1}
-.brand{font-weight:900;font-size:21px;color:#6772cf}
-.brand span{font-size:12px;color:#8992ab;margin-left:8px}
-button,select,input{font:inherit;border-radius:10px;border:1px solid #ccd5e6;padding:9px;background:white;color:#39465f}
-button{cursor:pointer}
-button:hover{filter:brightness(.96)}
-.primary{background:#7977d7;color:white;border:0;font-weight:bold}
-main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:14px;max-width:1500px;margin:auto}
-.game{min-width:0;background:white;padding:10px;border-radius:19px;box-shadow:0 3px 12px #8c99b326}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px;font-weight:bold;font-size:14px}
-#world{width:100%;height:auto;display:block;image-rendering:pixelated;border-radius:13px;background:#a7d5a1}
-.control{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:10px}
-.pad{display:grid;grid-template-columns:repeat(3,43px);gap:3px;touch-action:none}
-.pad button{background:#e4e4ff;border:0;padding:9px}
-.pad button:first-child{grid-column:2}
-.pad button:nth-child(2){grid-column:1;grid-row:2}
-.pad button:nth-child(3){grid-column:2;grid-row:2}
-.pad button:nth-child(4){grid-column:3;grid-row:2}
-.panel{background:white;border-radius:19px;padding:18px;box-shadow:0 3px 12px #8c99b326;max-height:calc(100vh - 95px);overflow:auto}
-h2{margin:0 0 10px;color:#646ac0;font-size:19px}
-h3{font-size:15px;margin:15px 0 9px}
-small,.muted{color:#8793aa;font-size:12px}
-.card{border:1px solid #e3e7f3;border-radius:13px;padding:12px;margin:12px 0;background:#f9faff}
-label{display:block;margin:9px 0 4px;font-size:13px}
-.field{width:100%;margin:3px 0 7px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.tag{background:#eeecff;border-radius:9px;padding:7px;font-size:12px}
-#notice{color:#38966c;font-weight:bold;font-size:13px;margin-top:10px}
-.choice{display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:9px;margin:5px 0}
-.choice input{width:auto}
-.row{display:flex;gap:6px;flex-wrap:wrap}
-.roomBtn{background:#f0eeff;color:#595db1;border:1px solid #dcdafa}
-#roomTitle{color:#6471a1}
-@media(max-width:850px){
-main{grid-template-columns:1fr;padding:8px}
-header{padding:10px}
-.brand{font-size:17px}
-.brand span{display:none}
-.panel{max-height:none}
-}
+:root{--ink:#3b4264;--sub:#76829f;--blue:#5d85d8;--paper:#fffefb;--line:#dfdfe8}
+*{box-sizing:border-box}body{margin:0;background:#e8eef8;color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{opacity:.5;cursor:not-allowed}
+header{max-width:1410px;margin:0 auto;padding:17px 20px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:47px;height:47px;border-radius:16px;background:#6d83d9;display:grid;place-items:center;color:white;font-size:25px;box-shadow:0 5px 0 #4d60b0}
+h1{font-size:20px;line-height:1.15;margin:0}.eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#8490ac;margin-bottom:4px}
+.headerControls{display:flex;align-items:center;gap:8px}.pill{border:1px solid #d9e1ee;border-radius:12px;background:white;padding:10px;color:#4c5e7d;box-shadow:0 2px 2px #c4ccdc35;min-width:110px}
+.layout{max-width:1410px;margin:0 auto;padding:3px 20px 24px;display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:16px}
+.gameShell{background:#fff;border:4px solid #fff;border-radius:22px;box-shadow:0 10px 35px #6d85ac27;overflow:hidden;min-width:0}
+.gameTop{padding:12px 14px;background:#fffefb;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.zone{display:flex;gap:9px;align-items:center;font-size:14px;font-weight:900}.zone span{font-size:19px}.status{font-size:12px;color:#7a86a0;font-weight:700}
+.stage{height:min(65vh,630px);min-height:400px;position:relative;background:#9fd9b3;overflow:hidden;border-radius:12px}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.floatTop{position:absolute;left:12px;top:12px;border-radius:12px;background:#fffef4e9;padding:8px 12px;box-shadow:0 4px 0 #4c6c7130;font-size:12px;font-weight:800;pointer-events:none}
+.floatBottom{position:absolute;bottom:13px;right:14px;border-radius:10px;background:#273953bc;color:white;padding:8px 12px;font-size:11px}
+.pad{position:absolute;left:14px;bottom:14px;display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:4px;touch-action:none;user-select:none}
+.pad button,.actionBtn{border:2px solid #fffb;box-shadow:0 3px 0 #44577466;background:#ffffffc9;border-radius:12px;font-weight:900;color:#435275}
+.pad button:active,.actionBtn:active{transform:translateY(2px)}.pad [data-key=up]{grid-column:2}.pad [data-key=left]{grid-column:1;grid-row:2}.pad [data-key=down]{grid-column:2;grid-row:2}.pad [data-key=right]{grid-column:3;grid-row:2}
+.actionBtn{position:absolute;right:15px;bottom:52px;min-width:70px;height:44px}.actionBtn:disabled{opacity:.7}
+.quick{padding:12px 14px 14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;background:#fff}
+.quick button{background:#f2f4fc;border:1px solid #e3e7f4;padding:9px 10px;border-radius:10px;font-size:12px;color:#60708f;font-weight:800}.quick button.active{background:#677fce;color:white;border-color:#677fce}
+.side{background:var(--paper);border:4px solid white;border-radius:22px;box-shadow:0 10px 35px #6d85ac27;padding:17px;min-width:0}
+.sideTitle{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-bottom:15px}.sideTitle strong{font-size:16px}.tiny{color:#91a0ba;font-size:11px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:#f0f2f8;padding:5px;border-radius:13px}.tabs button{border:0;background:transparent;padding:9px 4px;border-radius:10px;font-weight:900;color:#8491a9;font-size:13px}.tabs button.active{background:white;color:#465d98;box-shadow:0 2px 6px #a4adc044}
+.panel{padding-top:15px;display:none}.panel.active{display:block}.paper{background:#f5f6fb;border:1px solid #e6e8f1;border-radius:15px;padding:14px;margin-bottom:11px}
+h2{font-size:16px;margin:0 0 9px}h3{font-size:13px;margin:10px 0;color:#576684}p{color:#7b859f;font-size:12px;line-height:1.6;margin:6px 0 12px}
+.label{font-size:11px;font-weight:900;color:#71809c;margin:11px 0 6px;display:block}.field{display:block;width:100%;border-radius:10px;border:1px solid #dce2ec;background:white;padding:10px 11px;color:#44506b;min-width:0}.field:focus{outline:2px solid #aecafa}
+.primary{background:#6b83d2;color:white;border:0;border-bottom:3px solid #5268b0;border-radius:12px;padding:11px 15px;font-weight:900;width:100%;margin-top:11px}.secondary{background:#e7edfb;color:#526cae;border:0;border-radius:10px;padding:9px 12px;font-weight:900}
+.option{display:flex;gap:9px;align-items:center;background:white;margin:7px 0;padding:10px;border:1px solid #e0e4ec;border-radius:10px;font-size:13px;cursor:pointer}.option input{accent-color:#627bca}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.line{border:0;border-top:1px dashed #d6dbe5;margin:13px 0}.chip{display:inline-block;font-size:10px;font-weight:900;border-radius:8px;padding:5px 8px;background:#e1ecff;color:#5571a5}.result{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #e7eaf1;font-size:12px}.result:last-child{border:0}
+.colorGrid{display:flex;flex-wrap:wrap;gap:7px}.swatch{height:29px;width:29px;border:3px solid white;border-radius:10px;box-shadow:0 0 0 1px #ccd1dc}.swatch.on{outline:3px solid #667fd4}.hairGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.hairGrid button{background:white;border:1px solid #dde2ed;border-radius:10px;padding:9px 2px;color:#586787;font-weight:800;font-size:12px}.hairGrid button.on{background:#e6eafd;border-color:#7188d7}
+#avatarPreview{display:block;margin:6px auto;width:116px;height:132px;image-rendering:pixelated}.footnote{text-align:center;color:#8b9ab2;font-size:11px;padding:0 20px 18px}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{min-height:310px}.stage{height:58vh;min-height:340px}}
+@media(max-width:540px){header{padding:12px}.layout{padding:0 9px 12px;gap:10px}.brand{gap:8px}.logo{width:40px;height:40px}.eyebrow{font-size:8px}h1{font-size:16px}.pill{min-width:0;padding:8px;font-size:12px}.headerControls{gap:5px}.stage{height:54vh;min-height:330px}.gameTop{padding:9px}.quick{padding:10px}.quick button{font-size:11px;padding:8px}.pad{bottom:10px;left:9px}.floatBottom{font-size:10px;right:8px;bottom:12px;max-width:130px}.actionBtn{bottom:60px}}
+
+/* Moon Coin v0.3 */
+.coins{border:2px solid #f4dc9e;background:#fff6d6;color:#93622b;font-size:14px;font-weight:900;border-radius:14px;padding:9px 13px;white-space:nowrap}
+.coin{color:#bd7b24;font-weight:900}.note{padding:9px;border-radius:10px;background:#fff8e5;font-size:12px;color:#98651c;line-height:1.6}
+.shopItem{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px solid #e4e7ef;padding:10px 2px}
+.shopItem:last-child{border-bottom:0}.shopItem strong{font-size:12px}.shopItem small{font-size:10px;color:#7d8ba4}
+.shopItem button{background:#6d86cf;border:0;border-radius:9px;color:white;padding:8px 10px;font-weight:900;font-size:11px;white-space:nowrap}
+.shopItem button:disabled{background:#bec8d7;color:white}
+.overlay{position:fixed;inset:0;background:#263557b8;display:none;z-index:20;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}.dialog{max-width:560px;width:100%;background:#fffcf6;border:5px solid white;border-radius:25px;padding:21px;box-shadow:0 20px 60px #142d5370;max-height:92vh;overflow-y:auto}
+.dialog h2{font-size:23px;color:#657acc}.dialog .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dialog label{font-size:12px;font-weight:900;display:block;margin:6px 0}
+.dialog input,.dialog select{padding:10px;width:100%;border:1px solid #d3d9e8;border-radius:9px;background:white;color:#44516c}
+#creatorPreview{width:116px;height:133px;display:block;margin:8px auto;image-rendering:pixelated}
+@media(max-width:650px){.coins{padding:7px;font-size:11px}.dialog{padding:12px}}
 </style>
 </head>
 <body>
 <header>
-<div class="brand">🌸 CLASS WORLD <span>꿈별학교 v0.2</span></div>
-<select id="role">
-<option value="teacher">👩‍🏫 교사 모드</option>
-<option value="student">🧑‍🎓 학생 모드</option>
-</select>
+ <div class="brand"><div class="logo">✦</div><div><div class="eyebrow">WELCOME TO OUR LITTLE WORLD</div><h1>CLASS WORLD <span style="color:#91a2ce">꿈별학교</span></h1></div></div>
+ <div class="headerControls"><span class="coins" id="coinHud">🌙 0 MC</span><select class="pill" id="role" aria-label="모드"><option value="teacher">👩‍🏫 교사 모드</option><option value="student">🧒 학생 모드</option></select><select class="pill" id="studentChoice" aria-label="체험 학생" hidden><option>학생 1</option><option>학생 2</option><option>학생 3</option><option>학생 4</option><option>학생 5</option></select></div>
 </header>
-<main>
-<section class="game">
-<div class="topbar">
-<span id="roomTitle">🌳 꿈별마을 광장</span>
-<span>⭐ <span id="xp">0</span> XP</span>
+<div class="layout">
+ <div class="gameShell">
+  <div class="gameTop"><div class="zone"><span id="mapIcon">🌷</span><span id="mapName">햇살 광장</span></div><div class="status" id="avatarSummary">나만의 캐릭터와 모험을 시작해요 ✨</div></div>
+  <div class="stage" id="stage"><canvas id="game"></canvas><div class="floatTop" id="hint">🚶 방향키 / WASD로 이동 · E로 상호작용</div><div class="pad" id="pad"><button data-key="up">▲</button><button data-key="left">◀</button><button data-key="down">▼</button><button data-key="right">▶</button></div><button class="actionBtn" id="interact" title="주변 공간에 입장">✨ 입장 E</button><div class="floatBottom">📱 터치 버튼으로도 이동해요</div></div>
+  <div class="quick" id="quick"></div>
+ </div>
+ <aside class="side"><div class="sideTitle"><strong>🎒 나의 모험 가방</strong><span class="tiny">CLASS WORLD v0.3</span></div><div class="tabs"><button data-tab="mission" class="active">📜 미션</button><button data-tab="avatar">🎒 옷장</button><button data-tab="shop">🛍️ 상점</button></div>
+  <section id="mission" class="panel active"></section><section id="avatar" class="panel"></section><section id="shop" class="panel"></section><section id="world" class="panel"></section>
+ </aside>
 </div>
-<canvas id="world" width="920" height="560"></canvas>
-<div class="control">
-<div>
-<small>방향키 / WASD 이동 · 건물 클릭 또는 가까이서 E</small>
-<div class="row" style="margin-top:8px">
-<button class="roomBtn" data-room="광장">🌳 광장</button>
-<button class="roomBtn" data-room="교실">🏫 교실</button>
-<button class="roomBtn" data-room="도서관">📚 도서관</button>
-<button class="roomBtn" data-room="체육관">🏸 체육관</button>
-<button class="roomBtn" data-room="AI 연구소">🤖 AI 연구소</button>
+<div class="footnote">🌱 가상 학생만 사용하는 브라우저 체험판입니다. 문코인은 실제 화폐가 아니며 교사 역할·보상은 서버 인증 전 데모 기능입니다. 실제 학생 정보는 입력하지 마세요.</div>
+<div class="overlay" id="creatorOverlay" role="dialog" aria-modal="true" aria-labelledby="creatorTitle">
+ <div class="dialog">
+  <h2 id="creatorTitle">✨ 꿈별마을 첫 모험!</h2>
+  <p>처음 캐릭터를 만드는 건 무료예요. 확정 이후 다른 외형을 얻으려면 미션으로 문코인을 모아 상점에서 구매해요.</p>
+  <label for="newNickname">내 별명 (가명만 입력)</label><input id="newNickname" maxlength="12" placeholder="예: 달빛모험가" autocomplete="off">
+  <div class="grid">
+   <div><label for="newHair">헤어스타일</label><select id="newHair"></select></div>
+   <div><label for="newHairColor">머리 색상</label><select id="newHairColor"></select></div>
+   <div><label for="newFace">표정</label><select id="newFace"></select></div>
+   <div><label for="newCloth">기본 의상</label><select id="newCloth"></select></div>
+   <div><label for="newAcc">액세서리</label><select id="newAcc"></select></div>
+  </div>
+  <canvas id="creatorPreview" width="116" height="133"></canvas>
+  <button class="primary" id="createAvatar">✨ 내 캐릭터 확정하고 입장</button>
+  <p class="note">확정한 아이템은 내 옷장에 보관되고, 언제든 무료로 다시 착용할 수 있어요.</p>
+ </div>
 </div>
-</div>
-<div class="pad">
-<button data-key="ArrowUp">▲</button>
-<button data-key="ArrowLeft">◀</button>
-<button data-key="ArrowDown">▼</button>
-<button data-key="ArrowRight">▶</button>
-</div>
-</div>
-</section>
-
-<aside class="panel">
-<h2>🎀 나의 캐릭터</h2>
-<p class="muted">꾸민 캐릭터는 이 브라우저에 저장돼요.</p>
-<div class="grid">
-<div><label>헤어스타일</label>
-<select id="hair" class="field">
-<option value="0">단정한 머리</option>
-<option value="1">양갈래</option>
-<option value="2">긴 머리</option>
-<option value="3">동그란 머리</option>
-<option value="4">삐죽삐죽</option>
-</select></div>
-<div><label>머리 색상</label>
-<select id="hairColor" class="field">
-<option value="#52372f">초코 브라운</option>
-<option value="#d5954e">밀크 브라운</option>
-<option value="#343449">블랙</option>
-<option value="#e6b74a">골드</option>
-<option value="#e28db8">핑크</option>
-</select></div>
-<div><label>얼굴 표정</label>
-<select id="face" class="field">
-<option value="0">방긋 웃기</option>
-<option value="1">반짝 눈</option>
-<option value="2">수줍은 미소</option>
-</select></div>
-<div><label>옷 색상</label>
-<select id="clothes" class="field">
-<option value="#8680dc">라벤더</option>
-<option value="#ee8f9d">딸기우유</option>
-<option value="#74b9a5">민트</option>
-<option value="#e6ba65">레몬</option>
-<option value="#79a7df">하늘색</option>
-</select></div>
-</div>
-<label>액세서리</label>
-<select id="accessory" class="field">
-<option value="0">없음</option>
-<option value="1">리본</option>
-<option value="2">안경</option>
-<option value="3">마법사 모자</option>
-</select>
-<div class="card" id="teacher">
-<h3>📋 교사 미션 관리</h3>
-<label>미션 제목</label>
-<input id="question" class="field" value="배드민턴 단식 코트의 특징은?">
-<label>선택지 4개</label>
-<input id="opt0" class="field" value="복식보다 좌우 폭이 좁다">
-<input id="opt1" class="field" value="복식보다 좌우 폭이 넓다">
-<input id="opt2" class="field" value="복식과 완전히 같다">
-<input id="opt3" class="field" value="네트가 없다">
-<label>정답</label>
-<select id="correct" class="field">
-<option value="0">1번</option>
-<option value="1">2번</option>
-<option value="2">3번</option>
-<option value="3">4번</option>
-</select>
-<button class="primary field" id="publish">🚀 새 미션 배포</button>
-<h3>📊 학생 결과</h3>
-<div id="results"></div>
-</div>
-<div class="card" id="student" hidden>
-<h3>🎯 오늘의 퀘스트</h3>
-<label>체험용 학생 캐릭터</label>
-<select id="studentName" class="field">
-<option>학생 1</option><option>학생 2</option>
-<option>학생 3</option><option>학생 4</option>
-<option>학생 5</option>
-</select>
-<h3 id="missionTitle"></h3>
-<div id="choices"></div>
-<button class="primary field" id="submit">정답 제출하기</button>
-<div id="notice"></div>
-</div>
-<div class="card">
-<h3>💬 마을 안내</h3>
-<div id="message" class="muted">광장의 건물을 누르면 새로운 공간으로 이동해요!</div>
-</div>
-<small>현재 버전은 시제품입니다. 학생 계정과 여러 기기 동기화는 아직 지원하지 않으며 실제 학생 개인정보를 입력하면 안 됩니다.</small>
-</aside>
-</main>
-
 <script>
-const $=id=>document.getElementById(id);
-const canvas=$("world"),ctx=canvas.getContext("2d");
-ctx.imageSmoothingEnabled=false;
-const W=920,H=560;
-
-const read=(key,fallback)=>{
- try{return JSON.parse(localStorage.getItem(key))??fallback}
- catch{return fallback}
+'use strict';
+const $=s=>document.querySelector(s);
+const dataKey='classworld2d-v03';
+const defaultMission={id:1,q:'배드민턴 단식 경기에 대한 올바른 설명은?',options:['복식보다 좌우 폭이 좁다','복식보다 좌우 폭이 넓다','복식과 모든 선이 같다','네트를 사용하지 않는다'],correct:0};
+const hairColors=['#513e47','#a46c44','#d9a550','#292d4e','#cf7f8b'];
+const clothColors=['#7d9be0','#ec91a5','#78b7a2','#e5b463','#b19ce2'];
+const faces=['기본','웃음','반짝'];
+const styles=['단발','곱슬','양갈래','짧은 머리','긴 머리'];
+const accessories=['없음','리본','안경','모자'];
+const baseAvatar={hair:0,hairColor:0,face:0,cloth:0,acc:0};
+const itemLabels={hair:styles,hairColor:['초코','카라멜','금발','남색','핑크'],face:faces,cloth:['하늘 교복','벚꽃 옷','민트 옷','레몬 옷','보랏빛 옷'],acc:accessories};
+const prices={hair:50,hairColor:40,face:25,cloth:100,acc:65};
+const shops={salon:['hair','hairColor','face'],outfit:['cloth'],accessory:['acc']};
+function fresh(){return {mission:structuredClone(defaultMission),answers:{},xp:{},avatars:{},profiles:{},coins:{},owned:{},rewards:{},version:3}}
+let state;try{
+ const prev=JSON.parse(localStorage.getItem('classworld2d-v02')||'null');
+ const current=JSON.parse(localStorage.getItem(dataKey)||'null');
+ state=Object.assign(fresh(),prev||{},current||{}, {version:3});
+}catch(e){state=fresh()}
+for(const key of ['answers','xp','avatars','profiles','coins','owned','rewards'])if(!state[key]||typeof state[key]!=='object')state[key]={};
+function save(){try{localStorage.setItem(dataKey,JSON.stringify(state))}catch(e){console.warn('저장 실패',e)}}
+const maps={
+ plaza:{name:'햇살 광장',icon:'🌷',desc:'꿈별학교의 시작점! 건물 앞에서 E를 누르면 들어갈 수 있어요.',spawn:[11,9]},
+ classroom:{name:'우리 반 교실',icon:'🏫',desc:'오늘의 과제를 만나는 따뜻한 교실입니다.',spawn:[11,11]},
+ library:{name:'별빛 도서관',icon:'📚',desc:'책과 퀴즈를 만나는 조용한 공간입니다.',spawn:[11,11]},
+ gym:{name:'튼튼 체육관',icon:'🏀',desc:'움직이고 협동하며 성장하는 공간입니다.',spawn:[11,11]},
+ lab:{name:'AI 연구소',icon:'🤖',desc:'AI 문제 생성 기능은 향후 연결될 예정입니다.',spawn:[11,11]},
+ salon:{name:'달빛 미용실',icon:'💇',desc:'문코인으로 헤어스타일·머리색·표정을 구매해요.',spawn:[11,11]},
+ outfit:{name:'꿈꾸는 의상실',icon:'👗',desc:'문코인으로 새 옷을 구매하고 장착해요.',spawn:[11,11]},
+ accessory:{name:'별빛 소품상점',icon:'🎀',desc:'리본, 안경, 모자를 만나 보세요.',spawn:[11,11]}
 };
-const save=(key,value)=>{
- try{localStorage.setItem(key,JSON.stringify(value))}catch{}
-};
-
-let style=read("cw2-style",{
- hair:"0",hairColor:"#52372f",face:"0",
- clothes:"#8680dc",accessory:"0"
-});
-for(const id of Object.keys(style)){
- if($(id))$(id).value=style[id];
- $(id)?.addEventListener("change",()=>{
-  style[id]=$(id).value;
-  save("cw2-style",style);
- });
-}
-
-let room="광장";
-let player={x:460,y:425,dir:0};
-let xp=read("cw2-xp",0);
-$("xp").textContent=xp;
-
-const missionDefault={
- q:"배드민턴 단식 코트의 특징은?",
- opts:[
- "복식보다 좌우 폭이 좁다",
- "복식보다 좌우 폭이 넓다",
- "복식과 완전히 같다",
- "네트가 없다"
- ],correct:0
-};
-let mission=read("cw2-mission",missionDefault);
-let answers=read("cw2-answers",{});
-
-const buildings=[
- {name:"교실",x:65,y:88,w:220,h:162,wall:"#f4c5a9",roof:"#e89196"},
- {name:"도서관",x:355,y:65,w:215,h:178,wall:"#e6d4a7",roof:"#b9a0db"},
- {name:"체육관",x:640,y:95,w:205,h:158,wall:"#a9d6e0",roof:"#78afd2"},
- {name:"AI 연구소",x:655,y:334,w:198,h:150,wall:"#b1dabb",roof:"#7bb99b"}
-];
-
-function rect(x,y,w,h,color){
- ctx.fillStyle=color;
- ctx.fillRect(Math.round(x),Math.round(y),w,h);
-}
-function circle(x,y,r,color){
- ctx.fillStyle=color;
- ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
-}
-function text(s,x,y,size=17,color="#46536b"){
- ctx.font=`bold ${size}px "Malgun Gothic",sans-serif`;
- ctx.textAlign="center";
- ctx.fillStyle=color;
- ctx.fillText(s,x,y);
-}
-function outline(x,y,w,h,color="#fff"){
- ctx.strokeStyle=color;ctx.lineWidth=3;
- ctx.strokeRect(x,y,w,h);
-}
-
-function drawGround(){
- rect(0,0,W,H,"#a9d4a2");
- for(let y=0;y<H;y+=40)
-  for(let x=0;x<W;x+=40){
-   if((x+y/2)%80===0)rect(x+7,y+9,4,4,"#99c897");
-  }
- rect(305,0,270,560,"#ebdfc3");
- rect(0,265,W,70,"#ebdfc3");
- for(let x=0;x<W;x+=40){
-  rect(x+5,298,25,3,"#ddd2b9");
- }
- for(const [x,y] of [[45,355],[240,450],[590,440],[875,270]]){
-  circle(x,y,29,"#79ae78");
-  circle(x-9,y-8,21,"#8ec68a");
-  circle(x+10,y-6,17,"#95d38e");
-  rect(x-5,y+19,10,15,"#a17855");
- }
-}
-
-function drawBuilding(b){
- const {x,y,w,h,wall,roof,name}=b;
- rect(x+9,y+14,w,h,"#82b68f");
- rect(x,y+30,w,h-30,wall);
- outline(x,y+30,w,h-30,"#fff5df");
- rect(x-10,y+13,w+20,33,roof);
- rect(x+12,y,w-24,30,roof);
- rect(x+17,y+65,32,45,"#fff3d5");
- rect(x+21,y+70,24,34,"#83bed2");
- rect(x+w-49,y+65,32,45,"#fff3d5");
- rect(x+w-45,y+70,24,34,"#83bed2");
- rect(x+w/2-22,y+h-58,44,58,"#927b88");
- rect(x+w/2-17,y+h-53,34,53,"#f8e1b1");
- circle(x+w/2+11,y+h-27,3,"#99725d");
- rect(x+w/2-55,y+39,110,28,"#fff9ed");
- text(name,x+w/2,y+59,16);
- text(name==="교실"?"🏫":name==="도서관"?"📚":name==="체육관"?"🏸":"🤖",x+w/2,y+110,29);
-}
-
-function drawRoom(){
- rect(0,0,W,H,"#f0dec3");
- for(let y=0;y<H;y+=50)
-  for(let x=0;x<W;x+=50){
-   ctx.strokeStyle="#decdb9";
-   ctx.strokeRect(x,y,50,50);
-  }
- rect(0,0,W,85,"#c0d7db");
- rect(0,85,W,10,"#fff2d8");
- rect(330,8,260,65,"#557871");
- text(room,460,52,27,"#fff8eb");
-
- if(room==="교실"){
-  for(let row=0;row<3;row++)
-   for(let col=0;col<4;col++){
-    const x=135+col*165,y=165+row*105;
-    rect(x+6,y+8,105,62,"#b88f70");
-    rect(x,y,105,56,"#e4ba89");
-    outline(x,y,105,56,"#fff5cf");
-    rect(x+38,y+15,30,20,"#f9ede0");
-   }
- }else if(room==="도서관"){
-  for(let i=0;i<4;i++){
-   const x=85+i*195;
-   rect(x,155,130,250,"#9b795f");
-   for(let j=0;j<5;j++){
-    rect(x+12,170+j*45,22,32,"#d88b8b");
-    rect(x+40,170+j*45,24,32,"#87b9c5");
-    rect(x+70,170+j*45,24,32,"#d9bf7d");
-   }
-  }
- }else if(room==="체육관"){
-  rect(85,130,750,350,"#a9c4a0");
-  ctx.strokeStyle="#fff";
-  ctx.lineWidth=5;
-  ctx.strokeRect(110,145,700,320);
-  rect(458,145,5,320,"#fff");
-  rect(105,301,710,5,"#fff");
-  text("오늘의 체육 미션!",460,120,19);
- }else{
-  for(let i=0;i<4;i++){
-   const x=120+i*185;
-   rect(x,210,130,65,"#a4bacc");
-   rect(x+20,168,90,55,"#6f879f");
-   rect(x+28,175,74,41,"#c8f3ff");
-   rect(x+47,285,55,10,"#a6d9ad");
-  }
-  text("AI 수업 도우미는 다음 업데이트에서 연결됩니다",460,380,19);
- }
- rect(382,505,155,43,"#8ea1ce");
- text("🚪 광장으로",460,534,17,"#fff");
-}
-
-function drawAvatar(x,y,s=1,custom=style,label="나"){
- ctx.save();ctx.translate(x,y);ctx.scale(s,s);
- // Shadow
- ctx.fillStyle="#526c7470";
- ctx.beginPath();ctx.ellipse(0,13,23,9,0,0,Math.PI*2);ctx.fill();
- // Legs and shoes
- rect(-14,0,11,14,"#514969");
- rect(3,0,11,14,"#514969");
- rect(-17,9,16,7,"#765e75");
- rect(3,9,16,7,"#765e75");
- // Clothes
- rect(-21,-33,42,37,custom.clothes);
- rect(-24,-31,9,27,"#f5cba9");
- rect(15,-31,9,27,"#f5cba9");
- rect(-5,-30,10,24,"#fff3e3");
- // Head
- circle(0,-55,26,"#f7d3b2");
- const hc=custom.hairColor;
- if(custom.hair==="0"){
-  circle(0,-72,27,hc);
-  rect(-25,-70,50,18,hc);
- }else if(custom.hair==="1"){
-  circle(-31,-65,13,hc);
-  circle(31,-65,13,hc);
-  circle(0,-75,27,hc);
-  rect(-24,-71,48,16,hc);
- }else if(custom.hair==="2"){
-  rect(-28,-74,56,48,hc);
-  circle(0,-77,28,hc);
-  circle(0,-55,24,"#f7d3b2");
-  rect(-22,-74,44,15,hc);
- }else if(custom.hair==="3"){
-  circle(0,-76,30,hc);
-  circle(0,-55,24,"#f7d3b2");
-  rect(-23,-73,46,13,hc);
- }else{
-  for(let i=-2;i<=2;i++)circle(i*12,-82-(i%2)*8,13,hc);
-  rect(-25,-78,50,22,hc);
- }
- // Eyes
- if(player.dir!==2||label!=="나"){
-  if(custom.face==="1"){
-   circle(-9,-53,4,"#4c4553");
-   circle(9,-53,4,"#4c4553");
-   circle(-8,-55,1.5,"white");
-   circle(10,-55,1.5,"white");
+const portals={plaza:[
+{x:4,y:4,to:'classroom',label:'우리 반 교실'},
+{x:11,y:4,to:'library',label:'별빛 도서관'},
+{x:18,y:4,to:'gym',label:'튼튼 체육관'},
+{x:4,y:12,to:'lab',label:'AI 연구소'},
+{x:11,y:12,to:'salon',label:'달빛 미용실'},
+{x:18,y:12,to:'outfit',label:'꿈꾸는 의상실'},
+{x:18,y:8,to:'accessory',label:'별빛 소품상점'}]};
+for(const id of Object.keys(maps)){if(id!=='plaza')portals[id]=[{x:11,y:12,to:'plaza',label:'햇살 광장'}]}
+let currentMap='plaza',player={x:11,y:9},targetTab='mission';
+function profileOf(name){return state.profiles[name]||null}
+function nickname(){return (profileOf(actorName())||{}).nickname||actorName()}
+function coinsOf(name){return Math.max(0,Number(state.coins[name])||0)}
+function updateCoin(){document.querySelector('#coinHud').textContent='🌙 '+coinsOf(actorName())+' MC'}
+function owns(name,key,i){return ((state.owned[name]||{})[key]||[]).includes(i)}
+function ensureProfile(){const name=actorName();updateCoin();if(!profileOf(name))openCreator(name)}
+const actorName=()=>$('#role').value==='teacher'?'선생님':$('#studentChoice').value;
+const currentAvatar=()=>{const id=actorName();return {...baseAvatar,...(state.avatars[id]||{})}};
+const canvas=$('#game'),ctx=canvas.getContext('2d');
+let width=850,height=540,scale=1;const TILE=46,MW=22,MH=15;
+function resize(){let r=$('#stage').getBoundingClientRect();width=r.width;height=r.height;scale=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);ctx.setTransform(scale,0,0,scale,0,0);ctx.imageSmoothingEnabled=false}
+window.addEventListener('resize',resize);resize();
+function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h))}
+function txt(t,x,y,size=13,color='#465676',align='center'){ctx.fillStyle=color;ctx.textAlign=align;ctx.font=`900 ${size}px system-ui`;ctx.fillText(t,x,y)}
+function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function flower(x,y,c){rect(x-3,y,6,6,c);rect(x,y-3,6,6,c);rect(x,y,3,3,'#ffe4a3')}
+function tree(x,y){ctx.fillStyle='#6b957c';ctx.beginPath();ctx.ellipse(x,y+7,25,10,0,0,Math.PI*2);ctx.fill();rect(x-5,y-22,10,25,'#906c65');rect(x-25,y-55,50,35,'#69a58d');rect(x-17,y-68,34,25,'#86c7a4');rect(x-17,y-49,6,5,'#b4e0b2')}
+function desk(x,y){rect(x-25,y-1,8,30,'#9a7a67');rect(x+17,y-1,8,30,'#9a7a67');rounded(x-31,y-14,62,23,3,'#c99b76');rect(x-22,y-11,44,4,'#e4c09c');rect(x-7,y-34,14,14,'#92b7d4');rect(x-14,y-19,28,7,'#678cae')}
+function worldBase(){
+ for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){
+  const X=x*TILE,Y=y*TILE,alt=(x+y)%2;
+  if(currentMap==='plaza'){
+   const path=(x>=9&&x<=12)||(y>=7&&y<=8);
+   rect(X,Y,TILE+1,TILE+1,path?(alt?'#d7c8af':'#dfd2bc'):(alt?'#a9d6ac':'#b6dfb5'));
+   if(path){if((x*7+y*3)%6===0)rect(X+12,Y+25,10,2,'#c6b89c')}
+   else if((x*11+y*13)%9===0)flower(X+14,Y+16,['#f4a7bc','#ffe5a7','#ebd2fa'][x%3]);
   }else{
-   rect(-13,-55,6,4,"#4c4553");
-   rect(7,-55,6,4,"#4c4553");
+   rect(X,Y,TILE+1,TILE+1,y<3?(alt?'#f5e5ce':'#efdec6'):(alt?'#f9edd8':'#f7e8cf'));
+   if(y>=3){rect(X,Y+TILE-2,TILE,2,'#e8d4b7')}
   }
-  if(custom.face==="2"){
-   circle(-17,-45,5,"#eda8a7");
-   circle(17,-45,5,"#eda8a7");
-  }
-  ctx.strokeStyle="#a56c69";ctx.lineWidth=2;
-  ctx.beginPath();ctx.arc(0,-47,5,0,Math.PI);ctx.stroke();
  }
- if(custom.accessory==="1"){
-  circle(21,-82,8,"#ea7398");
-  circle(34,-82,8,"#ea7398");
-  circle(28,-82,5,"#ffe7f1");
- }else if(custom.accessory==="2"){
-  ctx.strokeStyle="#5c5667";ctx.lineWidth=3;
-  ctx.strokeRect(-19,-60,16,12);
-  ctx.strokeRect(3,-60,16,12);
-  rect(-3,-56,6,2,"#5c5667");
- }else if(custom.accessory==="3"){
-  rect(-30,-83,60,8,"#8b79d2");
-  ctx.fillStyle="#8b79d2";
-  ctx.beginPath();ctx.moveTo(-20,-83);
-  ctx.lineTo(0,-120);ctx.lineTo(20,-83);ctx.fill();
-  circle(3,-107,4,"#fff2a6");
- }
- ctx.restore();
- ctx.fillStyle="#ffffffed";
- ctx.fillRect(x-40*s,y-119*s,80*s,18*s);
- text(label,x,y-105*s,12*s,"#555b8c");
-}
-
-let walk=0;
-function draw(){
- if(room==="광장"){
-  drawGround();
-  for(const b of buildings)drawBuilding(b);
-  drawAvatar(310,400,.72,{
-   hair:"1",hairColor:"#d5954e",face:"0",
-   clothes:"#e98ba1",accessory:"1"
-  },"별이");
-  drawAvatar(595,306,.72,{
-   hair:"3",hairColor:"#343449",face:"1",
-   clothes:"#79a7df",accessory:"2"
-  },"꿈이");
- }else drawRoom();
-
- drawAvatar(player.x,player.y+Math.sin(walk)*2,1,style,"나");
-}
-
-function setRoom(next){
- room=next;
- player.x=460;player.y=425;
- $("roomTitle").textContent=(next==="광장"?"🌳 ":"✨ ")+
- (next==="광장"?"꿈별마을 광장":next);
- $("message").textContent=next==="광장"?
- "건물을 클릭하거나 가까이서 E를 눌러 입장해요.":
- "이 공간은 앞으로 학습 기능이 추가될 예정이에요.";
-}
-document.querySelectorAll("[data-room]").forEach(b=>{
- b.onclick=()=>setRoom(b.dataset.room);
-});
-
-canvas.addEventListener("click",e=>{
- const r=canvas.getBoundingClientRect();
- const x=(e.clientX-r.left)*W/r.width;
- const y=(e.clientY-r.top)*H/r.height;
- if(room!=="광장"){
-  if(y>475)setRoom("광장");
+ if(currentMap==='plaza'){
+  [[1,1],[20,1],[1,13],[20,13],[7,1],[15,13]].forEach(p=>tree((p[0]+.5)*TILE,(p[1]+.5)*TILE));
+  for(let k=0;k<20;k++){const fx=((k*17+3)%MW+.35)*TILE,fy=((k*11+6)%MH+.4)*TILE;if(k%3!==0)flower(fx,fy,['#ffc7df','#fff0b6','#f9d9ff'][k%3]);}
+  rounded(7*TILE,8.8*TILE,1.5*TILE,13,5,'#be9679');rect(7.2*TILE,8.5*TILE,7,17,'#916f6a');
+  rounded(14*TILE,6.8*TILE,1.5*TILE,13,5,'#be9679');rect(14.2*TILE,6.5*TILE,7,17,'#916f6a');
+  rounded(9*TILE,7*TILE,4*TILE,2*TILE,12,'#dad1bc');
+  rounded(10*TILE,7.2*TILE,2*TILE,1.5*TILE,20,'#90c9db');
+  txt('✦',11*TILE,7.9*TILE,27,'#fff9d8');
+  const doors=portals.plaza;
+  doors.forEach((p,i)=>{const x=(p.x+.5)*TILE,y=(p.y+.5)*TILE;   const palette=[['#f6b9ac','#de7e83'],['#b2c7f4','#849bd2'],['#ffe0a2','#d9a55d'],['#ceb9ed','#9c82cd'],['#edbfdb','#c689b5'],['#ffe3b1','#daa96e'],['#bad9f4','#83b4d2']][i];
+   rounded(x-71,y-61,142,94,8,palette[1]);rounded(x-67,y-69,134,42,7,palette[0]);rect(x-14,y-14,28,47,'#725f76');rect(x-8,y-9,16,35,'#9e8aa4');rect(x+6,y+8,4,4,'#ffdf8e');rounded(x-61,y-88,122,24,9,'#fff6e3');txt([...portals.plaza.map(p=>maps[p.to].icon+' '+maps[p.to].name)][i],x,y-71,13,'#596282')});
  }else{
-  const b=buildings.find(b=>
-   x>=b.x-10&&x<=b.x+b.w+10&&
-   y>=b.y&&y<=b.y+b.h);
-  if(b)setRoom(b.name);
- }
-});
-
-const keys=new Set();
-function interactiveTarget(el){
- return el&&["INPUT","TEXTAREA","SELECT"].includes(el.tagName);
-}
-addEventListener("keydown",e=>{
- if(interactiveTarget(e.target))return;
- const k=e.key.toLowerCase();
- if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k)){
-  keys.add(k);e.preventDefault();
- }
- if(k==="e"){
-  if(room!=="광장")setRoom("광장");
-  else{
-   const b=buildings.find(b=>
-    Math.hypot(player.x-(b.x+b.w/2),player.y-(b.y+b.h))<105);
-   if(b)setRoom(b.name);
+  for(let x=0;x<MW;x++)rect(x*TILE,2*TILE,TILE,9,'#d1b29c');
+  rect(7*TILE,2.8*TILE,8*TILE,10,'#f4cdb0');
+  rounded(9*TILE,3.2*TILE,4*TILE,45,4,'#63887e');
+  txt(maps[currentMap].name,11*TILE,3.8*TILE,17,'#fff6df');
+  for(const x of [3,18]){rounded(x*TILE,4*TILE,1.4*TILE,1.1*TILE,6,'#c2deef');rect(x*TILE+7,4*TILE+7,8,29,'#fff9eb')}
+  if(currentMap==='classroom'){
+   [[5,7],[10,7],[15,7],[5,10],[10,10],[15,10]].forEach(p=>desk((p[0]+.5)*TILE,(p[1]+.5)*TILE));
+   rounded(9*TILE,4.7*TILE,4*TILE,35,5,'#eaaea2');txt('⭐ 오늘의 미션',11*TILE,5.2*TILE,14,'#fff');
+  }else if(currentMap==='library'){
+   for(const x of [3,18])for(let y=6;y<12;y+=2){rect(x*TILE-12,y*TILE,60,56,'#ab8067');for(let k=0;k<5;k++)rect(x*TILE-6+k*11,y*TILE+7,8,36,['#8aa7d7','#eba6a0','#d6b875'][k%3])}
+   [[8,9],[14,9]].forEach(p=>desk(p[0]*TILE,p[1]*TILE));
+  }else if(currentMap==='gym'){
+   rounded(4*TILE,5*TILE,14*TILE,7*TILE,4,'#e7b681');rect(11*TILE,5*TILE,3,7*TILE,'#fff2d8');ctx.strokeStyle='#fff5db';ctx.lineWidth=4;ctx.strokeRect(5*TILE,6*TILE,12*TILE,5*TILE);txt('🏸',11*TILE,7*TILE,32)
+  }else if(currentMap==='lab'){
+   for(const x of [5,10,15]){rounded(x*TILE,8*TILE,3*TILE,2*TILE,6,'#a8bcd9');rect(x*TILE+20,8*TILE-34,70,45,'#7087b4');rect(x*TILE+25,8*TILE-29,60,32,'#c0e5db')}
+   rounded(9*TILE,4.7*TILE,4*TILE,30,6,'#d5bce4');txt('AI LAB',11*TILE,5.1*TILE,16,'#fff')
+  }else if(currentMap==='salon'){
+   for(const x of [5,11,17]){rounded(x*TILE,7*TILE,85,90,12,'#ddafc1');rounded(x*TILE+11,7*TILE+11,62,60,11,'#ffe1ef');rounded(x*TILE+25,9*TILE,38,35,8,'#ab86ba')}
+   txt('✂️ 달빛 미용실',11*TILE,5.4*TILE,17,'#9b6092');
+  }else if(currentMap==='outfit'){
+   for(const x of [6,11,16]){rounded(x*TILE,6.5*TILE,54,110,7,'#d3b78f');rounded(x*TILE+7,7*TILE,40,65,7,['#e89aab','#92badf','#91c7ab'][x%3]);rounded(x*TILE+15,8.6*TILE,25,20,4,'#fff1df')}
+   txt('👗 오늘의 코디',11*TILE,5.4*TILE,17,'#a76a87');
+  }else if(currentMap==='accessory'){
+   for(const x of [5,11,17]){rounded(x*TILE,7*TILE,100,75,9,'#ddd1f0');rounded(x*TILE+10,7*TILE+12,80,50,6,'#fff5d6');txt(['🎀','👓','🎩'][(x-5)/6],x*TILE+50,7.8*TILE,28)}
+   txt('🎀 별빛 소품상점',11*TILE,5.4*TILE,17,'#8a72b6');
   }
+  rounded(10*TILE,12*TILE,2*TILE,TILE,5,'#d8c6e8');txt('🚪 광장으로',11*TILE,12.8*TILE,12,'#625583');
  }
-});
-addEventListener("keyup",e=>keys.delete(e.key.toLowerCase()));
-addEventListener("blur",()=>keys.clear());
-
-document.querySelectorAll("[data-key]").forEach(b=>{
- const k=b.dataset.key.toLowerCase();
- b.addEventListener("pointerdown",e=>{
-  keys.add(k);b.setPointerCapture(e.pointerId);
- });
- for(const event of ["pointerup","pointercancel","lostpointercapture"])
-  b.addEventListener(event,()=>keys.delete(k));
-});
-
-let last=performance.now();
-function loop(now){
- const dt=Math.min((now-last)/1000,.05);last=now;
- let dx=0,dy=0;
- if(keys.has("arrowleft")||keys.has("a"))dx--;
- if(keys.has("arrowright")||keys.has("d"))dx++;
- if(keys.has("arrowup")||keys.has("w"))dy--;
- if(keys.has("arrowdown")||keys.has("s"))dy++;
- const length=Math.hypot(dx,dy)||1;
- player.x=Math.max(35,Math.min(885,player.x+dx/length*190*dt));
- player.y=Math.max(135,Math.min(530,player.y+dy/length*190*dt));
- if(dx||dy){
-  walk+=dt*12;
-  player.dir=dy<0?2:dy>0?0:dx<0?1:3;
- }
- draw();
- requestAnimationFrame(loop);
 }
-requestAnimationFrame(loop);
-
+function sprite(cx,cy,av,step=0,small=false){
+ const z=small?1.35:1.8;ctx.save();ctx.translate(Math.round(cx),Math.round(cy+Math.sin(step)*1.2));ctx.scale(z,z);
+ // original layered chibi pixel sprite, no external assets
+ ctx.fillStyle='#70816a44';ctx.beginPath();ctx.ellipse(0,1,12,4,0,0,Math.PI*2);ctx.fill();
+ const P=(x,y,w,h,c)=>rect(x,y,w,h,c);
+ P(-8,-8,7,7,'#6b6b83');P(2,-8,7,7,'#6b6b83');
+ const cl=clothColors[av.cloth%clothColors.length],hair=hairColors[av.hairColor%hairColors.length];
+ P(-11,-22,22,15,cl);P(-14,-20,4,10,'#f3c6a9');P(10,-20,4,10,'#f3c6a9');P(-6,-11,12,3,'#f0e1c6');
+ P(-11,-38,22,19,'#f5d5b7');P(-12,-39,24,9,hair);
+ if(av.hair===0){P(-13,-36,5,18,hair);P(8,-36,5,18,hair)}
+ if(av.hair===1){P(-15,-42,8,9,hair);P(5,-43,9,9,hair);P(-5,-45,12,7,hair)}
+ if(av.hair===2){P(-17,-31,6,12,hair);P(11,-31,6,12,hair);P(-13,-44,26,9,hair)}
+ if(av.hair===3){P(-12,-40,24,5,hair);P(-8,-44,16,5,hair)}
+ if(av.hair===4){P(-15,-37,6,27,hair);P(9,-37,6,27,hair);P(-10,-45,20,9,hair)}
+ P(-6,-30,3,3,'#514e65');P(4,-30,3,3,'#514e65');
+ if(av.face===1){P(-1,-23,5,2,'#c87f7b');P(-10,-26,3,2,'#eeaba7');P(8,-26,3,2,'#eeaba7')}
+ if(av.face===2){P(-6,-30,3,4,'#fff');P(4,-30,3,4,'#fff');P(-9,-24,4,2,'#e8a5a5');P(8,-24,4,2,'#e8a5a5')}
+ if(av.acc===1){P(7,-42,10,4,'#e579a5');P(11,-45,4,10,'#e579a5')}
+ if(av.acc===2){ctx.strokeStyle='#4b617c';ctx.lineWidth=1.8;ctx.strokeRect(-10,-33,8,7);ctx.strokeRect(2,-33,8,7);P(-2,-31,4,2,'#4b617c')}
+ if(av.acc===3){P(-14,-46,28,8,'#6d85c4');P(-17,-39,34,4,'#6d85c4')}
+ ctx.restore();
+}
+function label(cx,cy,t,bg='#fffdfa'){const w=Math.max(52,t.length*11+18);rounded(cx-w/2,cy-65,w,23,8,bg);txt(t,cx,cy-49,11,'#4f5972')}
+function goMap(id){if(!maps[id])return;currentMap=id;player={x:maps[id].spawn[0],y:maps[id].spawn[1]};$('#mapIcon').textContent=maps[id].icon;$('#mapName').textContent=maps[id].name;$('#hint').textContent=maps[id].desc;renderQuick();renderWorld();renderShop();if(shops[id])switchTab('shop')}
+function nearby(){return (portals[currentMap]||[]).find(p=>Math.hypot(p.x-player.x,p.y-player.y)<2)}
+function interact(){let found=nearby();if(found){goMap(found.to);return}if(shops[currentMap]){switchTab('shop');return}if(currentMap==='classroom'||currentMap==='library'){switchTab('mission');return}switchTab('mission')}
+$('#interact').addEventListener('click',interact);
+function renderQuick(){let area=$('#quick');area.replaceChildren();Object.entries(maps).forEach(([id,m])=>{const b=document.createElement('button');b.textContent=m.icon+' '+m.name;if(id===currentMap)b.classList.add('active');b.onclick=()=>goMap(id);area.append(b)})}
+function renderWorld(){const el=$('#world');el.replaceChildren();const h=document.createElement('h2');h.textContent='🗺️ 꿈별학교 세계지도';el.append(h);const p=document.createElement('p');p.textContent='첫 버전부터 5개 공간을 준비했어요. 지도 버튼으로 이동하거나 광장에서 건물 앞 E를 눌러 보세요.';el.append(p);Object.entries(maps).forEach(([id,m])=>{const b=document.createElement('button');b.className='field';b.style='text-align:left;margin:7px 0;cursor:pointer';b.textContent=m.icon+' '+m.name+' →';b.onclick=()=>goMap(id);el.append(b)})}
+function changeMode(){const student=$('#role').value==='student';$('#studentChoice').hidden=!student;player={x:maps[currentMap].spawn[0],y:maps[currentMap].spawn[1]};renderMission();renderAvatar();renderShop();ensureProfile()}
+$('#role').addEventListener('change',changeMode);$('#studentChoice').addEventListener('change',()=>{renderMission();renderAvatar();renderShop();ensureProfile()});
+function switchTab(tab){targetTab=tab;document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===tab))}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function build(tag,props={},text=''){const e=document.createElement(tag);for(const [k,v] of Object.entries(props)){if(k==='class')e.className=v;else e.setAttribute(k,v)}if(text)e.textContent=text;return e}
 function renderMission(){
- $("missionTitle").textContent=mission.q;
- $("choices").replaceChildren();
- mission.opts.forEach((option,i)=>{
-  const label=document.createElement("label");
-  label.className="choice";
-  const radio=document.createElement("input");
-  radio.type="radio";radio.name="answer";radio.value=i;
-  const t=document.createElement("span");
-  t.textContent=(i+1)+". "+option;
-  label.append(radio,t);
-  $("choices").append(label);
- });
- const results=$("results");
- results.replaceChildren();
- for(let i=1;i<=5;i++){
-  const name="학생 "+i,answer=answers[name];
-  const div=document.createElement("div");
-  div.className="tag";div.style.margin="5px 0";
-  div.textContent=name+" · "+
-   (answer===undefined?"미제출":
-    answer===mission.correct?"✅ 완료":"🔄 복습 필요");
-  results.append(div);
+ const el=$('#mission');el.replaceChildren();const teacher=$('#role').value==='teacher';
+ el.append(build('h2',{},teacher?'👩‍🏫 오늘의 학급 미션':'🎯 오늘의 도전'));
+ if(teacher){
+  const card=build('div',{class:'paper'});card.append(build('p',{},'퀴즈를 작성하고 배포하세요. 결과는 이 브라우저에 저장됩니다.'));
+  card.append(build('label',{class:'label'},'문제'));const q=build('input',{class:'field',maxlength:'140'});q.value=state.mission.q;card.append(q);
+  const fields=[];state.mission.options.forEach((v,i)=>{card.append(build('label',{class:'label'},`${i+1}번 보기`));const inp=build('input',{class:'field',maxlength:'100'});inp.value=v;card.append(inp);fields.push(inp)});
+  card.append(build('label',{class:'label'},'정답 선택'));const sel=build('select',{class:'field'});for(let i=0;i<4;i++){const o=build('option',{value:String(i)},`${i+1}번`);if(i===state.mission.correct)o.selected=true;sel.append(o)}card.append(sel);
+  const pub=build('button',{class:'primary'},'📬 새 미션 배포');pub.onclick=()=>{if(!q.value.trim()||fields.some(i=>!i.value.trim()))return alert('문제와 보기 4개를 입력해 주세요.');if(!confirm('기존 제출 결과를 초기화하고 새 미션을 배포할까요?'))return;state.mission={id:Date.now(),q:q.value.trim(),options:fields.map(i=>i.value.trim()),correct:Number(sel.value)};state.answers={};save();renderMission()};card.append(pub);el.append(card);
+  const progress=build('div',{class:'paper'});progress.append(build('h3',{},'📊 학생 제출 현황'));for(let i=1;i<=5;i++){const name='학생 '+i;const s=state.answers[name];const row=build('div',{class:'result'});row.append(build('span',{},name),build('strong',{},s===undefined?'대기 중':s===state.mission.correct?'✅ 정답':'↩ 다시 배우기'));progress.append(row)}el.append(progress);
+  const tools=build('div',{class:'paper'});tools.append(build('h3',{},'🌙 문코인 지급 (가상 학생 테스트 전용)'));
+  const who=build('select',{class:'field'});for(let i=1;i<=5;i++)who.append(build('option',{},'학생 '+i));tools.append(who);
+  const give=build('button',{class:'secondary'},'테스트 문코인 +50 MC');give.onclick=()=>{state.coins[who.value]=coinsOf(who.value)+50;save();renderMission();updateCoin();alert(who.value+'에게 50 MC를 지급했습니다. (이 브라우저에서만 적용)')};tools.append(give,build('p',{},'실제 교사 권한 인증과 학급 동기화는 추후 서버 연결이 필요합니다.'));el.append(tools)
+ }else{
+  const name=actorName(),ans=state.answers[name];let card=build('div',{class:'paper'});let row=build('div',{class:'row'});row.append(build('span',{class:'chip'},'미션 • 도전 1'),build('span',{class:'chip'},`✨ ${state.xp[name]||0} XP`));card.append(row,build('h2',{style:'margin-top:13px'},state.mission.q));
+  const choices=[];state.mission.options.forEach((v,i)=>{const l=build('label',{class:'option'});const r=build('input',{type:'radio',name:'answer',value:String(i)});if(ans===i)r.checked=true;if(ans!==undefined)r.disabled=true;l.append(r,build('span',{},`${i+1}. ${v}`));card.append(l);choices.push(r)});
+  if(ans===undefined){const b=build('button',{class:'primary'},'🎁 미션 제출하기');b.onclick=()=>{const n=choices.findIndex(x=>x.checked);if(n<0)return alert('정답을 선택해 주세요.');state.answers[name]=n;if(n===state.mission.correct&&!state.rewards[name+'|'+state.mission.id]){state.xp[name]=(state.xp[name]||0)+20;state.coins[name]=coinsOf(name)+20;state.rewards[name+'|'+state.mission.id]=true;}save();updateCoin();renderMission()};card.append(b)}else{const msg=ans===state.mission.correct?'🎉 정답! 20 XP + 문코인 20 MC 획득!':'💡 제출했어요. 다음엔 더 잘할 수 있어요!';card.append(build('p',{style:'font-weight:900;margin-top:15px'},msg))}
+  el.append(card,build('p',{},'이 버전에서는 하나의 브라우저에서 5명의 가상 학생을 바꾸어 체험할 수 있어요.'))
  }
 }
-$("role").onchange=()=>{
- const teacher=$("role").value==="teacher";
- $("teacher").hidden=!teacher;
- $("student").hidden=teacher;
- $("notice").textContent="";
-};
-$("publish").onclick=()=>{
- const q=$("question").value.trim();
- const opts=[0,1,2,3].map(i=>$("opt"+i).value.trim());
- if(!q||opts.some(x=>!x)){
-  alert("문제와 선택지 4개를 모두 입력해 주세요.");
-  return;
+function renderAvatar(){
+ const el=$('#avatar');el.replaceChildren();const name=actorName(),av=currentAvatar();
+ el.append(build('h2',{},'🎒 나의 옷장'),build('p',{},`${nickname()}의 장착 아이템입니다. 이미 보유한 아이템은 언제든 무료로 바꿀 수 있어요.`));
+ const card=build('div',{class:'paper'}),preview=build('canvas',{id:'avatarPreview',width:'116',height:'132'});card.append(preview);el.append(card);drawPreview(preview,av);
+ for(const key of ['hair','hairColor','face','cloth','acc']){
+  const group=build('div',{class:'paper'});group.append(build('h3',{},({hair:'헤어스타일',hairColor:'머리색',face:'표정',cloth:'의상',acc:'액세서리'})[key]));
+  const owned=(state.owned[name]||{})[key]||[av[key]];
+  for(const i of owned){const row=build('div',{class:'shopItem'});row.append(build('strong',{},itemLabels[key][i]));const b=build('button',{},av[key]===i?'✔ 장착 중':'장착하기');b.disabled=av[key]===i;b.onclick=()=>{state.avatars[name]={...currentAvatar(),[key]:i};save();renderAvatar();renderShop()};row.append(b);group.append(row)}el.append(group);
  }
- mission={q,opts,correct:Number($("correct").value)};
- answers={};
- save("cw2-mission",mission);
- save("cw2-answers",answers);
- renderMission();
- alert("새 학급 미션이 배포되었습니다!");
-};
-$("submit").onclick=()=>{
- const selected=document.querySelector('input[name="answer"]:checked');
- if(!selected){
-  $("notice").textContent="먼저 답을 선택해 주세요!";
-  return;
+ el.append(build('p',{},'🌙 더 많은 아이템은 마을의 미용실·의상실·소품상점에서 구매하세요.'));
+ $('#avatarSummary').textContent=`${nickname()} · ${styles[av.hair]} · 🌙 ${coinsOf(name)} MC`;
+}
+function renderShop(){
+ const el=$('#shop');el.replaceChildren();const name=actorName();
+ el.append(build('h2',{},'🛍️ 꿈별마을 상점'),build('p',{},'마을의 가게에 방문하면 문코인으로 꾸미기 아이템을 살 수 있어요. 구매한 아이템은 영구 보유합니다.'));
+ const categories=shops[currentMap];
+ if(!categories){el.append(build('div',{class:'note'},'마을의 💇 미용실, 👗 의상실, 🎀 소품상점 중 한 곳에 입장해 주세요.'));return}
+ el.append(build('div',{class:'note'},`현재 잔액 🌙 ${coinsOf(name)} MC · 이 화면의 구매는 체험용 브라우저 데이터에만 적용됩니다.`));
+ for(const key of categories){
+  const group=build('div',{class:'paper'});group.append(build('h3',{},({hair:'헤어스타일',hairColor:'머리 색상',face:'표정',cloth:'의상',acc:'액세서리'})[key]));
+  itemLabels[key].forEach((nameOfItem,i)=>{
+   const row=build('div',{class:'shopItem'}),price=i===0&&key==='acc'?0:prices[key]+(i>2?20:0);
+   const info=build('div');info.append(build('strong',{},nameOfItem),build('br'),build('small',{},price?'🌙 '+price+' MC':'기본 제공'));row.append(info);
+   const owned=owns(name,key,i),equipped=currentAvatar()[key]===i;
+   const btn=build('button',{},equipped?'✔ 장착 중':owned?'착용하기':price?'구매하기':'무료 받기');btn.disabled=equipped;
+   btn.onclick=()=>{
+    if(!owns(name,key,i)){
+     if(coinsOf(name)<price)return alert('문코인이 부족해요! 미션에 참여해서 모아보세요.');
+     if(price&&!confirm(`${nameOfItem}을(를) ${price} MC에 구매할까요?`))return;
+     state.coins[name]=coinsOf(name)-price;
+     if(!state.owned[name])state.owned[name]={};
+     if(!state.owned[name][key])state.owned[name][key]=[];
+     state.owned[name][key].push(i);
+    }
+    state.avatars[name]={...currentAvatar(),[key]:i};save();updateCoin();renderAvatar();renderShop();
+   };row.append(btn);group.append(row)
+  });el.append(group)
  }
- const name=$("studentName").value;
- const wasCorrect=answers[name]===mission.correct;
- const answer=Number(selected.value);
- answers[name]=answer;
- save("cw2-answers",answers);
- if(answer===mission.correct&&!wasCorrect){
-  xp+=20;
-  save("cw2-xp",xp);
-  $("xp").textContent=xp;
+}
+function openCreator(name){
+ const overlay=$('#creatorOverlay');overlay.classList.add('open');$('#newNickname').value=(state.profiles[name]||{}).nickname||'';
+ const opts={hair:styles,hairColor:itemLabels.hairColor,face:faces,cloth:itemLabels.cloth,acc:accessories};
+ for(const [key,labels] of Object.entries(opts)){
+  const select=$('#new'+key[0].toUpperCase()+key.slice(1));select.replaceChildren();
+  labels.forEach((t,i)=>select.append(build('option',{value:String(i)},t)));
+  select.value=String(currentAvatar()[key]);select.onchange=showCreatorPreview;
  }
- $("notice").textContent=answer===mission.correct?
-  "🎉 정답! 20 XP 획득 조건을 달성했어요!":
-  "답안이 저장되었어요. 다시 생각해봐요!";
- renderMission();
+ showCreatorPreview();$('#newNickname').focus();
+}
+function showCreatorPreview(){let av={};for(const key of ['hair','hairColor','face','cloth','acc'])av[key]=Number($('#new'+key[0].toUpperCase()+key.slice(1)).value)||0;drawPreview($('#creatorPreview'),av)}
+$('#createAvatar').onclick=()=>{
+ const name=actorName(),nick=$('#newNickname').value.trim();if(!nick)return alert('캐릭터 별명을 입력해 주세요.');
+ const avatar={};const owned={};
+ for(const key of ['hair','hairColor','face','cloth','acc']){
+  const i=Number($('#new'+key[0].toUpperCase()+key.slice(1)).value)||0;avatar[key]=i;owned[key]=[i];
+ }
+ if(avatar.acc!==0)owned.acc.push(0);
+ state.profiles[name]={nickname:nick,created:true};state.avatars[name]=avatar;state.owned[name]=owned;
+ if(!Number.isFinite(state.coins[name]))state.coins[name]=0;
+ save();$('#creatorOverlay').classList.remove('open');updateCoin();renderAvatar();renderShop();renderMission();
 };
-renderMission();
-draw();
+function drawPreview(c,av){const p=c.getContext('2d');p.imageSmoothingEnabled=false;p.fillStyle='#e6f2e6';p.fillRect(0,0,116,132);p.fillStyle='#c8dfcc';p.fillRect(0,109,116,23);// Render an avatar preview on an independent canvas
+ const temp=document.createElement('canvas');temp.width=100;temp.height=120;const t=temp.getContext('2d');
+ // keep renderer's context, but perform the sprite drawing via a dedicated helper
+ t.translate(50,104);t.scale(1.8,1.8);
+ function r(x,y,w,h,c){t.fillStyle=c;t.fillRect(x,y,w,h)}
+ r(-8,-8,7,7,'#67667e');r(2,-8,7,7,'#67667e');r(-11,-22,22,15,clothColors[av.cloth]);r(-14,-20,4,10,'#f3c6a9');r(10,-20,4,10,'#f3c6a9');r(-11,-38,22,19,'#f5d5b7');let hc=hairColors[av.hairColor];r(-12,-39,24,9,hc);
+ if(av.hair===0){r(-13,-36,5,18,hc);r(8,-36,5,18,hc)}if(av.hair===1){r(-15,-42,8,9,hc);r(5,-43,9,9,hc);r(-5,-45,12,7,hc)}if(av.hair===2){r(-17,-31,6,12,hc);r(11,-31,6,12,hc);r(-13,-44,26,9,hc)}if(av.hair===3){r(-12,-40,24,5,hc);r(-8,-44,16,5,hc)}if(av.hair===4){r(-15,-37,6,27,hc);r(9,-37,6,27,hc);r(-10,-45,20,9,hc)}r(-6,-30,3,3,'#514e65');r(4,-30,3,3,'#514e65');if(av.face===1)r(-1,-23,5,2,'#c87f7b');if(av.face===2){r(-6,-30,3,4,'#fff');r(4,-30,3,4,'#fff')}if(av.acc===1){r(7,-42,10,4,'#e579a5');r(11,-45,4,10,'#e579a5')}if(av.acc===2){t.strokeStyle='#4b617c';t.lineWidth=1.5;t.strokeRect(-10,-33,8,7);t.strokeRect(2,-33,8,7)}if(av.acc===3){r(-14,-46,28,8,'#6d85c4');r(-17,-39,34,4,'#6d85c4')}
+ p.drawImage(temp,12,11,92,111)
+}
+const pressed=new Set();const dirs={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right',w:'up',a:'left',s:'down',d:'right'};
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;const k=dirs[e.key]||dirs[e.key.toLowerCase()];if(k){pressed.add(k);e.preventDefault()}if(e.key.toLowerCase()==='e')interact()});document.addEventListener('keyup',e=>{let k=dirs[e.key]||dirs[e.key.toLowerCase()];if(k)pressed.delete(k)});window.addEventListener('blur',()=>pressed.clear());
+document.querySelectorAll('[data-key]').forEach(b=>{let d=b.dataset.key;b.addEventListener('pointerdown',e=>{e.preventDefault();pressed.add(d);b.setPointerCapture(e.pointerId)});for(let ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>pressed.delete(d))});
+function solid(x,y){if(x<1||x>MW-2||y<3||y>MH-2)return true;const tx=Math.floor(x),ty=Math.floor(y);if(currentMap==='classroom'){return [5,10,15].some(a=>Math.abs(x-(a+.5))<.78&&[7,10].some(b=>Math.abs(y-(b+.5))<.54))}return false}
+let last=performance.now();function frame(now){const dt=Math.min((now-last)/1000,.04);last=now;let dx=(pressed.has('right')?1:0)-(pressed.has('left')?1:0),dy=(pressed.has('down')?1:0)-(pressed.has('up')?1:0);const n=Math.hypot(dx,dy)||1;dx=dx/n*dt*3.8;dy=dy/n*dt*3.8;if(!solid(player.x+dx,player.y))player.x+=dx;if(!solid(player.x,player.y+dy))player.y+=dy;
+ ctx.clearRect(0,0,width,height);const camX=width/2-player.x*TILE,camY=height/2-player.y*TILE;ctx.save();ctx.translate(Math.round(camX),Math.round(camY));worldBase();
+ // static NPC sprites
+ if(currentMap==='plaza')[[8,10,'안내요정',1],[13,5,'마을친구',2]].forEach(([x,y,name,i])=>{let a={hair:i,face:1,hairColor:i,cloth:i,acc:0};sprite((x+.5)*TILE,(y+.75)*TILE,a,now/280+i,true);label((x+.5)*TILE,(y+.75)*TILE,name)});
+ const current=currentAvatar();sprite((player.x+.5)*TILE,(player.y+.7)*TILE,current,dx||dy?now/130:0);label((player.x+.5)*TILE,(player.y+.7)*TILE,actorName(),'#fff8ee');
+ ctx.restore();const near=nearby();$('#interact').textContent=near?'🚪 '+(near.to==='plaza'?'나가기':'입장'):'✨ 대화 E';requestAnimationFrame(frame)}
+renderQuick();renderWorld();renderMission();renderAvatar();goMap('plaza');ensureProfile();requestAnimationFrame(frame);
 </script>
 </body>
 </html>
