@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CLASS WORLD v0.6.1 | 꿈별학교 디지털 교실</title>
+<title>CLASS WORLD v0.7.1 | 꿈별학교 햇살교실</title>
 <style>
 :root{--ink:#3b4264;--sub:#76829f;--blue:#5d85d8;--paper:#fffefb;--line:#dfdfe8}
 *{box-sizing:border-box}body{margin:0;background:#e8eef8;color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}
@@ -137,6 +137,106 @@ canvas#game{image-rendering:auto} /* keep small Korean glyphs smooth instead of 
 #v05Mini{image-rendering:auto;width:172px;height:116px;border:1px solid #d8dce2;border-radius:8px}
 .cw06Float{max-width:58%;font-size:11px}
 @media(max-width:540px){#v05Mini{width:120px;height:81px}.v05MiniLabel{font-size:9px}.v05Legend{font-size:8px}.cw06Float{top:8px;max-width:58%;font-size:9px}}
+
+/* v0.7 Sunshine — warm wood, forest-green and gold game design */
+:root{--ink:#293e35;--sub:#677668;--blue:#597e5d;--paper:#fff9ec;--line:#d9cbaa}
+html,body,button,input,select,textarea{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans CJK KR",system-ui,sans-serif!important}
+body{background:radial-gradient(ellipse at 15% 2%,#f1dfb9,#e3dcc7 56%,#d2dece);color:#273e35}
+header{max-width:1660px;padding:13px 20px 10px}
+.logo{background:linear-gradient(135deg,#253f33,#537758);box-shadow:0 4px 0 #a77946;border:2px solid #c9a46b;border-radius:12px;color:#f7d58a}
+.eyebrow{color:#72846d;letter-spacing:1.3px}
+h1{color:#233d31;font-family:Georgia,"Malgun Gothic",serif;font-size:22px}
+h1 span{color:#967142!important}
+.coins{color:#7b511f;border:1px solid #d5ae65;box-shadow:0 2px 5px #99652d19;background:linear-gradient(#fff4d3,#f4e2b5)}
+.pill{border-color:#c8ccb5;background:#fffaf0;color:#385344;font-weight:800}
+.layout{max-width:1660px;grid-template-columns:minmax(0,1fr) 325px;gap:14px}
+.gameShell{border:2px solid #e9d7b3;background:#213d30;box-shadow:0 12px 45px #2e4b3544;border-radius:16px}
+.gameTop{background:#253d32;color:#fff5d8;border-bottom:2px solid #c9a36a;padding:10px 15px}
+.zone{color:#f8eaca}.status{color:#e4cda4}
+.stage{background:#d1ba8d;border-radius:0;min-height:470px;height:min(78vh,790px)}
+.stage::after{box-shadow:inset 0 3px 24px #20160e36,inset 0 -35px 55px #1b24182d}
+canvas#game{image-rendering:auto}
+.floatTop{background:#243e32de;color:#fff9e6;border:1px solid #cba56b;box-shadow:0 3px 12px #1f2c2188}
+.floatBottom{background:#263e35bd;color:#fff6da}
+.actionBtn,.pad button{color:#213e34;border:1px solid #d1b47a;background:#fff6e7df;box-shadow:0 3px 0 #705c3855}
+.quick{background:#1c382d;border-top:1px solid #c9a46b;gap:5px;padding:9px}
+.quick button{background:#345243;color:#efe9cc;border:1px solid #58745f;font-size:11px;border-radius:8px;padding:8px 9px}
+.quick button:hover{background:#466b56;color:#fff6d9}.quick button.active{background:#b88b4a;color:#fffdf1;border-color:#f0c989}
+.v05Toolbar{background:#f2e8d2;border-top:1px solid #d5bf96;color:#426049}
+.v05Toolbar button{border:1px solid #c3bc9a;background:#fffaf0;color:#41634d}
+.v05Welcome{color:#496548}
+.side{background:#f8f3e7;border:2px solid #ceb68e;border-radius:16px;box-shadow:0 12px 45px #2e4b352a;padding:14px}
+.sideTitle{background:#263f32;border:1px solid #b8975c;color:#fff3d4;border-radius:10px;padding:13px;margin:-1px -1px 11px}
+.sideTitle strong{color:#fff3d4}.sideTitle .tiny{color:#dbb97c}
+.tabs{background:#e4e7d9;border:1px solid #d6d7c5;padding:4px;gap:3px}
+.tabs button{color:#52695b;font-size:11px}.tabs button.active{background:#fffaf0;color:#2d6044;box-shadow:0 2px 5px #46614421}
+.paper{background:#fffdf8;border:1px solid #dcd7c3;box-shadow:0 2px 5px #b7ac8722}
+h2,h3{color:#2b4f3c}.field{color:#334939;border:1px solid #cbd5c8;background:#fffef9}
+.primary{background:linear-gradient(#567b5b,#395d43);border-bottom-color:#264633;color:#fff8de}
+.secondary{color:#3f604b;background:#e8efe3}
+.tabs [data-tab="classroom"].active{background:#315b45;color:#fff}
+.tabs [data-tab="classroom"]{background:#e6efdf;color:#315b45}
+.cw06Buttons button{background:#e3eadd;color:#385a41}
+.cw06Buttons button.main{background:linear-gradient(#638666,#3c6547);color:#fff}
+.cw06Status{background:#e6ecd9;color:#517044}
+.cw06Mini{color:#62785e}
+.cw06Ribbon{background:#edf1e3;border-color:#cbdcbe;color:#456044}.cw06Ribbon strong{color:#31563e}
+.cw06Status.live{background:#e0f1d9;color:#327045}.cw06Stat strong{color:#355b45}
+.cw06Float{top:9px;border:1px solid #d8b673;background:#284435e8;color:#fff1cf;box-shadow:0 5px 16px #261b1259}
+.cw06MapNotice{background:#243c32eb;color:#fff7df;border:1px solid #c8ab72;max-width:180px}
+.v05MiniWrap{top:62px;right:10px;padding:7px;border:2px solid #d1aa70;border-radius:10px;background:#243e32f5;box-shadow:0 7px 20px #1b291e77;pointer-events:none}
+.v05MiniLabel,.v05Legend{color:#f8eccd}
+#v05Mini{border:1px solid #bb965f;border-radius:6px;width:185px;height:122px}
+.note,.cw06TeacherWarning{background:#f7ebcb;color:#85602b}
+.footnote{color:#586d5e}
+.dialog{background:#fbf5e8;border:3px solid #cfad73}.dialog h2{color:#416c4c}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{min-height:290px}}
+@media(max-width:540px){header{padding:8px 10px}.layout{padding:0 7px 13px;gap:8px}h1{font-size:16px}.stage{height:60vh;min-height:390px}.v05MiniWrap{top:55px;right:7px;padding:3px}#v05Mini{width:116px;height:77px}.v05Legend,.v05MiniLabel{font-size:8px}.cw06Float{display:none}.floatTop{display:none}.side{padding:11px}.quick button{padding:6px 7px;font-size:10px}}
+
+
+/* v0.7.1 — intentional game HUD rhythm, sharper readable text, touch targets */
+:root{--ink:#24382d;--sub:#637264;--blue:#4c7755;--paper:#fff9ed;--line:#d0bea2}
+body{background:linear-gradient(145deg,#ebddc2 0%,#d5dece 60%,#d0dbc8 100%)}
+header{border-bottom:1px solid #c7b69555;margin-bottom:7px}
+.brand .eyebrow{letter-spacing:1.5px;font-weight:800;color:#466a50}
+.gameShell{border:3px solid #b38e5e;border-radius:15px;box-shadow:0 3px 0 #5b4635,0 15px 28px #253a2844}
+.gameTop{background:linear-gradient(105deg,#203b2b 0%,#2d5241 72%,#284435 100%)}
+.gameTop .status{font-weight:700;letter-spacing:.15px}
+.stage{background:#d3bc92}
+.quick{gap:5px;align-items:center;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#a48758 transparent}
+.quick button{white-space:nowrap;transition:background .13s ease,transform .13s ease}
+.quick button.active{box-shadow:inset 0 2px 0 #f6d6a0}
+.v05MiniWrap{border:1px solid #c5a76b;background:linear-gradient(145deg,#254434,#1a332a);padding:9px;box-shadow:0 7px 18px #14231977}
+.v05MiniLabel{font-size:12px;letter-spacing:.1px}
+#v05Mini{width:192px;height:128px;border-color:#d4b47b}
+.v05Legend{margin-top:4px;font-size:9px}
+.side{background:linear-gradient(180deg,#f8f0dc,#fbf9ef 42%);border-color:#bca078;box-shadow:0 3px 0 #987c53,0 12px 24px #283c2830}
+.sideTitle{background:linear-gradient(105deg,#203e2f,#385d42);border-color:#c9aa73;margin-bottom:13px}
+.tabs{border:1px solid #cfcbb4;background:#e4e6d7}
+.tabs button{min-height:38px}
+.panel h2{font-size:17px;margin:1px 0 10px;line-height:1.45}
+.paper{background:#fffdf5;box-shadow:0 2px 0 #d0c5a845;border-color:#e4dcc7}
+.cw06Ribbon{background:#eff1e3;border-color:#c6d2b4}
+.cw06Status.live{font-weight:900}
+.cw06Stat{border:1px solid #d7d8c1;border-radius:10px;background:#fbfcf7}
+.cw06Stat strong{font-size:18px}
+.cw06Buttons button{min-height:43px;font-size:12px;box-shadow:0 2px 0 #a3af963b}
+.cw06Seat{min-height:30px;font-weight:800;border-color:#dddbcb}
+.cw06Seat.done{background:#daeddd;border-color:#96b6a0;color:#2e6947}
+.field:focus-visible,.quick button:focus-visible,.tabs button:focus-visible,.primary:focus-visible{outline:3px solid #c3a56c;outline-offset:2px}
+.cw06MapNotice{background:#233d31e8;border:1px solid #bfa773;bottom:113px;right:11px;max-width:205px;font-weight:700}
+.cw06Float{box-shadow:0 3px 7px #23382966}
+.cw071Hover{position:absolute;z-index:8;pointer-events:none;max-width:226px;padding:8px 10px;border:1px solid #d2b57e;border-radius:9px;background:#1f3b2ff2;color:#fff3d6;font-size:11px;line-height:1.45;box-shadow:0 5px 18px #12251b77;display:none;transform:translate(-50%,-100%)}
+.cw071Hover strong{display:block;color:#f6d797;font-size:12px}
+.cw071MapToggle{font-size:10px;border:1px solid #c5a46d;background:#3e614c;color:#fff1d1;border-radius:6px;font-weight:900;padding:5px 7px;cursor:pointer;pointer-events:auto;display:none}
+.v05MiniWrap.cw071Collapsed #v05Mini,.v05MiniWrap.cw071Collapsed .v05MiniLabel,.v05MiniWrap.cw071Collapsed .v05Legend{display:none!important}
+.v05MiniWrap.cw071Collapsed{padding:5px;background:#234331ee}
+@media(max-width:600px){.cw071MapToggle{display:block}.v05MiniWrap:not(.cw071Collapsed) .cw071MapToggle{margin-bottom:3px}}
+.cw071Badge{display:flex;align-items:center;gap:7px;justify-content:space-between;padding:7px 10px;background:#e8eadb;border:1px solid #cad0b6;border-radius:8px;color:#335c42;font-size:11px;font-weight:850;margin:5px 0 12px}
+.cw071Badge span:last-child{color:#8a6139}
+@media(max-width:1000px){.layout{grid-template-columns:minmax(0,1fr)}.side{margin-top:1px}}
+@media(max-width:600px){header{gap:8px;flex-wrap:wrap}.headerControls{flex-wrap:wrap}.gameTop .status{font-size:10px}.cw06MapNotice{display:none!important}.stage{min-height:375px}.quick{flex-wrap:nowrap}.quick button{font-size:11px;min-width:max-content}#v05Mini{width:124px;height:82px}.v05MiniWrap{padding:4px;top:52px}.v05Legend{display:none}.cw071Hover{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -1307,6 +1407,341 @@ cw05MiniDraw=function(){
 document.title='CLASS WORLD v0.6.1 | 꿈별학교 디지털 교실';
 document.querySelector('.sideTitle .tiny').textContent='CLASS WORLD v0.6.1';
 window.CW061_TEST={scalePlayer:1.34,scaleNPC:1.05,landmarks:Object.keys(CW061_MAP_LABELS),font:'Malgun Gothic',mapPaint:cw05MiniDraw};
+
+
+/* CLASS WORLD v0.7 Sunshine visual edition — original Canvas art.
+ * All v0.6.1 gameplay methods and save keys are preserved.
+ * Concept image #2 is the aesthetic reference, NOT a runtime background. */
+const CW07={version:'v0.7.1-sunshine-polish', art:null, rendered:0};
+function cw07CreateArt(){
+ const c=document.createElement('canvas');c.width=MW*TILE;c.height=MH*TILE;
+ const g=c.getContext('2d');g.imageSmoothingEnabled=true;
+ const W=c.width,H=c.height;
+ function fill(x,y,w,h,col){g.fillStyle=col;g.fillRect(x,y,w,h)}
+ function rr(x,y,w,h,r,col){g.beginPath();g.roundRect(x,y,w,h,r);g.fillStyle=col;g.fill()}
+ function grad(x,y,w,h,a,b,horizontal=false){const z=horizontal?g.createLinearGradient(x,y,x+w,y):g.createLinearGradient(x,y,x,y+h);z.addColorStop(0,a);z.addColorStop(1,b);g.fillStyle=z;g.fillRect(x,y,w,h)}
+ function line(x,y,X,Y,col,weight=1){g.beginPath();g.moveTo(x,y);g.lineTo(X,Y);g.strokeStyle=col;g.lineWidth=weight;g.stroke()}
+ function ellipse(x,y,rx,ry,col){g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fillStyle=col;g.fill()}
+ function text(s,x,y,size=11,col='#4c5443',align='center',weight=700){g.font=weight+' '+size+'px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';g.fillStyle=col;g.textAlign=align;g.textBaseline='middle';g.fillText(s,x,y)}
+ function shadow(blur=12,x=0,y=5,col='#25170c58'){g.shadowColor=col;g.shadowBlur=blur;g.shadowOffsetX=x;g.shadowOffsetY=y}
+ // Matte timber walls, top crown moulding, architectural depth
+ grad(0,0,W,H,'#f1e3ce','#c7a37a');
+ grad(0,0,W,204,'#ece1ce','#dfccae');
+ fill(0,0,W,14,'#534432');fill(0,13,W,7,'#a8895f');
+ for(let i=0;i<18;i++){const x=i*62;line(x,26,x,184,'#d6c09c',1);line(x+1,26,x+1,184,'#f4eadc',1)}
+ fill(0,180,W,10,'#af865d');fill(0,190,W,9,'#704c30');fill(0,199,W,6,'#dfb884');
+ // Sunlit oak parquet: lightly staggered boards, hairline joints and a natural finish.
+ grad(0,205,W,H-205,'#e0c49a','#baa07b');
+ for(let y=205,row=0;y<H+32;y+=32,row++)for(let x=-58+(row%2)*55,col=0;x<W+100;x+=110,col++){
+  const v=(row*11+col*17)%7;
+  fill(x+1,y+1,108,30,['#d9be94','#dfc49c','#d8b98c','#dcc199','#d4b48b','#e2caa3','#d7ba91'][v]);
+  line(x+3,y+3,x+104,y+3,'#f7e6c363',1);line(x+2,y+30,x+106,y+30,'#916c4c43',1);
+  line(x+108,y+2,x+108,y+29,'#9c765448',1);
+  if((row*3+col*5)%9===0){ellipse(x+39,y+16,10,2,'#a9835940');line(x+31,y+16,x+48,y+16,'#9a775432',1)}
+ }
+ // Shallow floor horizon shading; sun enters from upper-left, not an all-over wash.
+ const warm=g.createLinearGradient(0,200,W,H);warm.addColorStop(0,'#ffe9b12a');warm.addColorStop(.55,'#ffffff00');warm.addColorStop(1,'#62462d18');
+ fill(0,205,W,H-205,warm);
+ // Sunlit glass windows, richly colored frames and skyline.
+ function windowArt(x,y,w,h){
+  shadow(10,3,6);rr(x-8,y-8,w+16,h+15,7,'#634e39');g.shadowColor='transparent';
+  rr(x-4,y-5,w+8,h+6,5,'#b88a57');grad(x,y,w,h,'#a2c8c4','#f6dca1');
+  for(let i=0;i<5;i++){const xx=x+i*37;g.fillStyle=i%2?'#718d6c':'#8d9c64';g.beginPath();g.arc(xx+9,y+h-13,31,Math.PI,2*Math.PI);g.fill()}
+  fill(x+w*.48,y,9,h,'#f9edd8');fill(x,y+h*.48,w,8,'#f9edd8');
+  fill(x-7,y+h-3,w+14,10,'#916642');fill(x-10,y+h+6,w+20,5,'#d9b58a');
+  line(x+6,y+5,x+w*.43,y+5,'#ffffffb5',3);
+ }
+ windowArt(35,48,174,103);windowArt(801,48,174,103);
+ // Layered sunbeams fall across both furniture and aisle, not a pink wash.
+ for(let i=0;i<4;i++){
+  const x=49+i*39;g.beginPath();g.moveTo(x,154);g.lineTo(x+20,154);g.lineTo(x+240+i*24,H);g.lineTo(x+105+i*22,H);g.closePath();
+  const shine=g.createLinearGradient(x,158,x+200,H);shine.addColorStop(0,'#fff9dc57');shine.addColorStop(1,'#f9df9f12');g.fillStyle=shine;g.fill();
+ }
+ // Architectural trim and class crest
+ fill(7,203,10,H-203,'#876441');fill(W-18,203,10,H-203,'#876441');
+ fill(13,203,5,H-203,'#f0d2a0');fill(W-10,203,4,H-203,'#e0ba85');
+ rr(W/2-33,20,66,33,8,'#876f4a');rr(W/2-29,21,58,27,7,'#264a39');
+ text('✦  CW  ✦',W/2,34,13,'#f6d99e');
+ // Blackboard in deep forest green, glossy frame and chalk tray
+ shadow(13,0,8);rr(331,64,347,133,9,'#644631');g.shadowColor='transparent';
+ rr(338,70,334,117,6,'#a87846');rr(343,75,324,106,4,'#1c4935');
+ grad(347,79,316,97,'#315d47','#204a39');
+ fill(360,83,2,90,'#62836a66');fill(343,182,324,8,'#785333');fill(354,184,302,4,'#cd9a5a');
+ rr(374,181,27,5,2,'#f8edd0');rr(414,183,22,4,2,'#d5b9b0');
+ text('✧ 오늘의 배움 ✧',505,99,12,'#eacfa2');
+ // chalk board title painted dynamically to allow teacher editing
+ // dynamic board objective is painted here in the main render, never duplicated
+ // Library columns and rolled-up school posters
+ function shelves(x){
+  shadow(12,3,7);rr(x,48,80,137,4,'#725036');g.shadowColor='transparent';rr(x+6,55,68,128,3,'#c19867');
+  for(let j=0;j<4;j++){fill(x+8,83+j*31,64,7,'#7b5637');for(let k=0;k<7;k++){
+    const pw=4+(k*2+j)%5,px=x+11+k*8;rr(px,65+j*31+(k%3)*2,pw,17+(k%3)*3,1,['#3b6650','#bb744d','#c2a15f','#557b7e','#766a56'][((k+j*3)%5)]);
+    fill(px+1,72+j*31+(k%3)*2,pw-2,1,'#f7deb6a6');}}
+  rr(x-5,179,90,7,2,'#65472e');
+ }
+ shelves(230);shelves(705);
+ // hanging clock: cream dial, dark hands
+ shadow(6);ellipse(775,45,19,19,'#816545');g.shadowColor='transparent';ellipse(775,45,15,15,'#fbf3d8');line(775,45,775,36,'#735739',2);line(775,45,784,48,'#735739',2);ellipse(775,45,2,2,'#68472d');
+ // Teacher: tiny school RPG NPC behind desk, tucked into podium
+ ellipse(507,243,38,10,'#4f382844');
+ rr(490,213,34,46,9,'#496f52');rr(496,219,20,30,4,'#faf3d5');
+ ellipse(507,199,22,23,'#613b28');ellipse(507,201,17,19,'#f1c6a4');
+ ellipse(495,184,12,13,'#4f3124');ellipse(513,180,18,11,'#593827');
+ ellipse(500,200,1.6,2.5,'#4d3429');ellipse(512,200,1.6,2.5,'#4d3429');
+ line(502,208,508,209,'#9f6f59',1.6);
+ // Teacher's podium ahead of avatar
+ shadow(14,0,9);rr(455,228,104,67,5,'#735034');g.shadowColor='transparent';
+ grad(458,234,98,56,'#bd8953','#81572f');
+ for(const xx of [468,526]){rr(xx,244,24,34,2,'#a77547');rr(xx+4,247,16,25,2,'#cb955b')}
+ rr(447,222,120,15,5,'#d2a46b');fill(449,234,115,4,'#714c31');
+ rr(476,204,48,27,4,'#3e5246');rr(481,208,38,19,2,'#89b3a4');fill(479,232,44,4,'#2e3e39');
+ rr(542,214,14,5,2,'#e6e4d0');rr(545,209,11,5,1,'#567e62');
+ text('✦',508,270,20,'#edd199');
+ // Side cabinet panels and posters, richer oak color with shading
+ function cabinet(x){shadow(9,0,5);rr(x,226,75,200,5,'#775134');g.shadowColor='transparent';
+  grad(x+5,232,65,188,'#bd8c58','#8e6540');for(let i=0;i<4;i++){rr(x+12,244+i*42,51,35,3,'#d7ae76');
+    rr(x+16,248+i*42,43,26,3,'#ae7c4d');ellipse(x+37,269+i*42,3,2,'#e8c48d')}
+  rr(x+4,221,67,10,2,'#d6a76b')}
+ cabinet(21);cabinet(912);
+ // Greenery with foliage highlights, warm terracotta pots.
+ function plant(x,y,s=1){g.save();g.translate(x,y);g.scale(s,s);ellipse(0,11,32,9,'#362b2040');rr(-16,-1,32,22,3,'#bf7550');
+  rr(-18,-4,36,7,2,'#d79567');fill(-12,12,25,2,'#e7a274');for(let i=0;i<9;i++){
+    const a=i*Math.PI*2/9,px=Math.cos(a)*20,py=-17+Math.sin(a)*10;
+    line(0,2,px,py-18,'#4b6846',2);g.save();g.translate(px,py-19);g.rotate(a*.7);ellipse(0,0,9,18,i%2?'#548158':'#326648');ellipse(-2,-4,3,9,'#9cb37b65');g.restore()}
+  g.restore()}
+ plant(95,555,1.1);plant(914,573,1.15);plant(85,176,.53);plant(934,178,.57);
+ // Decorative bulletin board, floor mat and wall banners
+ rr(110,47,95,108,4,'#997751');rr(115,53,85,96,2,'#d2af7b');
+ for(let i=0;i<3;i++){rr(122,61+i*27,71,21,2,['#fff4d7','#e0e9d8','#f1d5b8'][i]);
+   line(132,70+i*27,182,70+i*27,'#bea781',2);line(132,76+i*27,175,76+i*27,'#c2b39c',1)}
+ rr(810,47,92,108,4,'#937151');rr(814,51,84,101,3,'#dbb47d');
+ for(let i=0;i<4;i++){rr(821,60+i*21,68,14,2,['#f6d9a8','#e8e1cb','#e4c68c','#e6eccf'][i]);line(830,66+i*21,872,66+i*21,'#bda37f',2)}
+ // Runner gives a deeper central aisle, semi-transparent rather than flat pink stripe
+ shadow(7,2,5);rr(476,300,64,328,12,'#936f4b88');g.shadowColor='transparent';rr(480,305,55,316,10,'#d9bf91');
+ line(484,313,484,612,'#fbebc780',2);line(530,313,530,612,'#986f4f88',2);
+ for(let y=335;y<605;y+=52){text('✦',508,y,13,'#98724d')}
+ // Chair and desk furniture with genuine 2.5D perspective and coordinated shadows.
+ function chairDesk(seat){const x=seat.x*TILE,y=seat.y*TILE,i=seat.number;g.save();
+  // Warm ground shadow anchors each desk to the floor.
+  ellipse(x+6,y+34,50,9,'#412f2050');
+  // Chair: tubular metal frame, upholstered back and curved top.
+  fill(x-28,y+15,5,26,'#4b4c41');fill(x+23,y+15,5,26,'#4b4c41');
+  rr(x-29,y+4,58,27,7,'#3b594d');rr(x-25,y+4,50,22,6,'#567566');
+  rr(x-22,y+8,44,11,4,'#7a917a');fill(x-24,y+25,48,4,'#b2ab8a');
+  // Desk legs are visible under the thick timber top.
+  fill(x-37,y+5,6,29,'#574a3b');fill(x+30,y+5,6,29,'#574a3b');
+  fill(x-35,y+29,5,6,'#3a3b36');fill(x+31,y+29,5,6,'#3a3b36');
+  // 3/4 perspective: a sloping quadrilateral tabletop with a real front fascia.
+  shadow(6,1,3,'#25170850');
+  g.fillStyle='#6f5037';g.beginPath();g.moveTo(x-42,y-19);g.lineTo(x+38,y-19);g.lineTo(x+43,y+9);g.lineTo(x-45,y+9);g.closePath();g.fill();
+  g.shadowColor='transparent';
+  g.fillStyle='#a97649';g.beginPath();g.moveTo(x-42,y-27);g.lineTo(x+38,y-27);g.lineTo(x+43,y+4);g.lineTo(x-45,y+4);g.closePath();g.fill();
+  const wood=g.createLinearGradient(x,y-26,x,y+3);wood.addColorStop(0,'#edc88e');wood.addColorStop(.66,'#daa66b');wood.addColorStop(1,'#bd8752');
+  g.fillStyle=wood;g.beginPath();g.moveTo(x-38,y-24);g.lineTo(x+35,y-24);g.lineTo(x+39,y+1);g.lineTo(x-41,y+1);g.closePath();g.fill();
+  line(x-34,y-21,x+33,y-21,'#fff0c3af',1.6);line(x-39,y-17,x-42,y-1,'#f5d3a563',1);
+  fill(x-43,y+6,84,4,'#835b39');
+  // Vary objects between desks so the classroom doesn't look copy-pasted.
+  if(i%4===0){rr(x-29,y-18,33,18,2,'#f1e6ce');line(x-13,y-18,x-13,y,'#b9a889',1);
+   line(x-25,y-13,x-17,y-13,'#b4a78b',1);line(x-9,y-12,x,y-12,'#b4a78b',1)}
+  else{rr(x-27,y-18,28,20,2,['#345746','#385c6b','#7a5a4d','#4b6653'][i%4]);
+   rr(x-24,y-16,21,14,1,['#4d775d','#537c8c','#9f7962','#759578'][i%4]);line(x-20,y-14,x-8,y-14,'#dbcdaa',1)}
+  // Pencil and workbook create scale cues.
+  rr(x+14,y-17,15,18,2,['#c09357','#355c4a','#668099','#a5684d'][i%4]);line(x+17,y-12,x+26,y-12,'#e2c797',1);
+  line(x+31,y-18,x+33,y-1,'#704b32',2);ellipse(x+31,y-18,2,2,'#ecc275');
+  // The seat number belongs to the front apron, never on the character's face.
+  text(String(i).padStart(2,'0'),x,y+15,9,'#fff0ce');
+  g.restore();}
+ for(const seat of cw06Seats)chairDesk(seat);
+ // Door, raised threshold, small signs, and classroom access route
+ shadow(9,0,4);rr(444,613,126,77,8,'#5d4838');g.shadowColor='transparent';rr(455,621,104,68,4,'#af7e52');
+ rr(460,626,94,55,3,'#795c40');rr(467,630,80,41,2,'#bc9872');
+ rr(481,634,53,20,2,'#305846');text('광장',508,644,12,'#fff2d6');
+ ellipse(539,663,3,3,'#e7cc8c');
+ // gentle vignette
+ const vign=g.createRadialGradient(W/2,H/2,200,W/2,H/2,710);vign.addColorStop(0,'#35251d00');vign.addColorStop(1,'#402c2429');
+ fill(0,0,W,H,vign); // canvas gradient is a fillStyle
+ return c;
+}
+function cw07Ensure(){if(!CW07.art)CW07.art=cw07CreateArt()}
+const cw07PriorWorldBase=worldBase;
+worldBase=function(){if(currentMap!=='classroom')return cw07PriorWorldBase();
+ cw07Ensure();ctx.drawImage(CW07.art,0,0);
+ // Dynamic teacher-controlled classroom board: no save key or game rules changed
+ ctx.save();
+ ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fffbdd';ctx.font='bold 18px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+ const title=cw06Lesson.title.trim()||'오늘의 수업';
+ ctx.fillText(title.length>21?title.slice(0,20)+'…':title,505,130,293);
+ ctx.fillStyle='#d7e8d0';ctx.font='bold 11px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+ const objective=cw06Lesson.objective.trim();ctx.fillText(objective.length>35?objective.slice(0,34)+'…':objective,505,153,290);
+ ctx.fillStyle='#b9d5b555';ctx.font='bold 10px "Malgun Gothic",sans-serif';
+ ctx.fillText('▸ 칠판을 누르면 수업 자료 열기',505,174,280);
+ for(const o of cw06Seats)if(state.answers['학생 '+o.number]!==undefined){
+  ctx.fillStyle='#4e9464';ctx.beginPath();ctx.arc(o.x*TILE+36,o.y*TILE-25,11,0,2*Math.PI);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.fillText('✓',o.x*TILE+36,o.y*TILE-24);
+ }
+ ctx.restore();
+};
+// Smooth SD sprites with rounded outlines and directional eyes: not blocky rectangles.
+sprite=function(cx,cy,av,step=0,small=false,dir=null,moving=null){
+ const npc=small,faceDir=dir||(npc?'down':CW05.facing);
+ const walking=moving===null?(npc?true:CW05.moving):moving;
+ const s=walking?Math.sin(step):0,z=npc?0.92:1.06, bob=walking?Math.abs(s)*1.8:0;
+ const hair=hairColors[(av.hairColor||0)%hairColors.length],coat=clothColors[(av.cloth||0)%clothColors.length];
+ ctx.save();ctx.translate(cx,cy-bob);ctx.scale(z,z);if(faceDir==='left')ctx.scale(-1,1);
+ const C=(x,y,rx,ry,color)=>{ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,2*Math.PI);ctx.fill()};
+ const R=(x,y,w,h,r,color)=>{ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()};
+ C(0,8+bob,18,5,'#3e302655');
+ // jointed legs + tiny shoes
+ R(-11,-12+s*3,10,17,3,'#575e57');R(2,-12-s*3,10,17,3,'#575e57');
+ C(-7,5+s*3,6,4,'#453a37');C(8,5-s*3,6,4,'#453a37');
+ R(-16,-29,32,27,8,'#3b4a3f');R(-14,-30,28,27,7,coat);
+ R(-5,-27,10,19,3,'#ede5c9');R(-2,-25,5,15,2,'#e7d7ae');
+ R(-20,-27-s*2,6,19,4,coat);R(14,-27+s*2,6,19,4,coat);
+ C(-17,-8-s*2,4,5,'#efc5a4');C(17,-8+s*2,4,5,'#efc5a4');
+ // neck and head, hair silhouette
+ R(-5,-37,10,10,3,'#e4b99a');C(0,-51,19,20,'#77513d');C(0,-50,16,17,'#f3ccaa');
+ C(0,-66,19,10,hair);C(-15,-54,7,12,hair);C(15,-53,7,11,hair);
+ if(av.hair===1){for(let i=-2;i<=2;i++)C(i*8,-65+(i%2)*2,7,7,hair)}
+ if(av.hair===2){C(-22,-47,8,15,hair);C(22,-47,8,15,hair)}
+ if(av.hair===3){C(0,-65,18,9,hair);C(-13,-60,10,6,hair)}
+ if(av.hair===4){R(-20,-57,7,30,4,hair);R(13,-57,7,30,4,hair)}
+ C(-10,-65,6,2,'#ffffff44');
+ if(faceDir!=='up'){
+  if(faceDir==='down'){C(-7,-50,2.5,av.face===2?4:3,'#342c2b');C(7,-50,2.5,av.face===2?4:3,'#342c2b');
+   C(-8,-50,0.9,1.2,'#fff');C(6,-50,0.9,1.2,'#fff');C(-11,-44,4,2,'#edaa95aa');C(11,-44,4,2,'#edaa95aa');}
+  else C(9,-50,2.5,3,'#342c2b');
+  if(av.face===1)C(0,-40,3,1.5,'#a77866');
+ }else C(0,-60,15,11,hair);
+ if(av.acc===1){C(16,-65,7,5,'#c77768');C(22,-71,5,7,'#c77768')}
+ if(av.acc===2&&faceDir!=='up'){
+   ctx.lineWidth=1.5;ctx.strokeStyle='#574a43';ctx.strokeRect(-13,-55,10,9);
+   if(faceDir==='down'){ctx.strokeRect(3,-55,10,9);R(-3,-53,6,2,0,'#574a43')}
+ }
+ if(av.acc===3){R(-21,-69,42,6,3,'#42664d');R(-16,-79,32,13,4,'#54785e')}
+ ctx.restore();
+};
+label=function(cx,cy,name,bg){const isPlayer=bg==='#fff8ee',s=String(name||'모험가').slice(0,12);
+ ctx.save();ctx.font='bold 11px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+ const w=Math.max(42,Math.min(124,ctx.measureText(s).width+20));const y=cy-(isPlayer?101:96);
+ ctx.shadowColor='#34261777';ctx.shadowBlur=5;ctx.shadowOffsetY=2;
+ ctx.beginPath();ctx.roundRect(cx-w/2,y,w,21,7);ctx.fillStyle=isPlayer?'#2c4f3dea':'#294135e6';ctx.fill();
+ ctx.shadowColor='transparent';ctx.strokeStyle='#d6b676';ctx.lineWidth=.8;ctx.stroke();
+ ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff6dd';ctx.fillText(s,cx,y+10,w-12);ctx.restore();
+};
+// More architectural contrast on the mini map without touching its POI locations.
+const cw07PriorMini=cw05MiniDraw;
+cw05MiniDraw=function(now){
+ cw07PriorMini(now);
+ const mini=$('#v05Mini'),g=mini.getContext('2d');if(!g)return;
+ // Keep campus buildings visible inside the classroom, just like the selected reference.
+ if(currentMap==='classroom'||currentMap==='plaza'){
+  const w=mini.width,h=mini.height;
+  g.clearRect(0,0,w,h);g.fillStyle='#94ac81';g.fillRect(0,0,w,h);
+  // lawn patches, looping footpaths, fountain and stone courtyard
+  g.fillStyle='#c1cfa0';for(let i=0;i<24;i++){
+   g.beginPath();g.arc((i*47+19)%w,(i*31+13)%h,8+(i%4)*2,0,Math.PI*2);g.fill()}
+  g.fillStyle='#dfc79a';g.fillRect(w*.45,0,17,h);g.fillRect(0,h*.44,w,15);
+  g.fillStyle='#8eac9d';g.beginPath();g.arc(w*.50,h*.53,10,0,2*Math.PI);g.fill();
+  const labels={classroom:'교실',library:'도서관',gym:'체육관',lab:'AI실',salon:'미용실',outfit:'의상실',accessory:'소품점'};
+  for(let i=0;i<CW05_PORTALS.length;i++){
+   const p=CW05_PORTALS[i];const x=p.x/44*w,y=p.y/32*h;
+   g.save();g.fillStyle='#47583e44';g.beginPath();g.ellipse(x,y+8,14,5,0,0,Math.PI*2);g.fill();
+   g.fillStyle='#eee2c5';g.fillRect(x-11,y-3,22,15);
+   g.fillStyle=['#8d704e','#647e67','#a27657','#72866c','#ae8563','#b39366','#697f78'][i];
+   g.beginPath();g.moveTo(x-14,y-4);g.lineTo(x,y-15);g.lineTo(x+14,y-4);g.closePath();g.fill();
+   g.fillStyle='#6c8466';g.fillRect(x-8,y+1,4,5);g.fillRect(x+4,y+1,4,5);
+   const s=labels[p.to];g.font='bold 10px "Malgun Gothic",sans-serif';g.textAlign='center';
+   const tw=g.measureText(s).width;g.fillStyle='#fff8e5e6';g.beginPath();g.roundRect(x-tw/2-4,y+11,tw+8,12,3);g.fill();
+   g.fillStyle='#2d493c';g.textBaseline='middle';g.fillText(s,x,y+17);g.restore();
+  }
+  const pin=currentMap==='classroom'?CW05_PORTALS.find(p=>p.to==='classroom'):{x:player.x,y:player.y};
+  const px=pin.x/44*w,py=pin.y/32*h;
+  g.fillStyle='#fff9d2';g.beginPath();g.arc(px,py-16,6.5,0,2*Math.PI);g.fill();
+  g.strokeStyle='#335b47';g.lineWidth=2;g.stroke();g.fillStyle='#335b47';g.beginPath();g.arc(px,py-16,3,0,2*Math.PI);g.fill();
+  $('.v05MiniLabel').textContent='🗺️ 꿈별학교 캠퍼스';
+  $('.v05Legend').textContent='◉ 현재 위치 · 건물 지도';
+ }
+ g.save();g.strokeStyle='#5b513b';g.lineWidth=2;g.strokeRect(1,1,mini.width-2,mini.height-2);g.restore();
+};
+const cw07PriorChangeMode=changeMode;
+changeMode=function(){cw07PriorChangeMode();cw07ApplyUi()};
+function cw07ApplyUi(){
+ const title=document.querySelector('.sideTitle .tiny');if(title)title.textContent='SUNSHINE · v0.7.1';
+ const tip=document.querySelector('.footnote');if(tip)tip.textContent='🌿 CLASS WORLD v0.7.1 Sunshine — 수업·학생 계정은 가상 체험용입니다. 실제 학생 개인정보는 입력하지 마세요.';
+ document.querySelector('.gameTop .zone').title='우리 반 디지털 교실';
+ const hi=document.querySelector('.eyebrow');if(hi)hi.textContent='SUNSHINE CLASSROOM · 꿈별학교';
+}
+// Extend hit areas to the visible edges of the new electronic board and podium.
+canvas.addEventListener('click',e=>{
+ if(currentMap!=='classroom'||!cw05LastCamera||$('#creatorOverlay').classList.contains('open'))return;
+ const bounds=canvas.getBoundingClientRect();
+ const xx=(e.clientX-bounds.left-width/2)/CW05.zoom+cw05LastCamera.x;
+ const yy=(e.clientY-bounds.top-height/2)/CW05.zoom+cw05LastCamera.y;
+ if(xx>=338&&xx<=670&&yy>=70&&yy<=190)cw06OpenObject({kind:'board',x:11,y:4.35});
+ else if(xx>=450&&xx<=570&&yy>=200&&yy<=300)cw06OpenObject({kind:'podium',x:11,y:5.45});
+});
+CW07.art=cw07CreateArt();cw07ApplyUi();
+// Larger schoolroom at desktop size: fit the artwork to the stage without clipping.
+// Respect the user's manual zoom controls after initial boot.
+const cw07Stage=$('#stage').getBoundingClientRect();
+if(cw07Stage.width>700&&!(()=>{try{return localStorage.getItem('cw07-sunshine-initialized')}catch{return null}})()){
+ const fit=Math.min((cw07Stage.width-26)/(MW*TILE),(cw07Stage.height-24)/(MH*TILE));
+ cw05SetZoom(Math.max(.72,Math.min(.96,fit)));
+ try{localStorage.setItem('cw07-sunshine-initialized','1')}catch{}
+}
+// The former '71%' reset is meant for the plaza; classroom default now fits the stage.
+$('#cwZoomReset').onclick=()=>cw05SetZoom(currentMap==='classroom'?Math.min(.94,Math.max(.72,Math.min(($('#stage').clientWidth-26)/(MW*TILE),($('#stage').clientHeight-24)/(MH*TILE)))):.71);
+document.title='CLASS WORLD v0.7.1 Sunshine | 꿈별학교';
+window.CW07_TEST={version:CW07.version,drawn:()=>Boolean(CW07.art),getArtDimensions:()=>[CW07.art.width,CW07.art.height],preservesSave:dataKey};
+
+
+/* v0.7.1: lightweight contextual HUD, visual-only enhancement. */
+const CW071={version:'v0.7.1-sunshine-polish'};
+const cw071MapWrap=$('.v05MiniWrap');
+const cw071MapToggle=document.createElement('button');cw071MapToggle.type='button';cw071MapToggle.id='cw071MapToggle';cw071MapToggle.className='cw071MapToggle';cw071MapToggle.textContent='🗺️ 지도 열기';
+cw071MapWrap.prepend(cw071MapToggle);
+if(window.matchMedia('(max-width:600px)').matches)cw071MapWrap.classList.add('cw071Collapsed');
+cw071MapToggle.addEventListener('click',()=>{
+ const closed=cw071MapWrap.classList.toggle('cw071Collapsed');cw071MapToggle.textContent=closed?'🗺️ 지도 열기':'🗺️ 지도 접기';
+});
+const cw071Hover=document.createElement('div');cw071Hover.className='cw071Hover';cw071Hover.setAttribute('aria-hidden','true');
+$('#stage').append(cw071Hover);
+function cw071TargetAt(event){
+ if(currentMap!=='classroom'||!cw05LastCamera)return null;
+ const r=canvas.getBoundingClientRect();
+ const px=(event.clientX-r.left-width/2)/CW05.zoom+cw05LastCamera.x;
+ const py=(event.clientY-r.top-height/2)/CW05.zoom+cw05LastCamera.y;
+ if(px>=338&&px<=670&&py>=70&&py<=190)return {title:'전자칠판',detail:'학습 목표 및 수업 자료 열기'};
+ if(px>=450&&px<=570&&py>=200&&py<=300)return {title:'교탁',detail:'교사 수업 운영 · 진행 현황'};
+ for(const seat of cw06Seats){const x=seat.x*TILE,y=seat.y*TILE;
+  if(Math.abs(px-x)<=48&&Math.abs(py-y)<=34)return {title:`${seat.number}번 학생 책상`,detail:'클릭해서 과제·제출 현황 보기'};
+ }
+ return null;
+}
+canvas.addEventListener('pointermove',event=>{
+ if(event.pointerType==='touch'){cw071Hover.style.display='none';return;}
+ const t=cw071TargetAt(event);if(!t){cw071Hover.style.display='none';canvas.style.cursor='default';return;}
+ const r=canvas.getBoundingClientRect(),s=$('#stage').getBoundingClientRect();
+ cw071Hover.replaceChildren();const heading=document.createElement('strong');heading.textContent=t.title;
+ const desc=document.createElement('span');desc.textContent=t.detail;cw071Hover.append(heading,desc);
+ cw071Hover.style.left=Math.max(115,Math.min(s.width-115,event.clientX-s.left))+'px';
+ cw071Hover.style.top=Math.max(62,event.clientY-s.top-9)+'px';cw071Hover.style.display='block';canvas.style.cursor='pointer';
+});
+canvas.addEventListener('pointerleave',()=>{cw071Hover.style.display='none';canvas.style.cursor='default'});
+const cw071OldHud=cw06SyncHud;
+cw06SyncHud=function(){cw071OldHud();cw071Hover.style.display='none';
+ cw06MapNotice.textContent='▸ 칠판·교탁·책상을 누르면 활동이 열려요'; cw06MapNotice.hidden=true;
+};
+const cw071OldRenderPanel=cw06RenderClassroomPanel;
+cw06RenderClassroomPanel=function(){cw071OldRenderPanel();
+ const panel=$('#classroom');if(!panel)return;
+ let badge=panel.querySelector('.cw071Badge');if(!badge){badge=document.createElement('div');badge.className='cw071Badge';
+  const title=panel.querySelector('h2');if(title)title.after(badge);else panel.prepend(badge)}
+ badge.replaceChildren();const a=document.createElement('span');a.textContent='✦ 햇살교실 · 30석';
+ const b=document.createElement('span');b.textContent=cw06StatusText();badge.append(a,b);
+};
+CW07.art=cw07CreateArt();cw07ApplyUi();cw06SyncHud();
+window.CW071_TEST={version:CW071.version,seatCount:cw06Seats.length,art:()=>[CW07.art.width,CW07.art.height],storeKey:dataKey};
 
 </script>
 </body>
