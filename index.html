@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CLASS WORLD v0.7.1 | 꿈별학교 햇살교실</title>
+<title>CLASS WORLD v0.8 | 꿈별학교 Grand Redesign</title>
 <style>
 :root{--ink:#3b4264;--sub:#76829f;--blue:#5d85d8;--paper:#fffefb;--line:#dfdfe8}
 *{box-sizing:border-box}body{margin:0;background:#e8eef8;color:var(--ink);font-family:system-ui,'Malgun Gothic',sans-serif}
@@ -228,14 +228,55 @@ header{border-bottom:1px solid #c7b69555;margin-bottom:7px}
 .cw06Float{box-shadow:0 3px 7px #23382966}
 .cw071Hover{position:absolute;z-index:8;pointer-events:none;max-width:226px;padding:8px 10px;border:1px solid #d2b57e;border-radius:9px;background:#1f3b2ff2;color:#fff3d6;font-size:11px;line-height:1.45;box-shadow:0 5px 18px #12251b77;display:none;transform:translate(-50%,-100%)}
 .cw071Hover strong{display:block;color:#f6d797;font-size:12px}
-.cw071MapToggle{font-size:10px;border:1px solid #c5a46d;background:#3e614c;color:#fff1d1;border-radius:6px;font-weight:900;padding:5px 7px;cursor:pointer;pointer-events:auto;display:none}
-.v05MiniWrap.cw071Collapsed #v05Mini,.v05MiniWrap.cw071Collapsed .v05MiniLabel,.v05MiniWrap.cw071Collapsed .v05Legend{display:none!important}
-.v05MiniWrap.cw071Collapsed{padding:5px;background:#234331ee}
-@media(max-width:600px){.cw071MapToggle{display:block}.v05MiniWrap:not(.cw071Collapsed) .cw071MapToggle{margin-bottom:3px}}
 .cw071Badge{display:flex;align-items:center;gap:7px;justify-content:space-between;padding:7px 10px;background:#e8eadb;border:1px solid #cad0b6;border-radius:8px;color:#335c42;font-size:11px;font-weight:850;margin:5px 0 12px}
 .cw071Badge span:last-child{color:#8a6139}
 @media(max-width:1000px){.layout{grid-template-columns:minmax(0,1fr)}.side{margin-top:1px}}
 @media(max-width:600px){header{gap:8px;flex-wrap:wrap}.headerControls{flex-wrap:wrap}.gameTop .status{font-size:10px}.cw06MapNotice{display:none!important}.stage{min-height:375px}.quick{flex-wrap:nowrap}.quick button{font-size:11px;min-width:max-content}#v05Mini{width:124px;height:82px}.v05MiniWrap{padding:4px;top:52px}.v05Legend{display:none}.cw071Hover{display:none!important}}
+
+/* v0.8 Grand Redesign: unified desktop/tablet gaming UI. */
+:root{--ink:#233a2f;--paper:#f2e9d6;--line:#b5a37e;--sub:#69725c}
+body{background:radial-gradient(ellipse at 14% -30%,#e6d19b 0,transparent 55%),linear-gradient(120deg,#d4dbc9,#d8caa9 75%,#c9d4bf);color:#243d31}
+header{max-width:1680px;padding:14px 21px 12px;margin-bottom:10px;background:linear-gradient(90deg,#25443615,transparent);border-bottom:1px solid #a78c635c}
+.logo{width:54px;height:54px;background:linear-gradient(145deg,#224232,#4a7252);border-radius:12px;border:2px solid #cba96a;box-shadow:0 4px 0 #5d4935;font-size:29px;color:#f4d294}
+.eyebrow{color:#5a7154!important;font-size:10px;font-weight:900;letter-spacing:1.1px!important}
+h1{color:#213a2f;font-size:23px;font-weight:900;letter-spacing:-.4px}h1 span{color:#9e763f!important}
+.layout{max-width:1680px;grid-template-columns:minmax(0,1fr) 350px;gap:14px}
+.gameShell{border:2px solid #a68353;border-radius:16px;overflow:hidden;background:#193b2e;box-shadow:0 4px 0 #4b4e3d,0 19px 35px #263a2d40}
+.gameTop{background:linear-gradient(105deg,#193a2c,#315940);border-bottom:2px solid #c09d61;min-height:51px;padding:10px 15px;color:#fff6df}
+.zone{font-size:15px;letter-spacing:.1px}.zone span{font-size:20px}.status{color:#f7dca9;font-size:12px}
+.stage{background:#c6a777;height:min(76vh,780px);min-height:490px;border-radius:0}
+.stage::after{box-shadow:inset 0 3px 22px #1a392b20,inset 0 -28px 42px #13251d30;pointer-events:none}
+.quick{background:linear-gradient(180deg,#244536,#19382c);padding:10px 12px;gap:6px;border-top:2px solid #b39461;overflow:auto;scrollbar-width:thin}
+.quick button{font-size:11px;white-space:nowrap;background:#325745;color:#f5e8c9;border:1px solid #759078;border-radius:9px;min-height:34px;padding:7px 10px;box-shadow:0 2px 0 #152b20}
+.quick button:hover{background:#426d50}.quick button.active{background:linear-gradient(#c49b61,#a3783f);border-color:#f6d495;color:#fffdf4;box-shadow:inset 0 1px 0 #ebc68a}
+.v05Toolbar{background:#ece5d4;color:#46644b;border-color:#b3a281;font-size:12px;font-weight:900}
+.v05Toolbar button{background:#fffdf3;border:1px solid #c4b69b;color:#36513d;min-height:28px}
+.v05Online{background:#dee9d7;color:#42674b}
+.v05MiniWrap{top:14px;right:13px;padding:10px;background:linear-gradient(150deg,#263e33,#142e25);border:2px solid #ac8955;border-radius:13px;box-shadow:0 8px 18px #171f1855;transition:width .18s}
+.v05MiniLabel{font-size:11px;color:#f5ddb0;text-align:left;padding-right:22px;white-space:nowrap}
+#v05Mini{width:200px;height:128px;border:2px solid #8d9c80;border-radius:8px;background:#88a87d}.v05Legend{color:#d3ccae}
+.cw08MiniToggle{position:absolute;right:6px;top:5px;background:#48624b;border:1px solid #a7ac7a;color:#f6dfad;width:22px;height:22px;border-radius:6px;line-height:14px;font-weight:900;cursor:pointer;z-index:7}
+.v05MiniWrap.cw08Folded{padding:8px 33px 8px 9px}.v05MiniWrap.cw08Folded #v05Mini,.v05MiniWrap.cw08Folded .v05Legend{display:none!important}
+.floatTop,.cw06Float{background:#204336e8;border:1px solid #be9a5e;border-radius:9px;color:#f7e8c7;font-size:11px}
+.floatTop{left:12px;top:12px;max-width:44%;font-weight:700}.cw06Float{top:9px;max-width:50%;font-size:11px}
+.floatBottom{background:#203f35d9;border:1px solid #94754e;color:#f7e5c0;border-radius:8px;font-weight:700}
+.pad button,.actionBtn{color:#2e4935;background:#f9efdaec;border:1px solid #ba9968;border-radius:9px;box-shadow:0 3px 0 #61584261}
+.side{background:linear-gradient(175deg,#f1e9d7,#fbf9ef 30%,#eee6d6);border:2px solid #a98c62;border-radius:15px;box-shadow:0 4px 0 #937a56,0 15px 28px #20352733;padding:14px}
+.sideTitle{background:linear-gradient(110deg,#1f4432,#33583e);border:1px solid #d3b175;color:#f9edce;border-radius:9px;padding:12px;margin:0 0 12px}
+.sideTitle strong{font-size:15px}.sideTitle .tiny{font-size:10px;color:#efd5a2}
+.tabs{background:#dedfcb;border:1px solid #bfc4a6;padding:4px;border-radius:10px}.tabs button{border-radius:7px;min-height:39px;font-size:11px;color:#475e4b}
+.tabs [data-tab="classroom"]{background:transparent;color:#3d6847}.tabs button.active,.tabs [data-tab="classroom"].active{background:#2c6045;color:#fff8db;box-shadow:0 2px 0 #1e4635}
+.panel h2{font-size:17px;color:#2f5440;margin:5px 0 11px}.panel h3{color:#41654c}
+.paper{border-radius:11px;background:#fffdf6;border:1px solid #d9d2ba;box-shadow:0 2px 0 #d3c4a95c}
+.cw06Ribbon{border-color:#aebc9e;background:#e5eddb}.cw06Stat{background:#fafaf2;border-color:#bcc9b3}
+.cw06Stat strong{color:#3a614a}.cw06Buttons button.main,.primary{background:linear-gradient(#5b8a61,#31583e)!important;color:#fff8e6!important;border-bottom-color:#254735!important}
+.secondary{background:#e2e9d9;color:#375a43}.field:focus-visible,button:focus-visible{outline:3px solid #c4a061;outline-offset:2px}
+.option,.field{border-color:#c9cdbb}.chip{background:#e6edd8;color:#426747}
+.cw06MapNotice{display:none!important}.v05Welcome{display:none!important}
+.cw071Badge{background:#e5e9d9;border-color:#b4c3a9}
+.footnote{font-size:11px;color:#475e4b;line-height:1.6;margin-top:5px}
+@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1fr)}.stage{height:65vh}.side{margin-top:0}.floatTop{max-width:48%}}
+@media(max-width:650px){header{padding:9px 9px 7px}.brand{gap:7px}.logo{width:38px;height:38px;font-size:21px}.eyebrow{font-size:8px}h1{font-size:15px}.layout{padding:0 7px 12px;gap:10px}.gameTop{padding:8px}.stage{height:57vh;min-height:360px}.quick{padding:8px;gap:5px}.quick button{font-size:10px;padding:7px 8px;min-height:32px}.v05MiniWrap{top:8px;right:8px;padding:5px}#v05Mini{width:132px;height:86px}.cw06Float,.floatTop{display:none!important}.floatBottom{display:none}.side{padding:11px}.v05MiniLabel{font-size:9px}.pad{left:9px;bottom:10px}.actionBtn{bottom:58px}}
 
 </style>
 </head>
@@ -931,8 +972,8 @@ frame=function(now){
  else if(iy>0)CW05.facing='down';else if(iy<0)CW05.facing='up';
  if(moved)CW05.phase+=dt*13;
  const x=player.x*TILE,y=player.y*TILE;
- const cameraTargetX=currentMap==='classroom'?MW*TILE/2:x;
- const cameraTargetY=currentMap==='classroom'?MH*TILE/2:y;
+ const cameraTargetX=currentMap!=='plaza'?MW*TILE/2:x;
+ const cameraTargetY=currentMap!=='plaza'?MH*TILE/2:y;
  if(!cw05LastCamera)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  const damping=Math.min(1,dt*11);
  cw05LastCamera.x+=(cameraTargetX-cw05LastCamera.x)*damping;
@@ -1697,13 +1738,6 @@ window.CW07_TEST={version:CW07.version,drawn:()=>Boolean(CW07.art),getArtDimensi
 
 /* v0.7.1: lightweight contextual HUD, visual-only enhancement. */
 const CW071={version:'v0.7.1-sunshine-polish'};
-const cw071MapWrap=$('.v05MiniWrap');
-const cw071MapToggle=document.createElement('button');cw071MapToggle.type='button';cw071MapToggle.id='cw071MapToggle';cw071MapToggle.className='cw071MapToggle';cw071MapToggle.textContent='🗺️ 지도 열기';
-cw071MapWrap.prepend(cw071MapToggle);
-if(window.matchMedia('(max-width:600px)').matches)cw071MapWrap.classList.add('cw071Collapsed');
-cw071MapToggle.addEventListener('click',()=>{
- const closed=cw071MapWrap.classList.toggle('cw071Collapsed');cw071MapToggle.textContent=closed?'🗺️ 지도 열기':'🗺️ 지도 접기';
-});
 const cw071Hover=document.createElement('div');cw071Hover.className='cw071Hover';cw071Hover.setAttribute('aria-hidden','true');
 $('#stage').append(cw071Hover);
 function cw071TargetAt(event){
@@ -1742,6 +1776,304 @@ cw06RenderClassroomPanel=function(){cw071OldRenderPanel();
 };
 CW07.art=cw07CreateArt();cw07ApplyUi();cw06SyncHud();
 window.CW071_TEST={version:CW071.version,seatCount:cw06Seats.length,art:()=>[CW07.art.width,CW07.art.height],storeKey:dataKey};
+
+
+/* CLASS WORLD v0.8 Grand Redesign — original procedural world art.
+   Deliberately preserves mission, avatar inventory, Moon Coins, lesson state and save keys.
+   Graphic rooms are cached. No borrowed game assets or external API calls. */
+const CW08={version:'v0.8-grand-redesign',cache:new Map(),themes:{
+  classroom:{label:'햇살 교실',base:'#dbc49e',wall:'#e5d6bc',accent:'#315b43'},
+  gym:{label:'튼튼 체육관',base:'#d9ad70',wall:'#ecdbc1',accent:'#315c56'},
+  library:{label:'별빛 도서관',base:'#c1a17b',wall:'#e1d2b7',accent:'#335440'},
+  lab:{label:'AI 연구소',base:'#aab5aa',wall:'#cddcd8',accent:'#255967'},
+  salon:{label:'달빛 미용실',base:'#ba9e84',wall:'#e3d4c7',accent:'#784f46'},
+  outfit:{label:'꿈꾸는 의상실',base:'#c1ab89',wall:'#eee2d4',accent:'#644d5b'},
+  accessory:{label:'별빛 소품점',base:'#cab496',wall:'#e7d9bc',accent:'#506254'},
+  plaza:{label:'햇살 광장',base:'#8ca87a',wall:'#ded7be',accent:'#355c43'}
+}};
+function cw08MakeArt(id){
+ const outdoor=id==='plaza',w=outdoor?44*TILE:MW*TILE,h=outdoor?32*TILE:MH*TILE;
+ const c=document.createElement('canvas');c.width=w;c.height=h;
+ const g=c.getContext('2d',{alpha:false});g.imageSmoothingEnabled=true;
+ const theme=CW08.themes[id]||CW08.themes.classroom;
+ const fill=(x,y,ww,hh,color)=>{g.fillStyle=color;g.fillRect(x,y,ww,hh)};
+ const round=(x,y,ww,hh,r,col)=>{g.fillStyle=col;g.beginPath();g.roundRect(x,y,ww,hh,r);g.fill()};
+ const line=(x,y,xx,yy,color,thick=1)=>{g.strokeStyle=color;g.lineWidth=thick;g.beginPath();g.moveTo(x,y);g.lineTo(xx,yy);g.stroke()};
+ const circ=(x,y,rx,ry,color)=>{g.fillStyle=color;g.beginPath();g.ellipse(x,y,rx,ry,0,0,2*Math.PI);g.fill()};
+ const poly=(pts,col)=>{g.fillStyle=col;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);for(let k=1;k<pts.length;k++)g.lineTo(...pts[k]);g.closePath();g.fill()};
+ const text=(val,x,y,size=14,color='#fff5df',weight=800)=>{g.textAlign='center';g.textBaseline='middle';g.font=`${weight} ${size}px "Malgun Gothic","Apple SD Gothic Neo",sans-serif`;g.fillStyle=color;g.fillText(String(val),x,y)};
+ const gradient=(x,y,xx,yy,a,b)=>{let grd=g.createLinearGradient(x,y,xx,yy);grd.addColorStop(0,a);grd.addColorStop(1,b);return grd};
+ const shadow=(blur=12,x=0,y=6,color='#24170c4d')=>{g.shadowColor=color;g.shadowBlur=blur;g.shadowOffsetX=x;g.shadowOffsetY=y};
+ const clearShadow=()=>{g.shadowColor='transparent';g.shadowBlur=0;g.shadowOffsetX=0;g.shadowOffsetY=0};
+ const leaf=(x,y,s=1)=>{circ(x+2,y+7,26*s,7*s,'#29352639');fill(x-4*s,y-33*s,8*s,40*s,'#72563d');for(let j=0;j<6;j++){const a=j*Math.PI/3;circ(x+Math.sin(a)*17*s,y-41*s+Math.cos(a)*15*s,20*s,17*s,['#396647','#507f4e','#71995e','#3f7858','#588b5b','#6e965c'][j])}circ(x-10*s,y-60*s,9*s,5*s,'#d1daa16a')};
+ const plant=(x,y,s=1)=>{circ(x,y+21*s,22*s,6*s,'#332f2538');round(x-12*s,y+4*s,24*s,20*s,3,'#a96a46');round(x-15*s,y+2*s,30*s,6*s,2,'#dc9559');for(let i=0;i<7;i++){const a=(i/7)*Math.PI*2;line(x,y+5*s,x+Math.cos(a)*19*s,y-20*s+Math.sin(a)*11*s,'#355840',2*s);circ(x+Math.cos(a)*22*s,y-23*s+Math.sin(a)*12*s,9*s,13*s,['#315e3d','#638b4d','#7b9b5b'][i%3])}};
+ const picture=(x,y,ww,hh)=>{shadow(8);round(x-5,y-5,ww+10,hh+10,4,'#70523d');clearShadow();fill(x,y,ww,hh,gradient(x,y,x+ww,y+hh,'#99c6cc','#f2d69a'));for(let k=0;k<5;k++)circ(x+k*ww/4,y+hh-12,23,18,k%2?'#688867':'#4b765e');fill(x+ww/2-4,y,8,hh,'#fff4df');fill(x,y+hh*.52,ww,7,'#fff4df');fill(x-8,y+hh,ww+16,7,'#a8784c')};
+ const woodDesk=(x,y,s=1,kind=0)=>{g.save();g.translate(x,y);g.scale(s,s);circ(4,33,50,9,'#30281b33');
+  round(-34,13,6,28,1,'#564735');round(30,13,6,28,1,'#564735');round(-32,9,64,27,7,kind%2?'#365f55':'#3e594d');round(-27,13,54,17,4,'#668271');
+  poly([[-45,-22],[36,-22],[43,11],[-45,11]],'#875c39');poly([[-42,-28],[36,-28],[42,3],[-44,3]],'#b4824f');poly([[-38,-25],[33,-25],[38,0],[-40,0]],gradient(0,-30,0,10,'#f4c88e','#c18a4e'));
+  line(-33,-20,32,-20,'#ffe1a5',2);round(-25,-19,26,16,2,kind%3===0?'#f5edda':kind%3===1?'#355e4a':'#506c75');line(-20,-12,-6,-12,'#decba6',1);round(15,-15,12,12,2,'#e3d4b2');line(30,-17,31,-5,'#76503d',2);g.restore()};
+ const banner=(x,y,word,col='#355a44')=>{round(x-2,y,4,120,1,'#a38054');poly([[x-46,y],[x+46,y],[x+46,y+74],[x,y+90],[x-46,y+74]],col);line(x-38,y+10,x+38,y+10,'#dbc384',2);text(word,x,y+40,15,'#fff3d4')};
+ const hangingLamp=(x,y)=>{fill(x-2,y,4,23,'#4b473a');round(x-21,y+20,42,11,5,'#705b40');round(x-17,y+29,34,14,3,'#f8d29b');circ(x,y+36,31,18,'#ffdb9130')};
+ function indoor(){
+  fill(0,0,w,h,gradient(0,0,0,h,theme.wall,'#b29b78'));
+  fill(0,0,w,16,'#4a493b');fill(0,17,w,8,'#c9aa7d');fill(0,183,w,10,'#b58d61');fill(0,194,w,8,'#5d4533');
+  fill(0,204,w,h-204,gradient(0,204,0,h,theme.base,'#a88967'));
+  // authentic staggered wooden floorboards / polished tile (not the old checkerboard)
+  if(id==='lab'){
+   for(let y=205;y<h;y+=52){line(0,y,w,y,'#546b6b40');for(let x=0;x<w;x+=64)fill(x+(Math.floor(y/52)%2)*32,y+1,1,50,'#455d5c27')}
+  }else{
+   for(let row=0,y=204;y<h+40;y+=30,row++)for(let x=-80+(row%2)*62;x<w+65;x+=124){
+    const mod=(row*19+Math.round(x)*7)%5,tones=['#ffffff0b','#6c49250b','#e9c28c17','#fff3c021','#6549290a'];
+    fill(x+1,y+1,122,28,tones[Math.abs(mod)]);line(x,y+29,x+124,y+29,'#704f303b');line(x+122,y+2,x+122,y+27,'#7c60332b');
+   }
+  }
+  // deep architecture / architectural trim
+  fill(0,203,18,h-203,'#896443');fill(w-18,203,18,h-203,'#896443');fill(17,203,5,h-203,'#cfab78');fill(w-24,203,5,h-203,'#cfab78');
+  picture(30,58,163,107);picture(816,58,163,107);
+  // sunlight beams and contact shadows
+  for(let j=0;j<4;j++){let xx=42+j*43;poly([[xx,164],[xx+28,164],[xx+240+j*19,h],[xx+103+j*11,h]],'#fff5bd18')}
+  for(let y=270;y<h;y+=155){line(20,y,w-20,y,'#fff3d512',2)}
+  hangingLamp(275,15);hangingLamp(725,15);
+  // furniture around the margins
+  function cupboard(x){shadow(9);round(x,220,78,219,5,'#694e37');clearShadow();round(x+6,227,66,206,3,'#b18453');for(let i=0;i<4;i++){round(x+11,239+i*46,56,35,2,'#815d3d');round(x+16,242+i*46,46,29,2,'#ce9b60');circ(x+39,264+i*46,3,2,'#f1d6a0')}}
+  cupboard(24);cupboard(w-104);plant(116,582,1.05);plant(888,587,1.02);plant(175,174,.48);plant(834,176,.49);
+  // door at the bottom, leaving walkway for player interaction
+  shadow(8);round(450,608,115,82,8,'#514234');clearShadow();round(459,615,97,75,5,'#a77b4c');round(464,622,87,68,3,'#664e3b');round(470,627,75,47,2,'#ccac78');round(484,627,49,20,3,theme.accent);text('광장',508,637,11,'#fff6d8');circ(547,659,3,3,'#ecd3a4');
+  // elegant contact lighting
+  fill(0,203,w,h-203,gradient(0,203,w,h,'#ffe5a00c','#263a3108'));
+ }
+ function interiorBoard(title,subtitle){shadow(9);round(309,60,393,145,8,'#644a35');clearShadow();round(316,68,379,129,6,'#bd9460');round(325,77,361,110,4,theme.accent);round(332,83,347,96,3,'#183d34');
+  text(title,505,119,25,'#f7e5b6');text(subtitle,505,153,12,'#bad4b7');round(329,189,353,7,2,'#a8784e');round(351,188,33,5,1,'#fff4d3');}
+ function schoolCrest(){round(479,22,58,30,8,'#8b704e');round(486,24,44,23,6,theme.accent);text('✦ CW ✦',508,36,12,'#f5d797')}
+ if(outdoor){
+  fill(0,0,w,h,'#86a976');
+  for(let y=0;y<32;y++)for(let x=0;x<44;x++){
+   const X=x*TILE,Y=y*TILE,grass=((x*13+y*17)%6);
+   fill(X,Y,TILE+1,TILE+1,['#87a775','#8aab78','#90b07f','#8ca97b','#84a477','#8ca77b'][grass]);
+   if((x*23+y*13)%19===0){circ(X+22,Y+27,3,4,'#d6cc8c');circ(X+29,Y+21,2,3,'#fbdec0')}
+  }
+  // continuous sandstone walking routes, garden borders
+  for(let y=0;y<32;y++)for(let x=0;x<44;x++)if(cw05Path(x,y)){
+   const X=x*TILE,Y=y*TILE;fill(X,Y,TILE+1,TILE+1,(x+y)%3?'#d5c5a6':'#dac9a9');line(X,Y+TILE,X+TILE,Y+TILE,'#ac9a7b55');
+   if((x*3+y*11)%4===0)line(X+6,Y+13,X+20,Y+13,'#b4a58777');
+  }
+  // promenade hedges and garden beds
+  for(let k=0;k<10;k++){const X=220+(k%5)*310,Y=505+Math.floor(k/5)*590;round(X,Y,115,67,18,'#4c7452');round(X+8,Y+7,99,55,13,'#6e995c');for(let j=0;j<9;j++){circ(X+18+(j%5)*18,Y+17+Math.floor(j/5)*22,5,5,['#eabf89','#e5e4a2','#ead5b9'][j%3])}}
+  // decorative street cobbles
+  for(let x=250;x<1810;x+=88)for(let y=602;y<1130;y+=140){line(x,y,x+31,y,'#f2e2be66',2)}
+  // plaza pond / fountain at north-central path
+  const fx=22*TILE,fy=12*TILE;shadow(16);round(fx-122,fy-65,244,132,26,'#9a9b84');clearShadow();round(fx-111,fy-58,222,117,22,'#4b8c98');round(fx-98,fy-45,196,90,18,'#77b5b9');circ(fx,fy-10,36,31,'#d6d4b4');circ(fx,fy-22,23,23,'#ecdba6');circ(fx+10,fy-31,18,19,'#77b5b9');for(let i=0;i<4;i++)circ(fx+(i-1.5)*33,fy+27,17,4,'#d4ebd5ac');
+  // trees behind and along edge; leaves are lush but not pastel
+  for(let x=58;x<w;x+=142){leaf(x,90,1.1);leaf(x+20,h-63,1.03)}
+  for(let y=210;y<h-105;y+=154){leaf(55,y,1.05);leaf(w-55,y,1.1)}
+  for(let i=0;i<20;i++){let x=152+(i*173)%(w-300),y=218+(i*239)%(h-340);if(cw05Path(Math.floor(x/TILE),Math.floor(y/TILE)))continue;leaf(x,y,.62)}
+  // bronze campus lampposts
+  for(let x of [15*TILE,29*TILE])for(let y of [10*TILE,19*TILE,27*TILE]){round(x-3,y-40,6,49,2,'#445446');round(x-15,y-54,30,15,4,'#a67c4e');round(x-12,y-51,24,12,3,'#ffe3aa');circ(x,y-48,26,23,'#ffdb8132')}
+  // buildings align EXACTLY with existing clickable portal coordinates
+  const roofs=['#557663','#586c85','#986b4c','#526f75','#856451','#75657d','#99744e'];
+  const names=['우리 반 교실','별빛 도서관','튼튼 체육관','AI 연구소','달빛 미용실','꿈꾸는 의상실','별빛 소품점'];
+  for(let i=0;i<CW05_PORTALS.length;i++){
+   let p=CW05_PORTALS[i],x=(p.x+.5)*TILE,y=(p.y+.5)*TILE,roof=roofs[i];
+   // building facade with real layers, rooftop ridges, stone foundations
+   circ(x+9,y+34,104,19,'#2a473449');shadow(12);round(x-88,y-91,176,127,7,'#775d46');clearShadow();
+   round(x-83,y-88,166,118,6,'#e4d0af');fill(x-83,y+10,166,18,'#ad8961');
+   for(let k=0;k<6;k++)line(x-82+k*29,y-75,x-82+k*29,y+14,'#b39d7b55');
+   poly([[x-105,y-85],[x,y-152],[x+105,y-85]],'#3e4b41');poly([[x-97,y-88],[x,y-145],[x+97,y-88]],roof);
+   line(x-90,y-87,x+90,y-87,'#d9bd83',5);line(x-73,y-105,x+76,y-105,'#c7bd9d55',3);
+   round(x-20,y-64,41,95,4,'#594c3b');round(x-14,y-59,29,89,3,'#6f7d68');round(x-11,y-55,24,55,2,'#9dc0aa');circ(x+8,y+5,3,3,'#eed18c');
+   for(let z of [-1,1]){const wx=x+z*53-16;round(wx-4,y-60,40,50,3,'#866a47');round(wx,y-56,32,41,2,'#9dc9c7');fill(wx+14,y-56,5,41,'#f7ebd2');fill(wx,y-35,32,4,'#f7ebd2');round(wx-6,y-13,43,8,2,'#b8824c')}
+   round(x-30,y+28,60,12,3,'#d3bc98');round(x-40,y+40,80,7,3,'#a68a6b');
+   // readable sign fixed above a door; no text baked into walking sprites
+   shadow(4,0,2,'#22332666');round(x-77,y-168,154,27,7,'#1e4234');clearShadow();round(x-74,y-165,148,21,5,'#315b45');text(names[i],x,y-154,13,'#fff1ca');
+   round(x-18,y-135,36,24,5,'#ead3a2');text(['🏫','📖','🏸','AI','✂','✦','★'][i],x,y-122,15,'#395b44');
+  }
+  // bottom plaza sign; keep clear of player route
+  shadow(7);round(740,1300,536,64,15,'#254839');clearShadow();round(747,1307,522,48,11,'#365f49');text('✦  CLASS WORLD  ·  꿈별학교 캠퍼스  ✦',1008,1330,24,'#f1dfa9');
+ }else{
+  indoor();schoolCrest();
+  switch(id){
+  case 'classroom':{
+    // preserve the mature classroom desk/seating art and 30 actual hitboxes
+    let cwArt=CW07.art||cw07CreateArt();g.drawImage(cwArt,0,0);
+    // deep forest pinboards; subtle refinement without changing clickable desk coords
+    round(330,32,349,23,3,'#274b3a');text('우리의 배움이 시작되는 곳',505,44,13,'#ecd8a6');
+    for(let j=0;j<3;j++){round(110+j*47,215,37,8,2,'#8b633f');}
+    break;
+  }
+  case 'gym':{
+    interiorBoard('튼튼 체육관','배움도 몸도 함께 성장하는 하루');
+    // wall stadium markings and scoreboard
+    round(371,82,268,76,5,'#305c52');text('DREAM TEAM  ·  FAIR PLAY',505,111,20,'#fff0cf');
+    round(438,133,135,41,5,'#152e28');text('HOME   00  :  00   AWAY',507,151,13,'#f4d18a');
+    // polished maple volleyball / badminton multi-purpose surface
+    shadow(14);round(188,240,635,351,7,'#8d7658');clearShadow();round(198,245,614,336,4,'#c68c51');
+    for(let y=247;y<581;y+=23){line(202,y,809,y,'#efbb734d',1);for(let x=206+(Math.floor(y)%2)*38;x<804;x+=103)line(x,y,x,y+20,'#9a6a3e48')}
+    g.strokeStyle='#fef6e0';g.lineWidth=4;g.strokeRect(233,278,544,269);
+    // badminton doubles sidelines and singles sidelines, service lines
+    g.lineWidth=3;g.strokeRect(259,284,492,257);g.beginPath();g.moveTo(505,284);g.lineTo(505,542);g.stroke();
+    line(259,337,751,337,'#fdf3db',3);line(259,490,751,490,'#fdf3db',3);
+    // net cuts left-right halves, visible net cords
+    fill(503,269,7,290,'#334d43');for(let yy=275;yy<555;yy+=12)line(504,yy,509,yy,'#eee8d0',1);round(497,267,20,7,2,'#efe0ac');
+    circ(512,417,55,55,'#e5b27432');
+    // lively gym props: bench, racket rack, balls and cups
+    for(let x of [108,835]){round(x,475,62,17,3,'#956b46');round(x+8,493,8,26,2,'#4e544b');round(x+46,493,8,26,2,'#4e544b')}
+    round(820,329,77,91,5,'#426b5a');for(let i=0;i<4;i++){circ(839+(i%2)*25,350+Math.floor(i/2)*26,10,10,i%2?'#d59057':'#d6c684');line(839+(i%2)*25,340+Math.floor(i/2)*26,839+(i%2)*25,361+Math.floor(i/2)*26,'#5f5b43',2)}
+    round(117,328,54,95,5,'#875e44');for(let j=0;j<4;j++){line(128,346+j*17,160,346+j*17,'#f2d59a',3)}
+    plant(132,572,.69);plant(884,572,.72);banner(264,70,'TEAM');banner(748,70,'PLAY');
+    break;
+  }
+  case 'library':{
+    interiorBoard('별빛 도서관','책 속의 작은 세계가 열리는 곳');
+    for(let xx of [134,323,642,832]){
+     shadow(9);round(xx-56,267,113,252,5,'#695037');clearShadow();round(xx-49,274,99,238,3,'#aa8152');
+     for(let rr0=0;rr0<5;rr0++){round(xx-47,306+rr0*40,95,6,2,'#694b32');for(let j=0;j<10;j++){
+      const colors=['#315b47','#92664a','#c49a57','#57777a','#5a6052','#ba8051'];let hh=20+(j*7+rr0)%14;
+      round(xx-43+j*9,307+rr0*40-hh,7,hh,1,colors[(j+rr0*3)%6]);
+     }}
+    }
+    round(431,279,156,124,15,'#647a58');round(439,287,140,105,11,'#e4c995');text('독서와 탐구',509,309,17,'#3c634c');
+    for(let x of [320,503,685])for(let y of [471,579]){
+      shadow(5);round(x-67,y-38,134,62,10,'#805e41');clearShadow();round(x-60,y-35,120,51,7,'#cb9d62');
+      round(x-25,y-23,49,32,2,'#fff4db');line(x,y-23,x,y+8,'#b3a487',2);line(x-18,y-13,x-5,y-13,'#c0ae8d');line(x+7,y-13,x+22,y-13,'#c0ae8d');
+      round(x-52,y+18,105,11,5,'#45644e')
+    }
+    plant(110,554,.72);plant(904,554,.72);banner(258,85,'READ');banner(760,85,'GROW');
+    break;
+  }
+  case 'lab':{
+    interiorBoard('AI 연구소','질문하고 실험하며 미래를 탐구해요');
+    for(let x of [109,849]){round(x,239,60,211,5,'#365967');for(let y=249;y<431;y+=32){round(x+9,y,42,25,2,'#183a46');round(x+15,y+6,24,4,2,'#6fc9b6');for(let k=0;k<3;k++)circ(x+15+k*8,y+17,2,2,'#d8b476')}}
+    round(403,262,210,142,13,'#204b53');round(419,278,178,108,8,'#143c44');
+    // central data orb & concentric holographic rings
+    circ(507,328,58,49,'#216d72');circ(507,328,42,35,'#539d96');circ(505,316,24,18,'#9fe0ca');
+    g.strokeStyle='#b6f0db';g.lineWidth=2;for(let r of [56,68]){g.beginPath();g.ellipse(507,328,r,r*.56,0,0,2*Math.PI);g.stroke()}
+    text('AI  +  YOU',507,373,15,'#e7f8d5');
+    for(let x of [304,506,706])for(let y of [480,572]){
+      shadow(7);round(x-75,y-30,150,69,10,'#6d6556');clearShadow();round(x-69,y-35,138,60,7,'#c7a579');
+      round(x-50,y-53,98,47,4,'#254955');round(x-44,y-47,85,33,3,'#4d9b99');
+      round(x-39,y-40,54,6,2,'#b2ded1');round(x-39,y-28,76,3,1,'#add5c0');round(x-33,y-7,67,10,3,'#e1d7be');
+    }
+    banner(252,80,'CREATE');banner(767,80,'IDEA');
+    break;
+  }
+  case 'salon':{
+    interiorBoard('달빛 미용실','새로운 머리로 나답게 반짝여요');
+    for(let x of [300,505,710]){
+      shadow(12);round(x-68,286,136,173,12,'#7e5b44');clearShadow();round(x-60,292,120,160,9,'#cfad82');round(x-50,302,100,135,8,'#a4b4a7');
+      circ(x,367,38,38,'#7d8e7a');circ(x,362,25,28,'#efcba9');circ(x,343,32,18,'#52483e');
+      round(x-48,449,96,22,7,'#8d5a4c');round(x-5,470,10,41,3,'#725b4c');round(x-31,510,62,9,3,'#4e514b');
+    }
+    round(375,537,263,45,7,'#8d6548');round(389,539,236,37,5,'#cca276');for(let k=0;k<5;k++){round(411+k*43,547,26,18,3,['#547c63','#b1815a','#614b4f'][k%3])}
+    banner(172,76,'STYLE');banner(840,76,'HAIR');
+    break;
+  }
+  case 'outfit':{
+    interiorBoard('꿈꾸는 의상실','오늘의 나를 원하는 모습으로 꾸며요');
+    for(let x of [195,818]){
+      round(x-90,263,180,228,9,'#745e49');round(x-83,269,166,215,5,'#c09b6b');
+      line(x-73,290,x+74,290,'#65513f',6);for(let j=0;j<5;j++){
+        const xx=x-62+j*31;line(xx,293,xx,310,'#806e58',2);poly([[xx-13,314],[xx,298],[xx+13,314],[xx+17,390],[xx-17,390]],['#517a5d','#9c6857','#667b86','#aa8c5e','#705f83'][j]);
+        round(xx-17,386,34,7,2,'#3e4d46')}
+    }
+    shadow(8);round(373,296,262,155,12,'#7b654f');clearShadow();round(382,307,244,133,8,'#f5e6cb');
+    for(let j=0;j<3;j++){let x=418+j*88;circ(x,342,19,18,'#efc7aa');poly([[x-30,366],[x+30,366],[x+39,415],[x-40,415]],['#5d8867','#ab745e','#606e8e'][j]);round(x-12,415,24,7,2,'#705e4d')}
+    banner(165,70,'DRESS');banner(847,70,'LOOK');
+    break;
+  }
+  case 'accessory':{
+    interiorBoard('별빛 소품점','반짝이는 작은 물건으로 개성을 더해요');
+    for(let y of [281,391,506]){
+      shadow(7);round(192,y,628,65,8,'#6d513b');clearShadow();round(198,y+6,615,51,5,'#d1a770');
+      for(let i=0;i<8;i++){let x=229+i*80;
+       round(x-23,y+17,46,30,5,'#3d6651');circ(x,y+30,10,10,['#dfb88c','#94bbad','#d7ad76','#ba8a83'][i%4]);text(['★','✦','♥','✿'][i%4],x,y+29,12,'#fff5d9')}
+    }
+    round(360,598,302,35,8,'#365c47');text('MOON COIN  ✦  COLLECTION',509,614,16,'#f9e1a5');
+    banner(160,79,'GIFT');banner(854,79,'SHOP');
+    break;
+  }
+  }
+  // better vignette in indoor spaces
+  const vig=g.createRadialGradient(w/2,h/2,150,w/2,h/2,710);vig.addColorStop(0,'#00000000');vig.addColorStop(1,'#19150e20');fill(0,0,w,h,vig);
+ }
+ return c;
+}
+const cw08PreviousWorld=worldBase;
+worldBase=function(){
+ if(!CW08.cache.has(currentMap))CW08.cache.set(currentMap,cw08MakeArt(currentMap));
+ ctx.drawImage(CW08.cache.get(currentMap),0,0);
+ if(currentMap==='classroom'){
+  // teachable electronic board is still LIVE, backed by the original lesson data
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='800 18px "Malgun Gothic",sans-serif';ctx.fillStyle='#f6e6b8';
+  const t=String(cw06Lesson.title||'오늘의 수업');ctx.fillText(t.length>23?t.slice(0,22)+'…':t,505,130,295);
+  ctx.fillStyle='#c2debd';ctx.font='bold 11px "Malgun Gothic",sans-serif';const o=String(cw06Lesson.objective||'');ctx.fillText(o.length>38?o.slice(0,37)+'…':o,505,153,290);
+  for(const s of cw06Seats)if(state.answers['학생 '+s.number]!==undefined){ctx.beginPath();ctx.arc(s.x*TILE+36,s.y*TILE-27,10,0,Math.PI*2);ctx.fillStyle='#2f7551';ctx.fill();ctx.fillStyle='#fff4cf';ctx.font='bold 12px sans-serif';ctx.fillText('✓',s.x*TILE+36,s.y*TILE-27)}ctx.restore();
+ }
+};
+// Indoor maps should be stationary, like the classroom, not slide beneath the camera every step.
+// The original movement, navigation, collision and quest state remain untouched.
+const cw08OldGo=goMap;
+goMap=function(id){cw08OldGo(id);
+ if(id!=='plaza')cw05LastCamera={x:MW*TILE/2,y:MH*TILE/2};
+ cw08UpdateZone();
+};
+function cw08UpdateZone(){
+ $('.v05MiniLabel').textContent='🗺️ 꿈별학교 캠퍼스';
+ const hint=$('#hint');if(hint){hint.textContent=currentMap==='classroom'?'칠판·교탁·책상을 눌러 학습에 참여하세요':currentMap==='plaza'?'건물 문 앞에서 E키 · 장소 버튼으로 바로 이동':'학교 생활 공간 · E키 상호작용 / 아래 메뉴에서 이동';}
+ const bottom=$('.floatBottom');if(bottom)bottom.textContent='WASD·방향키로 이동  ·  E 상호작용';
+ const tt=$('.sideTitle .tiny');if(tt)tt.textContent='GRAND REDESIGN · v0.8';
+}
+const cw08PreviousMini=cw05MiniDraw;
+cw05MiniDraw=function(now){
+ const cv=$('#v05Mini');if(!cv)return;const g=cv.getContext('2d');const w=cv.width,h=cv.height;
+ g.clearRect(0,0,w,h);g.fillStyle='#90ac87';g.fillRect(0,0,w,h);
+ // shared campus map across ALL rooms (not local empty rectangles)
+ const sy=h/32,sx=w/44;
+ g.fillStyle='#daccae';g.fillRect(20*sx,0,4*sx,h);g.fillRect(0,12*sy,w,3*sy);g.fillRect(0,23*sy,w,3*sy);
+ g.fillRect(6*sx,4*sy,2*sx,20*sy);g.fillRect(36*sx,4*sy,2*sx,26*sy);
+ g.fillStyle='#649caa';g.beginPath();g.ellipse(22*sx,12*sy,11,7,0,0,Math.PI*2);g.fill();
+ const colors=['#425e4f','#5a6881','#a2734c','#4a7680','#886c53','#6d5c76','#947550'];
+ for(let k=0;k<CW05_PORTALS.length;k++){
+  const p=CW05_PORTALS[k],x=p.x*sx,y=p.y*sy,col=colors[k];
+  g.fillStyle='#4b493855';g.beginPath();g.ellipse(x+2,y+5,14,6,0,0,Math.PI*2);g.fill();
+  g.fillStyle='#ead9b9';g.fillRect(x-11,y-2,22,15);
+  g.fillStyle=col;g.beginPath();g.moveTo(x-15,y-4);g.lineTo(x,y-15);g.lineTo(x+15,y-4);g.closePath();g.fill();
+  g.fillStyle='#45624d';g.fillRect(x-8,y+1,4,5);g.fillRect(x+4,y+1,4,5);
+  // Labels belong to buildings, not the character head or canvas HUD.
+  const lbl=['교실','도서관','체육관','AI실','미용실','의상실','소품'][k];
+  g.textAlign='center';g.textBaseline='middle';g.font='bold 9px "Malgun Gothic",sans-serif';
+  const lw=g.measureText(lbl).width;g.fillStyle='#f8f0d7e6';g.fillRect(x-lw/2-2,y+13,lw+4,12);
+  g.fillStyle='#254b38';g.fillText(lbl,x,y+19);
+  if(currentMap===p.to){g.strokeStyle='#f6cf76';g.lineWidth=2.5;g.strokeRect(x-15,y-16,30,34)}
+ }
+ let px,py;
+ if(currentMap==='plaza'){px=player.x*sx;py=player.y*sy}else{let spot=CW05_PORTALS.find(p=>p.to===currentMap);px=(spot?.x||22)*sx;py=(spot?.y||12)*sy}
+ g.fillStyle='#fff6d5';g.beginPath();g.arc(px,py-16,5,0,Math.PI*2);g.fill();g.strokeStyle='#1c4c3b';g.lineWidth=2;g.stroke();
+ g.fillStyle='#264938';g.beginPath();g.arc(px,py-16,2,0,Math.PI*2);g.fill();
+ $('.v05MiniLabel').textContent='🗺️ 꿈별학교 캠퍼스';$('.v05Legend').textContent='✦ 현재 위치 · 학교 건물';
+};
+// More subtle nameplates: always above hair, never over eyes or chest.
+const cw08OldLabel=label;
+label=function(cx,cy,name,bg){
+ let s=String(name||'모험가').slice(0,12),isMe=bg==='#fff8ee';ctx.save();ctx.font='bold 10px "Malgun Gothic",sans-serif';
+ let len=ctx.measureText(s).width+18,w=Math.max(40,Math.min(112,len)),y=cy-(isMe?103:95);
+ ctx.fillStyle=isMe?'#17392ee8':'#355143e6';ctx.strokeStyle=isMe?'#d6be7c':'#8cad8e';ctx.lineWidth=1;
+ ctx.beginPath();ctx.roundRect(cx-w/2,y,w,19,7);ctx.fill();ctx.stroke();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff5db';ctx.fillText(s,cx,y+9.4,w-10);ctx.restore();
+};
+// Map toggle: collapses the campus view without covering the classroom on small tablets.
+const miniShell=$('.v05MiniWrap');miniShell.style.pointerEvents='auto';
+const miniToggle=document.createElement('button');miniToggle.type='button';miniToggle.className='cw08MiniToggle';miniToggle.textContent='−';miniToggle.setAttribute('aria-label','미니맵 접기');
+miniShell.insertBefore(miniToggle,miniShell.firstChild);let cw08MiniCollapsed=false;
+miniToggle.onclick=()=>{cw08MiniCollapsed=!cw08MiniCollapsed;miniShell.classList.toggle('cw08Folded',cw08MiniCollapsed);miniToggle.textContent=cw08MiniCollapsed?'+':'−';miniToggle.setAttribute('aria-label',cw08MiniCollapsed?'미니맵 펼치기':'미니맵 접기')};
+if(window.matchMedia('(max-width:600px)').matches)miniToggle.click();
+// new graphic style and tidy information hierarchy; DOM injection is text-only.
+document.title='CLASS WORLD v0.8 | 꿈별학교 Grand Redesign';
+$('.eyebrow').textContent='CLASS WORLD · LEARN · EXPLORE · BELONG';
+$('.sideTitle strong').textContent='✦ 꿈별학교 학급 허브';
+const footer=$('.footnote');if(footer)footer.textContent='CLASS WORLD v0.8 · 디자인 개선 체험판 · 교사 역할과 학생 계정은 아직 가상 모드입니다. 실제 학생 개인정보를 입력하지 마세요.';
+const gameTitle=$('h1 span');if(gameTitle){gameTitle.style.color='#c49a54';}
+cw08UpdateZone();
+const cw08Tests={version:CW08.version,maps:Object.keys(maps),saveKey:dataKey,rooms:()=>Array.from(CW08.cache.keys()),seats:cw06Seats.length,mission:()=>state.mission,lesson:()=>({...cw06Lesson})};
+window.CW08_TEST=cw08Tests;
 
 </script>
 </body>
