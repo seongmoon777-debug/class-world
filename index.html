@@ -1075,16 +1075,20 @@ frame=function(now){
  let iy=(pressed.has('down')?1:0)-(pressed.has('up')?1:0);
  const len=Math.hypot(ix,iy)||1;
  const dx=ix/len*3.6*dt,dy=iy/len*3.6*dt;
+ const beforeX=player.x,beforeY=player.y;
  let moved=false;
  if(!solid(player.x+dx,player.y)&&ix){player.x+=dx;moved=true}
  if(!solid(player.x,player.y+dy)&&iy){player.y+=dy;moved=true}
  CW05.moving=moved;
- if(ix>0)CW05.facing='right';else if(ix<0)CW05.facing='left';
- else if(iy>0)CW05.facing='down';else if(iy<0)CW05.facing='up';
+ const travelledX=player.x-beforeX,travelledY=player.y-beforeY;
+ if(moved)CW05.facing=Math.abs(travelledX)>Math.abs(travelledY)?(travelledX>0?'right':'left'):(travelledY>0?'down':'up');
  if(moved)CW05.phase+=dt*13;
  const x=player.x*TILE,y=player.y*TILE;
- const cameraTargetX=currentMap!=='plaza'?MW*TILE/2:x;
- const cameraTargetY=currentMap!=='plaza'?MH*TILE/2:y;
+ const followPlayer=currentMap==='plaza'||width<650;
+ const halfViewX=width/(2*CW05.zoom),halfViewY=height/(2*CW05.zoom);
+ const clampCamera=(value,half,extent)=>extent<=half*2?extent/2:Math.max(half,Math.min(extent-half,value));
+ const cameraTargetX=followPlayer?clampCamera(x,halfViewX,MW*TILE):MW*TILE/2;
+ const cameraTargetY=followPlayer?clampCamera(y,halfViewY,MH*TILE):MH*TILE/2;
  if(!cw05LastCamera)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  const damping=Math.min(1,dt*11);
  cw05LastCamera.x+=(cameraTargetX-cw05LastCamera.x)*damping;
@@ -1093,7 +1097,7 @@ frame=function(now){
  if(Math.abs(cw05LastCamera.x-cameraTargetX)>1100||Math.abs(cw05LastCamera.y-cameraTargetY)>1100)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  ctx.clearRect(0,0,width,height);
  ctx.save();ctx.translate(width/2,height/2);ctx.scale(CW05.zoom,CW05.zoom);
- ctx.translate(Math.round(-cw05LastCamera.x),Math.round(-cw05LastCamera.y));
+ ctx.translate(-cw05LastCamera.x,-cw05LastCamera.y);
  worldBase();
  // Familiar NPCs now animate their walking legs, and new tab players interpolate.
  if(currentMap==='plaza'){
@@ -1119,7 +1123,7 @@ frame=function(now){
  label(playerX,playerY,nickname(),'#fff8ee');
  ctx.restore();
  const near=nearby();
- $('#interact').textContent=near?'🚪 '+(near.to==='plaza'?'나가기':'입장'):'✨ 대화 E';
+ $('#interact').textContent=near?'🚪 '+(near.to==='plaza'?'나가기':'입장'):shops[currentMap]?'🛍️ 상점':'📋 활동 E';
  if(now-CW05.miniTime>160){cw05MiniDraw(now);CW05.miniTime=now}
  if(now-CW05.onlineLast>800){document.querySelector('#cwOnline').textContent='🟢 이 브라우저 탭 '+(count+1)+'개 연결';CW05.onlineLast=now}
  requestAnimationFrame(frame);
@@ -2763,5 +2767,6 @@ document.title='문스쿨 | 캐릭터 STYLE 1';
 window.MOON_STYLE1_TEST={version:'0.9.3-style1',ready:()=>MOON_STYLE1.loaded,failed:()=>MOON_STYLE1.errors.slice(),hasBoyGirl:()=>Boolean(document.querySelector('input[name="newGender"][value="boy"]')&&document.querySelector('input[name="newGender"][value="girl"]')),coinKey:dataKey};
 
 </script>
+<script src="school.js"></script>
 </body>
 </html>
