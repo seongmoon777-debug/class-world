@@ -1085,10 +1085,11 @@ frame=function(now){
  if(moved)CW05.phase+=dt*13;
  const x=player.x*TILE,y=player.y*TILE;
  const followPlayer=currentMap==='plaza'||width<650;
+ const [mapWidth,mapHeight]=currentMap==='plaza'?CW05_DIM.plaza:[MW,MH];
  const halfViewX=width/(2*CW05.zoom),halfViewY=height/(2*CW05.zoom);
  const clampCamera=(value,half,extent)=>extent<=half*2?extent/2:Math.max(half,Math.min(extent-half,value));
- const cameraTargetX=followPlayer?clampCamera(x,halfViewX,MW*TILE):MW*TILE/2;
- const cameraTargetY=followPlayer?clampCamera(y,halfViewY,MH*TILE):MH*TILE/2;
+ const cameraTargetX=followPlayer?clampCamera(x,halfViewX,mapWidth*TILE):mapWidth*TILE/2;
+ const cameraTargetY=followPlayer?clampCamera(y,halfViewY,mapHeight*TILE):mapHeight*TILE/2;
  if(!cw05LastCamera)cw05LastCamera={x:cameraTargetX,y:cameraTargetY};
  const damping=Math.min(1,dt*11);
  cw05LastCamera.x+=(cameraTargetX-cw05LastCamera.x)*damping;
