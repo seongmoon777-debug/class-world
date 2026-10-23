@@ -144,6 +144,7 @@ function campusRender(){
 function campusRenderHome(teacher){
  const owner=campusOwner||(teacher?'학생 1':actorName()),mine=!teacher&&owner===actorName(),person=campusPerson(owner);
  cw09El('h3','',owner+'의 집과 공터',campusPanel);cw09El('p','','각 학생에게 집 1채와 24칸의 공터가 있어요. 장식은 한 종류씩 보유하며 회수해 다시 놓을 수 있어요.',campusPanel);
+ if(typeof renderHomeShareControls==='function')renderHomeShareControls(campusPanel,owner,person);
  const ownerField=cw09Field(campusPanel,'방문할 집','select');for(let i=1;i<=30;i++){const n='학생 '+i,o=cw09El('option','',n,ownerField);o.value=n;}ownerField.value=owner==='선생님'?'학생 1':owner;ownerField.onchange=()=>{campusOwner=ownerField.value;campusPage=Math.floor((Number(campusOwner.replace('학생 ',''))-1)/6);campusPlace=null;campusRender();};
  cw09Button(campusPanel,'우리 동네 걸어보기',()=>{campusPage=Math.floor((Number((campusOwner||actorName()).replace('학생 ',''))-1)/6)||0;goMap('neighborhood');campusOpen('home');});
  if(!mine&&!teacher)cw09Button(campusPanel,'내 집으로',()=>{campusOwner=actorName();campusPage=Math.floor((Number(actorName().replace('학생 ',''))-1)/6);campusPlace=null;campusRender();});
