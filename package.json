@@ -1,7 +1,7 @@
 {
   "name": "moonschool-class-world",
   "private": true,
-  "version": "0.9.4",
-  "scripts": {"test": "node tests/school.cjs"},
+  "version": "0.10.0",
+  "scripts": {"test": "node tests/school.cjs && node tests/campus.cjs"},
   "devDependencies": {"playwright": "1.62.1"}
 }

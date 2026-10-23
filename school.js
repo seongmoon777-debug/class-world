@@ -72,7 +72,8 @@ cw09FormFor=function(a,parent){
   cw09El('p','cw09Done','✓ 제출 완료'+(rec.correct===true?' · 정답':rec.correct===false?' · 다시 배워요':''),box);
   cw09El('p','schoolAnswer',rec.answer,box);
   if(a.kind==='quiz')cw09El('p','',`정답: ${a.options[a.correct]} · ${a.explanation||''}`,box);
-  cw09El('p','cw09Info',`${rec.reviewed?'교사 확인 완료':'교사 확인 대기'}${rec.reward!==undefined?' · 받은 보상 '+rec.reward+' MC':''}`,box);return;
+  cw09El('p','cw09Info',`${rec.reviewed?'교사 확인 완료':'교사 확인 대기'}${rec.reward!==undefined?' · 받은 보상 '+rec.reward+' MC':''}`,box);
+  if(rec.feedback){cw09El('h3','','💌 선생님 답장',box);cw09El('p','schoolAnswer',rec.feedback,box);}return;
  }
  if(a.place!==currentMap){cw09Button(box,`${cw09PlaceLabel(a.place)}에서 참여하기`,()=>{goMap(a.place);CW09.selected=a.id;switchTab('activities');cw09Render();},'primary');return;}
  let read,write,inputs=[];
@@ -136,6 +137,8 @@ cw09Render=function(){
    count++;const entry=cw09El('div','schoolRecord','',box);cw09El('strong','',person+(a.daily?' · '+key.split('@')[1]:''),entry);cw09El('p','schoolAnswer',r.answer,entry);
    cw09El('small','',new Date(r.at).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+(r.correct===null||r.correct===undefined?'':r.correct?' · 정답':' · 오답'),entry);
    cw09Button(entry,r.reviewed?'확인 완료':'교사 확인',()=>{if($('#role').value!=='teacher')return;cw09Data=cw09Load();const latest=cw09Data.submissions[key]?.[person];if(latest){latest.reviewed=true;cw09Save();cw09Render();}});
+   const reply=cw09Field(entry,'선생님 답장 · '+person,'textarea',r.feedback||'',300);
+   cw09Button(entry,'답장 저장',()=>{if($('#role').value!=='teacher')return;cw09Data=cw09Load();const latest=cw09Data.submissions[key]?.[person];if(latest){latest.feedback=reply.value.trim();latest.feedbackAt=Date.now();latest.reviewed=true;cw09Save();cw09Render();}});
   }
   if(!count)cw09El('p','','아직 제출한 학생이 없어요.',box);
   cw09Button(box,'활동 삭제',()=>{if($('#role').value!=='teacher'||!confirm('활동을 삭제할까요? 기존 제출 기록과 문코인은 보존됩니다.'))return;cw09Data=cw09Load();cw09Data.items=cw09Data.items.filter(x=>x.id!==a.id);cw09Save();CW09.selected=null;cw09Render();cw09RefreshStage();});
