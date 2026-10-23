@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
  const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage(),errors=[],passed=[];
  page.on('pageerror',e=>errors.push(e.message));
- const origin='http://127.0.0.1:'+server.address().port;
+ const origin=process.env.SCHOOL_TEST_FILE?require('node:url').pathToFileURL(path.join(root,'index.html')).href:'http://127.0.0.1:'+server.address().port;
  const check=(name,fn)=>Promise.resolve().then(fn).then(()=>{passed.push(name);console.log('PASS '+name);});
  await page.goto(origin);await page.waitForFunction(()=>typeof schoolSubmit==='function'&&MOON_STYLE1.loaded===8);
  await page.locator('#newNickname').fill('선생님');await page.locator('#createAvatar').click();await page.waitForTimeout(100);
@@ -62,10 +62,25 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   const result=await page.evaluate(()=>{const before=localStorage.getItem(dataKey),old=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k===CW09.storageKey)throw new DOMException('full','QuotaExceededError');return old.call(this,k,v);};const res=schoolSubmit('ms094_math',1);Storage.prototype.setItem=old;return {error:res.error,same:before===localStorage.getItem(dataKey),submitted:!!cw09Load().submissions.ms094_math?.[actorName()]};});
   assert.ok(result.error);assert.ok(result.same);assert.equal(result.submitted,false);
  });
+ await check('plaza return keeps avatar visible after camera settles at every zoom',async()=>{
+  for(const size of [{width:1440,height:1000},{width:390,height:844}]){
+   await page.setViewportSize(size);
+   for(const zoom of [.57,.96,1.12]){
+    await page.evaluate(z=>{goMap('classroom');goMap('plaza');cw05SetZoom(z);},zoom);
+    await page.waitForTimeout(900);
+    assert.ok(await page.evaluate(()=>{const x=width/2+((player.x+.5)*TILE-cw05LastCamera.x)*CW05.zoom,y=height/2+((player.y+.7)*TILE-cw05LastCamera.y)*CW05.zoom;return x>30&&x<width-30&&y>90&&y<height-10;}),'plaza avatar must be inside the viewport');
+    assert.ok(await page.evaluate(()=>!solid(player.x,player.y)),'spawn must be walkable');
+   }
+  }
+  await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>cw05SetZoom(.96));
+ });
  await check('movement, directions and idle retain grounded illustration',async()=>{
   await page.evaluate(()=>{goMap('plaza');player.x=31;player.y=40;});await page.locator('#game').click({position:{x:30,y:30}});
   const before=await page.evaluate(()=>player.x);await page.keyboard.down('ArrowRight');await page.waitForTimeout(250);await page.keyboard.up('ArrowRight');
   assert.ok(await page.evaluate(()=>player.x)>before);assert.equal(await page.evaluate(()=>CW05.facing),'right');
+  await page.waitForTimeout(600);
+  assert.ok(await page.evaluate(()=>Math.abs((player.x+.5)*TILE-cw05LastCamera.x)*CW05.zoom<width/2-30),'walking avatar stays visible');
+  await page.screenshot({path:path.join(reports,'plaza-fixed.png'),fullPage:true});
   const transforms=await page.evaluate(()=>{const calls=[],old=ctx.drawImage;ctx.drawImage=function(...args){calls.push(args.slice(1));};sprite(100,100,currentAvatar(),0,false,'down',false);sprite(100,100,currentAvatar(),2,false,'down',true);ctx.drawImage=old;return calls;});assert.deepEqual(transforms[0],transforms[1]);
   await page.locator('.schoolHelp summary').click();await page.locator('.schoolHelp summary').click();assert.equal(await page.locator('.floatTop').isVisible(),false);assert.equal(await page.locator('.cw071Hover').isVisible(),false);
  });
