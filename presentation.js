@@ -28,7 +28,22 @@ function schoolPixel(av,dir='down',frame=0,run=false){
  if(av.acc===1){R(33+hx,10,8,5,'#a94e69');R(35+hx,8,3,9,'#df8aa4');}if(av.acc===2&&!back){g.strokeStyle=edge;g.lineWidth=1;g.strokeRect(16+hx,18,9,9);if(!side)g.strokeRect(27+hx,18,9,9);}if(av.acc===3){R(10+hx,6,29,7,'#3d607f');R(8+hx,12,34,3,'#6798bb');}
  PIXEL_SCHOOL.cache.set(key,c);if(PIXEL_SCHOOL.cache.size>400)PIXEL_SCHOOL.cache.clear();return c;
 }
-sprite=function(x,y,av,step=0,small=false,dir='down',moving=false){const run=moving&&CW_MOVE.running&&!small,frame=moving?Math.floor(step*(run?1.1:1))%8:0,img=schoolPixel({...av,gender:av.gender||ms093Gender(av,small)},dir,frame,run),scale=small?.95:1.2;ctx.save();ctx.imageSmoothingEnabled=false;ctx.fillStyle='#19293455';ctx.beginPath();ctx.ellipse(x,y+3,small?11:15,5,0,0,Math.PI*2);ctx.fill();ctx.drawImage(img,Math.round(x-24*scale),Math.round(y-63*scale),48*scale,64*scale);ctx.restore();};
+const schoolOutlineCache=new WeakMap();
+function schoolOutlinedPixel(image){
+ if(schoolOutlineCache.has(image))return schoolOutlineCache.get(image);
+ const c=document.createElement('canvas');c.width=image.width+8;c.height=image.height+8;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+ const mask=document.createElement('canvas');mask.width=image.width;mask.height=image.height;const m=mask.getContext('2d');m.drawImage(image,0,0);m.globalCompositeOperation='source-in';m.fillStyle='#173651';m.fillRect(0,0,mask.width,mask.height);
+ const offsets=[[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]];
+ for(const [x,y] of offsets)g.drawImage(mask,4+x*2,4+y*2);
+ m.fillStyle='#fffbe9';m.fillRect(0,0,mask.width,mask.height);for(const [x,y] of offsets)g.drawImage(mask,4+x,4+y);
+ g.drawImage(image,4,4);schoolOutlineCache.set(image,c);return c;
+}
+sprite=function(x,y,av,step=0,small=false,dir='down',moving=false){
+ const run=moving&&CW_MOVE.running&&!small,frame=moving?Math.floor(step*(run?1.1:1))%8:0,base=schoolPixel({...av,gender:av.gender||ms093Gender(av,small)},dir,frame,run),scale=small?.95:1.3,img=small?base:schoolOutlinedPixel(base),pad=small?0:4;
+ ctx.save();ctx.imageSmoothingEnabled=false;ctx.fillStyle='#19293455';ctx.beginPath();ctx.ellipse(x,y+3,small?11:16,4,0,0,Math.PI*2);ctx.fill();
+ if(!small){ctx.lineWidth=3;ctx.strokeStyle='#153b57';ctx.beginPath();ctx.ellipse(x,y+2,18,6,0,0,Math.PI*2);ctx.stroke();ctx.lineWidth=1.5;ctx.strokeStyle='#79f0ed';ctx.stroke();}
+ ctx.drawImage(img,Math.round(x-(24+pad)*scale),Math.round(y-(63+pad)*scale),img.width*scale,img.height*scale);ctx.restore();
+};
 function schoolPixelPreview(c,av){const g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);g.fillStyle='#e9eddc';g.fillRect(0,0,c.width,c.height);g.imageSmoothingEnabled=false;const scale=Math.min(c.width/58,c.height/70);g.drawImage(schoolPixel({...av,gender:av.gender||ms093Gender(av,false)}),Math.round((c.width-48*scale)/2),Math.round(c.height-65*scale),48*scale,64*scale);}
 drawPreview=schoolPixelPreview;campusDrawPreview=schoolPixelPreview;
 // A compact world-first layout. Activities open when chosen, instructions stay tucked away.
