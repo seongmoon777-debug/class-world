@@ -1,9 +1,9 @@
 {
   "name": "moonschool-class-world",
   "private": true,
-  "version": "0.10.2",
+  "version": "0.11.0",
   "scripts": {
-    "test": "node tests/school.cjs && node tests/campus.cjs && node tests/home-share.cjs && node tests/movement.cjs"
+    "test": "node tests/school.cjs && node tests/campus.cjs && node tests/home-share.cjs && node tests/movement.cjs && node tests/presentation.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"
