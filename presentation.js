@@ -42,3 +42,5 @@ label=function(){};
 renderAvatar();document.title='문스쿨 | 픽셀 캠퍼스';
 
 presentationStyle.textContent+=`.gameTop>.actionBtn{position:static!important;inset:auto!important;transform:none!important;padding:7px 11px;min-height:36px;font-size:12px}.worldNav{color:#fff1d1}.worldNav summary{color:#fff1d1}.gameTop .zone{margin-right:auto}`;
+presentationStyle.textContent+=`body:not(.cwUiOpen) .side{min-height:0!important;height:auto!important}.gameTop>.actionBtn{padding:6px 8px}.gameTop .zone{min-width:0}@media(max-width:540px){.gameTop{gap:5px}.gameTop .zone{font-size:13px}.gameTop>.actionBtn{font-size:11px;min-height:34px}}`;
+schoolRunRefresh=function(){runButton.textContent=CW_MOVE.running?'🏃 달리기':'🚶 걷기';runButton.title=CW_MOVE.running?'달리기 끄기':'달리기 켜기 · Shift';runButton.setAttribute('aria-pressed',String(CW_MOVE.running));};schoolRunRefresh();
