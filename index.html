@@ -1082,7 +1082,7 @@ frame=function(now){
  for(let step=0;step<steps;step++){if(ix&&!solid(player.x+dx/steps,player.y)){player.x+=dx/steps;moved=true;}if(iy&&!solid(player.x,player.y+dy/steps)){player.y+=dy/steps;moved=true;}}
  CW05.moving=moved;
  const travelledX=player.x-beforeX,travelledY=player.y-beforeY;
- if(moved)CW05.facing=Math.abs(travelledX)>Math.abs(travelledY)?(travelledX>0?'right':'left'):(travelledY>0?'down':'up');
+ if(moved)CW05.facing=ix?(ix>0?'right':'left'):(iy>0?'down':'up');
  if(moved)CW05.phase+=dt*13;
  const x=player.x*TILE,y=player.y*TILE;
  const followPlayer=currentMap==='plaza'||width<650;
