@@ -8,6 +8,7 @@ fs.mkdirSync(reports,{recursive:true});
  page.on('pageerror',e=>errors.push(e.message));
  const test=async(name,fn)=>{await fn();passed.push(name);console.log('PASS '+name);};
  const reload=async()=>{await page.reload();await page.selectOption('#role','student');};
+ await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));
  await page.goto(require('node:url').pathToFileURL(path.join(root,'index.html')).href);
  await page.waitForFunction(()=>typeof campusTransaction==='function'&&MOON_STYLE1.loaded===8);
  await page.locator('#newNickname').fill('선생님');await page.locator('#createAvatar').click();await page.waitForTimeout(100);
@@ -95,3 +96,4 @@ fs.mkdirSync(reports,{recursive:true});
  });
  assert.deepEqual(errors,[]);passed.push('no browser JavaScript errors');fs.writeFileSync(path.join(reports,'campus-results.json'),JSON.stringify({passed,errors,base:'b7dd89a',date:new Date().toISOString()},null,2));await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});
+
