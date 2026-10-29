@@ -213,14 +213,14 @@ const campusOldWorld=worldBase;worldBase=function(){
   campusLots.forEach((lot,i)=>{const owner='학생 '+(campusPage*6+i+1),p=campusPerson(owner),x=lot.x*TILE,y=lot.y*TILE,roof=CAMPUS_DECOR.find(d=>d.id===p.roof)?.color||'#987b66';
    rounded(x-125,y-10,250,142,12,'#acc396');ctx.strokeStyle=owner===actorName()?'#c4953d':'#819975';ctx.lineWidth=3;ctx.strokeRect(x-125,y-10,250,142);
    ctx.fillStyle='#54725335';ctx.beginPath();ctx.ellipse(x+4,y+8,73,12,0,0,Math.PI*2);ctx.fill();
-   const wall=ctx.createLinearGradient(x,y-65,x,y);wall.addColorStop(0,'#fff2d7');wall.addColorStop(1,'#dfca9e');rounded(x-56,y-62,112,65,5,wall);rect(x-59,y-4,118,8,'#9e9174');
+   const wall=ctx.createLinearGradient(x,y-65,x,y);wall.addColorStop(0,p.wallColor||'#fff2d7');wall.addColorStop(1,'#dfca9e');rounded(x-56,y-62,112,65,5,wall);rect(x-59,y-4,118,8,'#9e9174');
    ctx.fillStyle=roof;ctx.beginPath();ctx.moveTo(x-69,y-57);ctx.lineTo(x,y-105);ctx.lineTo(x+69,y-57);ctx.closePath();ctx.fill();
    ctx.strokeStyle='#f4e1b64d';ctx.lineWidth=2;for(let tile=0;tile<4;tile++){ctx.beginPath();ctx.moveTo(x-48+tile*14,y-68-tile*8);ctx.lineTo(x+48-tile*14,y-68-tile*8);ctx.stroke();}
    rect(x+32,y-97,13,28,'#9a8267');rounded(x-14,y-38,28,42,4,'#5c7771');rect(x-9,y-33,18,30,'#73918a');rect(x+6,y-16,3,3,'#ead4a0');
    for(const wx of [x-39,x+25]){rounded(wx-2,y-40,19,23,3,'#a38c69');rect(wx,y-38,15,18,'#a3c8cc');rect(wx+6,y-38,2,18,'#f5e4bf');rect(wx,y-30,15,2,'#f5e4bf');rounded(wx-4,y-16,23,7,2,'#a88965');txt('🌼',wx+7,y-15,13);}
    for(let post=0;post<7;post++){const px=x-120+post*40;rect(px,y+120,5,17,'#f0e7ce');}rect(x-120,y+125,245,4,'#e2d9bf');
    for(let stone=0;stone<3;stone++)rounded(x-10,y+14+stone*17,20,9,3,'#ddd3b8');
-   txt(owner+(owner===actorName()?' · 내 집':''),x,y-111,14,'#324d3e');
+   txt((p.houseName||owner)+(owner===actorName()?' · 내 집':''),x,y-111,14,'#324d3e');
    for(const [id,cell] of Object.entries(p.layout)){const d=CAMPUS_DECOR.find(d=>d.id===id);if(d)txt(d.icon,x-103+(cell%6)*40,y+34+Math.floor(cell/6)*25,22);}
   });
  }else{
