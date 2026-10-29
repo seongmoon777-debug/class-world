@@ -16,7 +16,7 @@ fs.mkdirSync(reports,{recursive:true});
  // Test currency belongs to a disposable browser context only.
  await page.evaluate(()=>{state.coins[actorName()]=1000;save();campusOpen('life');});
  await test('attendance UI rewards only once, mood can change',async()=>{
-  await page.getByRole('combobox',{name:'오늘의 기분',exact:true}).selectOption('😊 즐거워요');await page.getByRole('button',{name:'출석하기 · 5 MC',exact:true}).click();assert.equal(await page.evaluate(()=>coinsOf(actorName())),1005);
+  await page.getByRole('combobox',{name:'오늘의 기분',exact:true}).selectOption('😊 즐거워요');await page.locator('#campus').getByRole('button',{name:'출석하기 · 5 MC',exact:true}).click();assert.equal(await page.evaluate(()=>coinsOf(actorName())),1005);
   await page.getByRole('combobox',{name:'오늘의 기분',exact:true}).selectOption('😌 편안해요');await page.getByRole('button',{name:'기분 수정',exact:true}).click();assert.equal(await page.evaluate(()=>coinsOf(actorName())),1005);
   assert.equal(await page.evaluate(()=>campusPerson().attendance[schoolToday()].mood),'😌 편안해요');
  });
