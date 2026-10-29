@@ -65,3 +65,8 @@ presentationStyle.textContent+=`body:not(.cwUiOpen) .side{min-height:0!important
 schoolRunRefresh=function(){runButton.textContent=CW_MOVE.running?'🏃 달리기':'🚶 걷기';runButton.title=CW_MOVE.running?'달리기 끄기':'달리기 켜기 · Shift';runButton.setAttribute('aria-pressed',String(CW_MOVE.running));};schoolRunRefresh();
 
 presentationStyle.textContent+=`body{background:#e4edf3;color:#20344d}.gameTop{background:#183958;border-color:#d89c29}.sideTitle{background:#24478a}.tabs{background:#e9eff8;border-color:#849fba}.tabs button.active{background:#2458aa;color:white}.gameShell{border-color:#5c7896}.schoolHelp{background:#eef4fb;color:#274568}.worldNav{background:#1c4765}.cw09Choice:has(input:checked){background:#d3eafa;border-color:#2369bf}#game{filter:saturate(1.28) contrast(1.06)}.gameTop>.actionBtn{background:#f1b43d;color:#19374f;border-color:#9c741d}.gameTop>.actionBtn[aria-pressed=true]{background:#e4523d;color:white;border-color:#a9362c}.stage{background:#c1d9e6}.quick button:nth-child(3n+1){border-bottom:3px solid #2978c5}.quick button:nth-child(3n+2){border-bottom:3px solid #d55343}.quick button:nth-child(3n){border-bottom:3px solid #19966a}`;
+
+// One visible destination for wardrobe, shopping and everyday school life.
+for(const id of ['avatar','shop'])document.querySelector('.tabs [data-tab="'+id+'"]')?.remove();
+const spaceOldSwitch=switchTab;switchTab=function(id){if(id==='avatar')return campusOpen('style');if(id==='shop')return campusOpen('shop');return spaceOldSwitch(id);};
+campusTab.onclick=()=>campusOpen('style');campusUpdateBadge();

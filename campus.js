@@ -86,7 +86,7 @@ function campusPlaceItem(id,cell,owner=campusOwner||actorName()){
  });
 }
 function campusBuyCosmetic(key,index){
- if(!['hair','hairColor','cloth','acc','shoes'].includes(key)||!Number.isInteger(index)||!itemLabels[key]?.[index])return {error:'없는 꾸미기 아이템이에요.'};
+ if(!['hair','hairColor','face','cloth','acc','shoes'].includes(key)||!Number.isInteger(index)||!itemLabels[key]?.[index])return {error:'없는 꾸미기 아이템이에요.'};
  return campusTransaction((p,s,name)=>{
   const owned=s.owned[name]||(s.owned[name]={}),av={...baseAvatar,...s.avatars[name]},list=owned[key]||(owned[key]=[Number(av[key])||0]);
   const price=key==='shoes'?20+index*10:prices[key]+(index>2?20:0);
@@ -107,18 +107,18 @@ function campusAnswer(route,index){
  });
 }
 itemLabels.shoes=['기본 구두','하늘 운동화','벚꽃 운동화','숲빛 장화'];
-const campusTab=cw09El('button','','🏡 생활');campusTab.dataset.tab='campus';$('.tabs').append(campusTab);
+const campusTab=cw09El('button','','🏡 내 공간');campusTab.dataset.tab='campus';$('.tabs').append(campusTab);
 const campusPanel=cw09El('section','panel','',$('.side'));campusPanel.id='campus';
 function campusOpen(view='life'){campusView=view;campusMessage='';switchTab('campus');campusRender();}
 campusTab.onclick=()=>campusOpen();
 function campusAct(result){campusMessage=result.error||result.message||'저장했어요.';renderAvatar();renderShop();campusRender();}
 function campusReplies(){const result=[];for(const [key,people] of Object.entries(cw09Data.submissions)){const rec=people[actorName()];if(rec?.feedback){const a=cw09Data.items.find(x=>key===x.id||key.startsWith(x.id+'@'));result.push({key,rec,title:a?.title||'지난 활동'});}}return result.sort((a,b)=>(b.rec.feedbackAt||0)-(a.rec.feedbackAt||0));}
-function campusUpdateBadge(){const unread=$('#role').value==='student'?campusReplies().filter(({key,rec})=>(campusPerson().readReplies[key]||0)<(rec.feedbackAt||1)).length:0;campusTab.textContent='🏡 생활'+(unread?' · 새 답장 '+unread:'');}
+function campusUpdateBadge(){const unread=$('#role').value==='student'?campusReplies().filter(({key,rec})=>(campusPerson().readReplies[key]||0)<(rec.feedbackAt||1)).length:0;campusTab.textContent='🏡 내 공간'+(unread?' · 새 답장 '+unread:'');}
 function campusRender(){
  if(!campusPanel.classList.contains('active'))return;campusData=campusLoad();campusPanel.replaceChildren();const teacher=$('#role').value==='teacher';
- cw09El('h2','',teacher?'우리 반 생활 기록':'나의 문스쿨 생활',campusPanel);
+ cw09El('h2','',teacher?'우리 반 공간':'내 공간',campusPanel);
  const nav=cw09El('div','campusNav','',campusPanel);
- for(const [v,t] of [['life','출석·답장'],['home','내 집·공터'],['style','꾸미기'],['explore','성장·탐험']])cw09Button(nav,t,()=>campusOpen(v),campusView===v?'primary':'secondary');
+ for(const [v,t] of [['style','꾸미기'],['shop','상점'],['home','내 집'],['life','출석·답장'],['explore','탐험']])cw09Button(nav,t,()=>campusOpen(v),campusView===v?'primary':'secondary');
  if(campusMessage){const m=cw09El('p','note',campusMessage,campusPanel);m.setAttribute('role','status');}
  if(campusView==='life'){
   if(teacher){
@@ -137,6 +137,7 @@ function campusRender(){
   }
  }else if(campusView==='home')campusRenderHome(teacher);
  else if(campusView==='style')campusRenderStyle(teacher);
+ else if(campusView==='shop')campusRenderStore(teacher);
  else campusRenderExplore(teacher);
  cw09El('p','cw09Info','이 브라우저의 체험 기록입니다. 다른 기기·친구에게 실시간 공유되지 않아요.',campusPanel);
  campusUpdateBadge();
@@ -165,16 +166,22 @@ function campusRenderHome(teacher){
  const shop=cw09El('details','cw09Form','',campusPanel);cw09El('summary','','🛒 집 꾸미기 상점 · '+coinsOf(actorName())+' MC',shop);
  for(const item of CAMPUS_DECOR){const row=cw09El('div','shopItem','',shop);cw09El('span','',item.icon+' '+item.name+' · '+item.price+' MC',row);const b=cw09Button(row,person.decor.includes(item.id)?'보유':'구매',()=>campusAct(campusBuy(item.id)));b.disabled=person.decor.includes(item.id)||coinsOf(actorName())<item.price;}
 }
-function campusRenderStyle(teacher){
+function campusRenderStyle(teacher,shopping=false){
  if(teacher){cw09El('p','','학생 모드에서 문코인으로 구매하고 미리 볼 수 있어요.',campusPanel);return;}
- cw09El('p','','기존 일러스트 또는 옷·헤어·신발이 반영되는 꾸미기 전용 그림체를 선택해요. 기존 구매 기록을 그대로 사용해요.',campusPanel);
+ cw09El('p','',shopping?'문코인 '+coinsOf(actorName())+' MC':'보유한 아이템을 골라 입어요.',campusPanel);
  const cv=cw09El('canvas','campusPreview','',campusPanel);cv.width=180;cv.height=220;campusDrawPreview(cv,currentAvatar());
- for(const [mode,title] of [['illustration','기존 일러스트'],['custom','꾸미기 캐릭터']]){const b=cw09Button(campusPanel,title,()=>campusAct(campusTransaction((p,s,n)=>{s.avatars[n]={...baseAvatar,...s.avatars[n],renderMode:mode};})));b.disabled=(currentAvatar().renderMode||'illustration')===mode;}
- for(const [key,title] of [['hair','헤어스타일'],['hairColor','머리색'],['cloth','의상'],['shoes','신발'],['acc','액세서리']]){
+ for(const [key,title] of [['hair','헤어스타일'],['hairColor','머리색'],['face','표정'],['cloth','의상'],['shoes','신발'],['acc','액세서리']]){
   const section=cw09El('details','cw09Form','',campusPanel);cw09El('summary','',title,section);
-  itemLabels[key].forEach((label,i)=>{const price=key==='shoes'?20+i*10:prices[key]+(i>2?20:0),owned=owns(actorName(),key,i)||(Number(currentAvatar()[key])||0)===i,row=cw09El('div','shopItem','',section);cw09El('span','',label+(owned?' · 보유':' · '+price+' MC'),row);
+  itemLabels[key].forEach((label,i)=>{const price=key==='shoes'?20+i*10:prices[key]+(i>2?20:0),owned=owns(actorName(),key,i)||(Number(currentAvatar()[key])||0)===i,row=(!shopping&&!owned)?null:cw09El('div','shopItem','',section);if(!row)return;cw09El('span','',label+(owned?' · 보유':' · '+price+' MC'),row);
    const b=cw09Button(row,owned?'착용':'구매·착용',()=>campusAct(campusBuyCosmetic(key,i)));b.disabled=!owned&&coinsOf(actorName())<price;
   });
+ }
+}
+function campusRenderStore(teacher){
+ campusRenderStyle(teacher,true);if(teacher)return;
+ for(const [title,items] of [['집 장식',CAMPUS_DECOR],['성장 도구',CAMPUS_GEAR]]){
+  const section=cw09El('details','cw09Form','',campusPanel);cw09El('summary','',title,section);
+  for(const item of items){const owned=CAMPUS_GEAR.some(g=>g.id===item.id)?campusPerson().gear.includes(item.id):campusPerson().decor.includes(item.id),row=cw09El('div','shopItem','',section);cw09El('span','',item.icon+' '+item.name+' · '+item.price+' MC',row);const b=cw09Button(row,owned?'보유':'구매',()=>campusAct(campusBuy(item.id)));b.disabled=owned||coinsOf(actorName())<item.price;}
  }
 }
 function campusRenderExplore(teacher){
