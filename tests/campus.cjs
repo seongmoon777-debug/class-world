@@ -24,7 +24,7 @@ fs.mkdirSync(reports,{recursive:true});
   await reload();assert.equal(await page.evaluate(()=>coinsOf(actorName())),1005);await page.clock.setFixedTime(new Date('2026-10-24T03:00:00Z'));assert.ok(!await page.evaluate(()=>campusAttendance('😊 즐거워요','').error));assert.equal(await page.evaluate(()=>coinsOf(actorName())),1010);await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));
  });
  await test('teacher views attendance, replies to real submission and student sees new reply',async()=>{
-  await page.evaluate(()=>{goMap('library');schoolSubmit('ms094_reading',{title:'어린 왕자',pages:12,thought:'친구를 소중히 하는 장면이 좋았어요.'});});
+  await page.evaluate(()=>{doorBaseGo('library');schoolSubmit('ms094_reading',{title:'어린 왕자',pages:12,thought:'친구를 소중히 하는 장면이 좋았어요.'});});
   await page.selectOption('#role','teacher');await page.evaluate(()=>campusOpen('life'));assert.match(await page.locator('#campus').innerText(),/출석 1명/);
   await page.evaluate(()=>{CW09.filter='all';CW09.selected='ms094_reading';switchTab('activities');cw09Render();});
   await page.getByRole('textbox',{name:'선생님 답장 · 학생 1',exact:true}).fill('장면과 이유를 잘 연결했어요!');await page.getByRole('button',{name:'답장 저장',exact:true}).click();
@@ -44,8 +44,8 @@ fs.mkdirSync(reports,{recursive:true});
   assert.ok(await page.evaluate(()=>campusPlaceItem('flowers',2,'학생 1').error));assert.equal(await page.evaluate(()=>campusPerson('학생 1').layout.flowers),7);assert.equal(await page.evaluate(()=>campusPerson().decor.length),0);await page.selectOption('#studentChoice','학생 1');
  });
  await test('neighborhood has 30 independent lots and safely switches pages',async()=>{
-  await page.evaluate(()=>{campusPage=4;campusOwner='학생 30';goMap('neighborhood');});assert.equal(await page.evaluate(()=>currentMap),'neighborhood');assert.equal(await page.locator('#campus .campusCell').count(),24);assert.ok(await page.locator('#campus .campusCell').first().isDisabled());
-  await page.evaluate(()=>{campusPage=0;campusOwner=actorName();goMap('neighborhood');});await page.waitForTimeout(600);await page.screenshot({path:path.join(reports,'neighborhood.png'),fullPage:true});
+  await page.evaluate(()=>{campusPage=4;campusOwner='학생 30';doorBaseGo('neighborhood');});assert.equal(await page.evaluate(()=>currentMap),'neighborhood');assert.equal(await page.locator('#campus .campusCell').count(),24);assert.ok(await page.locator('#campus .campusCell').first().isDisabled());
+  await page.evaluate(()=>{campusPage=0;campusOwner=actorName();doorBaseGo('neighborhood');});await page.waitForTimeout(600);await page.screenshot({path:path.join(reports,'neighborhood.png'),fullPage:true});
   const point=await page.evaluate(()=>{const r=canvas.getBoundingClientRect();return {x:r.left+width/2+(4*TILE-cw05LastCamera.x)*CW05.zoom,y:r.top+height/2+(4*TILE-cw05LastCamera.y)*CW05.zoom};});await page.mouse.click(point.x,point.y);assert.equal(await page.evaluate(()=>campusOwner),'학생 1');
  });
  await test('hair clothes and shoes equip visibly and preserve gender and old ownership',async()=>{
@@ -59,7 +59,7 @@ fs.mkdirSync(reports,{recursive:true});
  });
  await test('growth tool raises real stat and opens correct expedition hint',async()=>{
   const before=await page.evaluate(()=>campusStats().observation);assert.ok(!await page.evaluate(()=>campusBuy('focus').error));assert.equal(await page.evaluate(()=>campusStats().observation),before+2);assert.ok(await page.evaluate(()=>campusBuy('focus').error));
-  await page.evaluate(()=>{campusRoute='reading';goMap('expedition');campusOpen('explore');});await page.getByRole('button',{name:'성장 도구로 힌트 보기',exact:true}).click();assert.match(await page.locator('#campus').innerText(),/낱말의 뜻을 짐작/);
+  await page.evaluate(()=>{campusRoute='reading';doorBaseGo('expedition');campusOpen('explore');});await page.getByRole('button',{name:'성장 도구로 힌트 보기',exact:true}).click();assert.match(await page.locator('#campus').innerText(),/낱말의 뜻을 짐작/);
  });
  await test('wrong expedition answer never charges; completion rewards once',async()=>{
   const before=await page.evaluate(()=>coinsOf(actorName()));assert.ok(await page.evaluate(()=>campusAnswer('reading',2).error));assert.equal(await page.evaluate(()=>coinsOf(actorName())),before);assert.equal(await page.evaluate(()=>campusRun().step),0);
@@ -67,20 +67,20 @@ fs.mkdirSync(reports,{recursive:true});
   await page.evaluate(()=>campusRender());await page.screenshot({path:path.join(reports,'expedition.png'),fullPage:true});
  });
  await test('route mismatch rejected, separate routes and next day award independently',async()=>{
-  assert.ok(await page.evaluate(()=>campusAnswer('nature',0).error));await page.evaluate(()=>{campusRoute='nature';goMap('expedition');});for(const i of [0,1,2])assert.ok(!await page.evaluate(i=>campusAnswer('nature',i).error,i));
-  await page.clock.setFixedTime(new Date('2026-10-24T03:00:00Z'));await page.evaluate(()=>{campusRoute='reading';goMap('expedition');});assert.equal(await page.evaluate(()=>campusRun().step),0);for(const i of [0,1,2])assert.ok(!await page.evaluate(i=>campusAnswer('reading',i).error,i));await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));
+  assert.ok(await page.evaluate(()=>campusAnswer('nature',0).error));await page.evaluate(()=>{campusRoute='nature';doorBaseGo('expedition');});for(const i of [0,1,2])assert.ok(!await page.evaluate(i=>campusAnswer('nature',i).error,i));
+  await page.clock.setFixedTime(new Date('2026-10-24T03:00:00Z'));await page.evaluate(()=>{campusRoute='reading';doorBaseGo('expedition');});assert.equal(await page.evaluate(()=>campusRun().step),0);for(const i of [0,1,2])assert.ok(!await page.evaluate(i=>campusAnswer('reading',i).error,i));await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));
  });
  await test('all new purchases placements stats and feedback persist after reload',async()=>{
   const before=await page.evaluate(()=>coinsOf(actorName()));await reload();assert.equal(await page.evaluate(()=>coinsOf(actorName())),before);assert.equal(await page.evaluate(()=>campusPerson().layout.flowers),7);assert.equal(await page.evaluate(()=>campusPerson().roof),'roof-blue');assert.equal(await page.evaluate(()=>currentAvatar().shoes),1);assert.equal(await page.evaluate(()=>campusStats().observation),3);assert.equal(await page.evaluate(()=>cw09Data.submissions.ms094_reading['학생 1'].feedback),'장면과 이유를 잘 연결했어요!');
  });
  await test('teamwork expedition completes through visible choices and awards XP',async()=>{
-  await page.evaluate(()=>{campusBuy('friend');campusRoute='teamwork';goMap('expedition');campusOpen('explore');});const before=await page.evaluate(()=>({coins:coinsOf(actorName()),xp:state.xp[actorName()]||0}));
+  await page.evaluate(()=>{campusBuy('friend');campusRoute='teamwork';doorBaseGo('expedition');campusOpen('explore');});const before=await page.evaluate(()=>({coins:coinsOf(actorName()),xp:state.xp[actorName()]||0}));
   assert.equal(await page.evaluate(()=>campusStats().cooperation),3);await page.getByRole('button',{name:'성장 도구로 힌트 보기',exact:true}).click();assert.match(await page.locator('#campus').innerText(),/친구가 왜/);
   for(const i of [0,1,2]){await page.locator('#campus input[name=campus-puzzle]').nth(i).check();await page.getByRole('button',{name:'관문 답하기',exact:true}).click();}
   assert.equal(await page.evaluate(()=>coinsOf(actorName())),before.coins+20);assert.equal(await page.evaluate(()=>state.xp[actorName()]),before.xp+15);assert.match(await page.locator('#campus').innerText(),/오늘 보상은 이미 받았어요/);
  });
  await test('teacher cannot buy place earn attendance or expedition rewards',async()=>{
-  await page.selectOption('#role','teacher');assert.ok(await page.evaluate(()=>campusBuy('tree').error));assert.ok(await page.evaluate(()=>campusAttendance('😊 즐거워요','').error));assert.ok(await page.evaluate(()=>campusPlaceItem('flowers',0).error));await page.evaluate(()=>{campusRoute='teamwork';goMap('expedition');});assert.ok(await page.evaluate(()=>campusAnswer('teamwork',0).error));await page.selectOption('#role','student');
+  await page.selectOption('#role','teacher');assert.ok(await page.evaluate(()=>campusBuy('tree').error));assert.ok(await page.evaluate(()=>campusAttendance('😊 즐거워요','').error));assert.ok(await page.evaluate(()=>campusPlaceItem('flowers',0).error));await page.evaluate(()=>{campusRoute='teamwork';doorBaseGo('expedition');});assert.ok(await page.evaluate(()=>campusAnswer('teamwork',0).error));await page.selectOption('#role','student');
  });
  await test('storage failure rolls back coins and new inventory together',async()=>{
   const before=await page.evaluate(()=>coinsOf(actorName()));const r=await page.evaluate(()=>{const fn=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k===CAMPUS_KEY)throw new DOMException('full','QuotaExceededError');return fn.call(this,k,v);};const r=campusBuy('tree');Storage.prototype.setItem=fn;return r;});assert.ok(r.error);assert.equal(await page.evaluate(()=>coinsOf(actorName())),before);assert.ok(!await page.evaluate(()=>campusLoad().students[actorName()].decor.includes('tree')));
@@ -89,7 +89,7 @@ fs.mkdirSync(reports,{recursive:true});
   await page.evaluate(()=>{campusOwner=actorName();campusOpen('home');});await page.locator('#campus details').filter({hasText:'집 꾸미기 상점'}).locator('summary').click();const item=page.locator('#campus .shopItem').filter({hasText:'별빛 가로등'});const before=await page.evaluate(()=>coinsOf(actorName()));await item.getByRole('button',{name:'구매',exact:true}).click();assert.equal(await page.evaluate(()=>coinsOf(actorName())),before-25);assert.ok(await page.evaluate(()=>campusPerson().decor.includes('lamp')));
  });
  await test('new room movement stays visible at mobile viewport and tabs do not overflow page',async()=>{
-  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{campusOwner=actorName();goMap('neighborhood');});await page.waitForTimeout(700);await page.screenshot({path:path.join(reports,'campus-mobile.png'),fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await page.evaluate(()=>{const y=height/2+((player.y+.7)*TILE-cw05LastCamera.y)*CW05.zoom;return y>90&&y<height-5;}));
+  await page.setViewportSize({width:390,height:844});await page.evaluate(()=>{campusOwner=actorName();doorBaseGo('neighborhood');});await page.waitForTimeout(700);await page.screenshot({path:path.join(reports,'campus-mobile.png'),fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.ok(await page.evaluate(()=>{const y=height/2+((player.y+.7)*TILE-cw05LastCamera.y)*CW05.zoom;return y>90&&y<height-5;}));
  });
  await test('student-entered mood note renders as text',async()=>{
   await page.evaluate(()=>campusAttendance('😊 즐거워요','<img src=x onerror=alert(1)>'));await page.selectOption('#role','teacher');await page.evaluate(()=>campusOpen('life'));assert.equal(await page.locator('#campus img').count(),0);assert.match(await page.locator('#campus').innerText(),/<img src=x/);

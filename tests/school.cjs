@@ -1,7 +1,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),reports=path.resolve(root,'../qa');fs.mkdirSync(reports,{recursive:true});
-const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/'?'index.html':req.url.split('?')[0].slice(1);if(!['index.html','school.js','campus.js','home-share.js','movement.js','presentation.js','assets/rounded-atlas.js','rounded-avatar.js'].includes(name)){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript; charset=utf-8':'text/html; charset=utf-8');res.end(fs.readFileSync(path.join(root,name)));});
+const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/'?'index.html':req.url.split('?')[0].slice(1);if(!['index.html','school.js','campus.js','home-share.js','movement.js','presentation.js','assets/rounded-atlas.js','rounded-avatar.js','doors.js'].includes(name)){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',name.endsWith('.js')?'text/javascript; charset=utf-8':'text/html; charset=utf-8');res.end(fs.readFileSync(path.join(root,name)));});
 (async()=>{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
@@ -16,7 +16,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
  await check('girl choice and wardrobe persist',async()=>{assert.equal(await page.evaluate(()=>profileOf(actorName()).gender),'girl');assert.ok(await page.evaluate(()=>state.owned[actorName()].cloth.length));});
  await check('place and input validation',async()=>{
   assert.ok(await page.evaluate(()=>schoolSubmit('ms094_ai',1).error));
-  await page.evaluate(()=>goMap('library'));assert.ok(await page.evaluate(()=>schoolSubmit('ms094_reading',{title:'책',pages:0,thought:'좋았던 책이에요'}).error));
+  await page.evaluate(()=>doorBaseGo('library'));assert.ok(await page.evaluate(()=>schoolSubmit('ms094_reading',{title:'책',pages:0,thought:'좋았던 책이에요'}).error));
  });
  await check('reading form submits once through visible UI',async()=>{
   await page.evaluate(()=>{CW09.selected='ms094_reading';switchTab('activities');cw09Render();});
@@ -29,7 +29,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   await page.selectOption('#role','student');assert.equal(await page.evaluate(()=>coinsOf(actorName())),before+20);
  });
  await check('correct quiz rewards once; wrong quiz keeps explanation and no reward',async()=>{
-  await page.evaluate(()=>goMap('lab'));const before=await page.evaluate(()=>coinsOf(actorName()));
+  await page.evaluate(()=>doorBaseGo('lab'));const before=await page.evaluate(()=>coinsOf(actorName()));
   assert.equal(await page.evaluate(()=>schoolSubmit('ms094_ai',1).record.reward),20);
   assert.ok(await page.evaluate(()=>schoolSubmit('ms094_ai',1).error));
   assert.equal(await page.evaluate(()=>schoolSubmit('ms094_privacy',0).record.reward),0);
@@ -37,7 +37,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   await page.evaluate(()=>{CW09.selected='ms094_privacy';switchTab('activities');cw09Render();});assert.match(await page.locator('#activities').innerText(),/정답: 우리 집 주소와 전화번호/);
  });
  await check('daily resets per date and preserves yesterday',async()=>{
-  await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));await page.evaluate(()=>goMap('classroom'));
+  await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));await page.evaluate(()=>doorBaseGo('classroom'));
   assert.equal(await page.evaluate(()=>schoolSubmit('ms094_daily',[0,1,2]).record.reward),10);
   assert.ok(await page.evaluate(()=>schoolSubmit('ms094_daily',[0,1,2]).error));
   await page.clock.setFixedTime(new Date('2026-10-24T03:00:00Z'));assert.equal(await page.evaluate(()=>schoolSubmit('ms094_daily',[0,1,2]).record.reward),10);
@@ -45,7 +45,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
  });
  await check('separate students receive separate rewards',async()=>{
   await page.selectOption('#studentChoice','학생 2');await page.locator('#newNickname').fill('별빛학생');await page.locator('#createAvatar').click();await page.waitForTimeout(100);
-  await page.evaluate(()=>goMap('lab'));assert.equal(await page.evaluate(()=>schoolSubmit('ms094_ai',1).record.reward),20);
+  await page.evaluate(()=>doorBaseGo('lab'));assert.equal(await page.evaluate(()=>schoolSubmit('ms094_ai',1).record.reward),20);
   await page.selectOption('#studentChoice','학생 1');assert.ok(await page.evaluate(()=>cw09Rewarded('ms094_ai',actorName())));
  });
  await check('teacher creates quiz through form and reviews records',async()=>{
@@ -58,7 +58,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   assert.ok(await page.evaluate(()=>schoolSubmit('ms094_ai',1).error));
  });
  await check('storage failure rolls back coin and submission',async()=>{
-  await page.selectOption('#role','student');await page.evaluate(()=>goMap('classroom'));
+  await page.selectOption('#role','student');await page.evaluate(()=>doorBaseGo('classroom'));
   const result=await page.evaluate(()=>{const before=localStorage.getItem(dataKey),old=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k===CW09.storageKey)throw new DOMException('full','QuotaExceededError');return old.call(this,k,v);};const res=schoolSubmit('ms094_math',1);Storage.prototype.setItem=old;return {error:res.error,same:before===localStorage.getItem(dataKey),submitted:!!cw09Load().submissions.ms094_math?.[actorName()]};});
   assert.ok(result.error);assert.ok(result.same);assert.equal(result.submitted,false);
  });
@@ -66,7 +66,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   for(const size of [{width:1440,height:1000},{width:390,height:844}]){
    await page.setViewportSize(size);
    for(const zoom of [.57,.96,1.12]){
-    await page.evaluate(z=>{goMap('classroom');goMap('plaza');cw05SetZoom(z);},zoom);
+    await page.evaluate(z=>{doorBaseGo('classroom');doorBaseGo('plaza');cw05SetZoom(z);},zoom);
     await page.waitForTimeout(900);
     assert.ok(await page.evaluate(()=>{const x=width/2+((player.x+.5)*TILE-cw05LastCamera.x)*CW05.zoom,y=height/2+((player.y+.7)*TILE-cw05LastCamera.y)*CW05.zoom;return x>30&&x<width-30&&y>90&&y<height-10;}),'plaza avatar must be inside the viewport');
     assert.ok(await page.evaluate(()=>!solid(player.x,player.y)),'spawn must be walkable');
@@ -75,7 +75,7 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>cw05SetZoom(.96));
  });
  await check('movement, directions and idle retain grounded illustration',async()=>{
-  await page.evaluate(()=>{goMap('plaza');player.x=31;player.y=40;});await page.locator('#game').click({position:{x:30,y:30}});
+  await page.evaluate(()=>{doorBaseGo('plaza');player.x=31;player.y=40;});await page.locator('#game').click({position:{x:30,y:30}});
   const before=await page.evaluate(()=>player.x);await page.keyboard.down('ArrowRight');await page.waitForTimeout(250);await page.keyboard.up('ArrowRight');
   assert.ok(await page.evaluate(()=>player.x)>before);assert.equal(await page.evaluate(()=>CW05.facing),'right');
   await page.waitForTimeout(600);
@@ -85,13 +85,13 @@ const server=http.createServer((req,res)=>{const name=req.url.split('?')[0]==='/
   await page.locator('.schoolHelp summary').click();await page.locator('.schoolHelp summary').click();assert.equal(await page.locator('.floatTop').isVisible(),false);assert.equal(await page.locator('.cw071Hover').isVisible(),false);
  });
  await check('class vote tallies and previous daily records remain reviewable',async()=>{
-  await page.evaluate(()=>goMap('plaza'));assert.equal(await page.evaluate(()=>schoolSubmit('c09_vote',1).record.reward),10);
+  await page.evaluate(()=>doorBaseGo('plaza'));assert.equal(await page.evaluate(()=>schoolSubmit('c09_vote',1).record.reward),10);
   await page.selectOption('#role','teacher');await page.evaluate(()=>{CW09.filter='all';CW09.selected='c09_vote';switchTab('activities');cw09Render();});assert.match(await page.locator('#activities').innerText(),/도서 교환: 1표/);
   await page.evaluate(()=>{CW09.selected='ms094_daily';cw09Render();});assert.match(await page.locator('#activities').innerText(),/2026-10-23/);assert.match(await page.locator('#activities').innerText(),/2026-10-24/);
   await page.selectOption('#role','student');
  });
  await page.clock.setFixedTime(new Date('2026-10-23T03:00:00Z'));
- await page.evaluate(()=>{goMap('classroom');CW09.filter='here';switchTab('activities');cw09Render();});await page.screenshot({path:path.join(reports,'desktop.png'),fullPage:true});
+ await page.evaluate(()=>{doorBaseGo('classroom');CW09.filter='here';switchTab('activities');cw09Render();});await page.screenshot({path:path.join(reports,'desktop.png'),fullPage:true});
  await check('mobile layout fits viewport and keeps help collapsed',async()=>{
   await page.setViewportSize({width:390,height:844});await page.waitForTimeout(600);await page.screenshot({path:path.join(reports,'mobile.png'),fullPage:true});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.equal(await page.locator('.schoolHelp').getAttribute('open'),null);assert.ok(await page.evaluate(()=>{const foot=(player.y+.7)*TILE;return Math.abs(foot-cw05LastCamera.y)*CW05.zoom<height/2-8;}));
  });
