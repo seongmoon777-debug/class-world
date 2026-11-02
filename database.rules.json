@@ -1,0 +1,120 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "classes": {
+      "$class": {
+        "info": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com'",
+          ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && !data.exists() && newData.exists() && newData.child('owner').val() === auth.uid && $class.matches(/^[A-F0-9]{12}$/)",
+          ".validate": "newData.hasChildren(['owner','name','created'])",
+          "owner": {
+            ".validate": "newData.isString() && newData.val() === auth.uid"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30"
+          },
+          "created": {
+            ".validate": "newData.isNumber() && newData.val() === now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "members": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          "$uid": {
+            ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && ($uid === auth.uid || (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true))",
+            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+            ".validate": "newData.val() === true"
+          }
+        },
+        "requests": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          "$uid": {
+            ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && ($uid === auth.uid || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
+            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info').exists() && (($uid === auth.uid && !root.child('classes').child($class).child('members').child(auth.uid).exists()) || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
+            ".validate": "newData.hasChildren(['name'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "notice": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          ".validate": "newData.isString() && newData.val().length <= 500"
+        },
+        "presence": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          "$uid": {
+            "$session": {
+              ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && $uid === auth.uid && ((root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) || !newData.exists())",
+              ".validate": "newData.hasChildren(['name','map','x','y','dir','moving','av','page','at'])",
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
+              },
+              "map": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30"
+              },
+              "x": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+              },
+              "y": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+              },
+              "dir": {
+                ".validate": "newData.val() === 'up' || newData.val() === 'down' || newData.val() === 'left' || newData.val() === 'right'"
+              },
+              "moving": {
+                ".validate": "newData.isBoolean()"
+              },
+              "page": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 4 && newData.val() % 1 === 0"
+              },
+              "at": {
+                ".validate": "newData.isNumber() && newData.val() === now"
+              },
+              "av": {
+                ".validate": "newData.hasChildren(['gender','hair','face','hairColor','cloth','acc','shoes'])",
+                "gender": {
+                  ".validate": "newData.val() === 'boy' || newData.val() === 'girl'"
+                },
+                "hair": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "face": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "hairColor": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "cloth": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "acc": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "shoes": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 20 && newData.val() % 1 === 0"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
