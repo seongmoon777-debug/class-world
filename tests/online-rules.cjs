@@ -1,0 +1,22 @@
+// Evaluate the rule predicates with isolated snapshots; not a Firebase emulator.
+const assert=require('node:assert/strict'),rules=require('../database.rules.json').rules;
+const snap=v=>({val:()=>v??null,exists:()=>v!==null&&v!==undefined,child:p=>snap(p.split('/').reduce((o,k)=>o?.[k],v)),isString:()=>typeof v==='string',isNumber:()=>typeof v==='number',isBoolean:()=>typeof v==='boolean',hasChildren:ks=>ks.every(k=>v?.[k]!==undefined)});
+const state={classes:{ABCDEF123456:{info:{owner:'teacher'},members:{student:true}}}};
+const evaluate=(expr,uid,{data=null,next=null,sessionUid=uid,provider='google.com'}={})=>Function('auth','root','data','newData','$class','$uid','$session','now',`return (${String(expr).replace(/\$class\.matches\((\/.*?\/)\)/g,'$1.test($class)')});`)(uid?{uid,token:{firebase:{sign_in_provider:provider}}}:null,snap(state),snap(data),snap(next),'ABCDEF123456',sessionUid,'session',1000);
+const c=rules.classes.$class;
+assert.equal(rules['.read'],false);assert.equal(rules['.write'],false);
+for(const uid of [null,'outsider'])assert.equal(evaluate(c.presence['.read'],uid),false);
+for(const uid of ['teacher','student'])assert.equal(evaluate(c.presence['.read'],uid),true);
+assert.equal(evaluate(c.presence.$uid.$session['.write'],'student',{next:{},sessionUid:'other'}),false);
+assert.equal(evaluate(c.presence.$uid.$session['.write'],'outsider',{next:{}}),false);
+assert.equal(evaluate(c.members.$uid['.write'],'student',{next:true}),false);
+assert.equal(evaluate(c.members.$uid['.write'],'teacher',{next:true,sessionUid:'student'}),true);
+assert.equal(evaluate(c.notice['.write'],'student',{next:'bad'}),false);
+assert.equal(evaluate(c.notice['.write'],'teacher',{next:'ok'}),true);
+assert.equal(evaluate(c.info['.write'],'outsider',{data:{owner:'teacher'},next:{owner:'outsider'}}),false);
+assert.equal(evaluate(c.info['.write'],'teacher',{next:{owner:'teacher'}}),true);
+assert.equal(evaluate(c.info['.write'],'teacher',{next:{owner:'teacher'},provider:'anonymous'}),false);
+assert.equal(evaluate(c.requests.$uid['.write'],'outsider',{next:{name:'친구'},sessionUid:'student'}),false);
+assert.equal(evaluate(c.presence.$uid.$session.x['.validate'],'student',{next:999}),false);
+assert.equal(c.presence.$uid.$session.av.$other['.validate'],false);
+console.log('PASS 17 isolated rule conditions (not emulator integration)');
