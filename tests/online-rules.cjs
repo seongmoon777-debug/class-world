@@ -9,7 +9,7 @@ for(const uid of [null,'outsider'])assert.equal(evaluate(c.presence['.read'],uid
 for(const uid of ['teacher','student'])assert.equal(evaluate(c.presence['.read'],uid),true);
 assert.equal(evaluate(c.presence.$uid.$session['.write'],'student',{next:{},sessionUid:'other'}),false);
 assert.equal(evaluate(c.presence.$uid.$session['.write'],'outsider',{next:{}}),false);
-assert.equal(evaluate(c.members.$uid['.write'],'student',{next:true}),false);
+assert.equal(evaluate(c.members.$uid['.write'],'student',{next:true}),true);
 assert.equal(evaluate(c.members.$uid['.write'],'teacher',{next:true,sessionUid:'student'}),true);
 assert.equal(evaluate(c.notice['.write'],'student',{next:'bad'}),false);
 assert.equal(evaluate(c.notice['.write'],'teacher',{next:'ok'}),true);
@@ -20,3 +20,7 @@ assert.equal(evaluate(c.requests.$uid['.write'],'outsider',{next:{name:'친구'}
 assert.equal(evaluate(c.presence.$uid.$session.x['.validate'],'student',{next:999}),false);
 assert.equal(c.presence.$uid.$session.av.$other['.validate'],false);
 console.log('PASS 17 isolated rule conditions (not emulator integration)');
+
+assert.equal(evaluate(c.members.$uid['.write'],'student',{next:true,sessionUid:'other'}),false);
+assert.equal(evaluate(c.members.$uid['.write'],null,{next:true}),false);
+assert.equal(evaluate(c.members.$uid['.write'],'student',{next:null}),false);
