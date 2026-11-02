@@ -1,7 +1,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const mock=`
-const data={},listeners=[];let authListener;window.mockUser={uid:'teacher'};window.mockData=data;
+const data={classes:{ABCDEF123456:{info:{owner:'host',name:'초대 체험방'}}}},listeners=[];let authListener;window.mockUser={uid:'teacher'};window.mockData=data;
 const value=p=>p==='.info/connected'?true:p.split('/').reduce((o,k)=>o?.[k],data)??null;
 const snap=p=>({val:()=>value(p),exists:()=>value(p)!==null});
 const emit=()=>listeners.slice().forEach(x=>x.fn(snap(x.p)));
@@ -25,11 +25,11 @@ export const remove=p=>set(p,null);window.mockSet=set;
  await p.getByRole('heading',{name:'테스트 학급',exact:true}).waitFor();const code=await p.locator('#onlineSchool code').innerText();assert.match(code,/^[A-F0-9]{12}$/);
  await p.getByLabel('학급 공지 내용').fill('내일 책을 가져와요');await p.getByRole('button',{name:'공지 저장',exact:true}).click();await p.waitForFunction(()=>document.querySelector('[data-notice]')?.textContent==='내일 책을 가져와요');
  await p.getByRole('button',{name:'로그아웃',exact:true}).click();await p.evaluate(()=>window.mockUser={uid:'student'});await p.getByRole('button',{name:'Google 계정으로 로그인',exact:true}).click();
- await p.getByLabel('학급에서 쓸 이름',{exact:true}).fill('달빛');await p.getByLabel('학급 코드',{exact:true}).fill(code);await p.getByRole('button',{name:'학급 입장',exact:true}).click();await p.getByRole('button',{name:'참여 요청 보내기',exact:true}).click();
- assert.equal(await p.evaluate(c=>window.mockData.classes[c].requests.student.name,code),'달빛');assert.equal(await p.getByLabel('학급 공지 내용').count(),0);
- await p.evaluate(c=>window.mockSet('classes/'+c+'/members/student',true),code);await p.waitForFunction(()=>document.querySelector('[data-notice]')?.textContent==='내일 책을 가져와요');
+ await p.getByLabel('학급에서 쓸 이름',{exact:true}).fill('달빛');await p.getByLabel('학급 코드',{exact:true}).fill(code);await p.getByRole('button',{name:'학급 입장',exact:true}).click();
+ assert.equal(await p.evaluate(c=>window.mockData.classes[c].members.student,code),true);assert.equal(await p.getByLabel('학급 공지 내용').count(),0);
+ await p.waitForFunction(()=>document.querySelector('[data-notice]')?.textContent==='내일 책을 가져와요');
  await p.waitForFunction(c=>!!window.mockData.classes[c].presence?.student?.session,code);assert.equal(await p.getByRole('button',{name:'공지 저장',exact:true}).count(),0);
  await p.evaluate(c=>window.mockSet('classes/'+c+'/members/student',null),code);await p.getByText('학급 참여가 해제됐어요.',{exact:true}).waitFor();
  assert.equal(await p.evaluate(()=>localStorage.getItem('preserved-test')),'keep');assert.deepEqual(errors,[]);
- await browser.close();console.log('PASS mocked Google auth, class creation, announcement, join request, approval, presence, revocation, local data preservation');
+ await p.goto('https://school.test/?join=ABCDEF123456');await p.getByRole('button',{name:'Google 계정으로 로그인',exact:true}).click();await p.getByRole('heading',{name:'초대 체험방',exact:true}).waitFor();assert.equal(await p.getByLabel('학급 코드',{exact:true}).count(),0);assert.equal(await p.evaluate(()=>window.mockData.classes.ABCDEF123456.members.teacher),true);assert.match(await p.getByLabel('친구 초대 링크').inputValue(),/join=ABCDEF123456/);assert.deepEqual(errors,[]);await browser.close();console.log('PASS mocked Google auth, class creation, announcement, automatic membership, presence, revocation, local data preservation');
 })().catch(e=>{console.error(e);process.exit(1);});

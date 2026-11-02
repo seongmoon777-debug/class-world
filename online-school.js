@@ -2,6 +2,8 @@
 (() => {
  'use strict';
  if(new URLSearchParams(location.search).has('visit')) return;
+ const invite=(new URLSearchParams(location.search).get('join')||'').toUpperCase();
+ const hasInvite=/^[A-F0-9]{12}$/.test(invite);
  const config={apiKey:'AIzaSyBzCDQzfNsyGF8iO9IO2RnPqPpJRv8z-fQ',authDomain:'moonschool-class-world.firebaseapp.com',projectId:'moonschool-class-world',appId:'1:750686498820:web:e62e7f305a77647f814551',databaseURL:'https://moonschool-class-world-default-rtdb.asia-southeast1.firebasedatabase.app'};
  const root=document.createElement('dialog');root.id='onlineSchool';root.setAttribute('aria-label','온라인 학급');
  const style=document.createElement('style');style.textContent='#onlineSchool{width:min(440px,90vw);max-height:85vh;overflow:auto;border:2px solid #47654f;border-radius:18px;padding:22px;color:#263d34;background:#fffaf0}#onlineSchool::backdrop{background:#142b4366}#onlineSchool input,#onlineSchool textarea{display:block;box-sizing:border-box;width:100%;margin:8px 0;padding:10px}#onlineSchool button{margin:5px;padding:9px;border-radius:9px}#onlineSchool p{line-height:1.6}#onlineSchool .notice{font-size:13px;color:#526358}#onlineSchool code{user-select:all;font-size:18px}';document.head.append(style);document.body.append(root);
@@ -23,7 +25,7 @@
   const modules=await Promise.all(['app','auth','database'].map(x=>import(url+`firebase-${x}.js`)));
   sdk=Object.assign({},...modules);const app=sdk.initializeApp(config,'moonschool-online');auth=sdk.getAuth(app);db=sdk.getDatabase(app);
   await sdk.setPersistence(auth,sdk.browserSessionPersistence);
-  sdk.onAuthStateChanged(auth,u=>{stop();user=u;code='';meta=null;render();});
+  sdk.onAuthStateChanged(auth,async u=>{stop();user=u;code='';meta=null;render();if(u&&hasInvite){try{await enter(invite);}catch{say('초대 학급에 연결하지 못했어요. 온라인 학급에서 다시 시도해 주세요.');}}});
  }
  function stop(){generation++;offs.splice(0).forEach(fn=>fn());if(timer)clearInterval(timer);timer=null;if(presence){sdk.remove(presence).catch(()=>{});presence=null;}approved=false;connected=false;remote={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);open.textContent='🌐 온라인 학급';}
  function avatar(){const a=currentAvatar(),out={};for(const k of ['hair','face','hairColor','cloth','acc','shoes'])out[k]=Number.isInteger(a[k])&&a[k]>=0&&a[k]<=20?a[k]:0;out.gender=a.gender==='girl'?'girl':'boy';return out;}
@@ -55,7 +57,9 @@
   stop();code=next;meta=null;const token=generation;
   const s=await sdk.get(ref(base()+'/info'));if(token!==generation)return;
   if(!s.exists()){code='';render();say('해당 학급을 찾지 못했어요.');return;}
-  meta=s.val();render();
+  meta=s.val();
+  if(!owner()){await sdk.set(ref(base()+'/members/'+user.uid),true);if(token!==generation)return;}
+  render();
   if(owner()){approved=true;await startPresence(token);watchTeacher(token);watchNotice(token);render();}
   else offs.push(sdk.onValue(ref(base()+'/members/'+user.uid),s=>{if(token!==generation)return;const ok=s.val()===true;if(approved&&!ok){stop();meta=null;render();say('학급 참여가 해제됐어요.');return;}approved=ok;if(ok){startPresence(token);watchNotice(token);}render();},()=>{stop();meta=null;render();}));
  }
@@ -65,13 +69,17 @@
  function render(){
   root.replaceChildren();btn('닫기',()=>root.close());el('h2','온라인 학급');
   el('p','공유: 같은 공간의 캐릭터 위치·옷차림, 학급 공지. 출석·문코인·과제·집은 아직 이 기기에 저장됩니다.').className='notice';
-  if(!user){const login=btn('Google 계정으로 로그인',async()=>{await sdk.signInWithPopup(auth,new sdk.GoogleAuthProvider());});login.disabled=!auth;el('p','공용 기기에서는 사용 후 로그아웃해 주세요.').className='notice';return;}
+  if(!user){if(hasInvite)el('p','구글 로그인하면 초대받은 공간으로 바로 연결돼요. 승인이나 코드 입력은 필요 없어요.');const login=btn('Google 계정으로 로그인',async()=>{await sdk.signInWithPopup(auth,new sdk.GoogleAuthProvider());});login.disabled=!auth;el('p','공용 기기에서는 사용 후 로그아웃해 주세요.').className='notice';return;}
   el('p','구글 로그인됨');btn('로그아웃',async()=>{stop();await sdk.signOut(auth);});
   if(!meta){const n=field('학급에서 쓸 이름',16);n.value=displayName();const c=field('학급 코드',12);btn('학급 입장',async()=>{if(!n.value.trim()){say('학급에서 쓸 이름을 입력해 주세요.');return;}sessionStorage.setItem('moon-online-name',n.value.trim());await enter(c.value);});
    const detail=el('details');el('summary','교사: 새 학급 만들기',detail);const label=el('label','학급 이름',detail),name=el('input','',label);name.maxLength=30;name.setAttribute('aria-label','새 학급 이름');
    btn('새 학급 만들기',async()=>{if(!name.value.trim())return say('학급 이름을 입력해 주세요.');const bytes=crypto.getRandomValues(new Uint8Array(6));const id=Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('').toUpperCase();await sdk.set(ref(`classes/${id}/info`),{owner:user.uid,name:name.value.trim(),created:sdk.serverTimestamp()});await enter(id);},detail);return;
   }
-  el('h3',meta.name);el('code',code);btn('학급 나가기',()=>{stop();meta=null;code='';render();});
+  el('h3',meta.name);el('code',code);
+  const inviteUrl=new URL(location.pathname,location.origin);inviteUrl.searchParams.set('v','0.15.1');inviteUrl.searchParams.set('join',code);
+  const share=field('친구 초대 링크',240);share.value=inviteUrl.href;share.readOnly=true;
+  btn('초대 링크 복사',async()=>{try{await navigator.clipboard.writeText(inviteUrl.href);say('복사했어요. 친구에게 보내 주세요.');}catch{share.select();say('위 주소를 복사해서 보내 주세요.');}});
+  btn('함께 둘러보기',()=>root.close());btn('학급 나가기',()=>{stop();meta=null;code='';render();});
   if(!member()){el('p','교사 승인 후 연결됩니다.');btn('참여 요청 보내기',async()=>{await sdk.set(ref(base()+'/requests/'+user.uid),{name:displayName()});say('교사에게 참여를 요청했어요.');});return;}
   el('h3','학급 공지');el('p','공지를 불러오는 중…').dataset.notice='';
   // Reload current notice after a UI render without accumulating listeners.
@@ -83,4 +91,5 @@
  open.onclick=()=>{render();root.showModal();if(!sdk)act(async()=>{await init();render();});};root.addEventListener('close',()=>{pressed.clear();});
  window.addEventListener('pagehide',()=>{if(presence)sdk.remove(presence).catch(()=>{});});
  render();
+ if(hasInvite){root.showModal();act(async()=>{await init();render();});}
 })();
