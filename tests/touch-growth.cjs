@@ -1,0 +1,24 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict'),path=require('node:path');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+ const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('https://school.test/**',r=>r.fulfill({path:path.resolve(new URL(r.request().url()).pathname.slice(1)||'index.html')}));
+ await page.goto('https://school.test/');await page.evaluate(()=>{document.querySelector('#creatorOverlay').classList.remove('open');});
+ const box=await page.locator('#pad').boundingBox(),x=box.x+box.width/2,y=box.y+box.height/2;
+ await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+40,y-30);
+ assert.deepEqual(await page.evaluate(()=>[...pressed].sort()),['right','up']);
+ await page.keyboard.down('ArrowRight');await page.mouse.up();assert.equal(await page.evaluate(()=>pressed.has('right')),true);
+ await page.keyboard.up('ArrowRight');assert.equal(await page.evaluate(()=>pressed.size),0);
+ await page.mouse.move(x,y);await page.mouse.down();assert.equal(await page.evaluate(()=>pressed.size),0);
+ await page.mouse.move(x-40,y);await page.evaluate(()=>window.dispatchEvent(new Event('blur')));assert.equal(await page.evaluate(()=>pressed.size),0);await page.mouse.up();
+ await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(x+40,y);await page.evaluate(()=>goMap('plaza'));assert.equal(await page.evaluate(()=>pressed.size),0);await page.mouse.up();
+ await page.locator('.moonGrowth summary').click();assert.equal(await page.locator('.moonStat').count(),3);
+ const original=await page.evaluate(()=>localStorage.getItem(dataKey));
+ await page.evaluate(()=>{campusStudent(campusData,actorName()).gear=['focus'];updateCoin();});
+ assert.equal(await page.locator('meter[aria-label="관찰력"]').getAttribute('value'),'3');
+ assert.equal(await page.evaluate(()=>localStorage.getItem(dataKey)),original);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ assert.deepEqual(errors,[]);await page.screenshot({path:'../../outputs/touch-growth-mobile.png'});
+ await browser.close();console.log('PASS joystick diagonal/deadzone/release/keyboard overlap/blur/map reset, growth equipment values, no save mutation, mobile width');
+})().catch(e=>{console.error(e);process.exit(1)});
