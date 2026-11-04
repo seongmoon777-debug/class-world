@@ -1,7 +1,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const mock=`
-const data={classes:{ABCDEF123456:{info:{owner:'host',name:'초대 체험방'}}}},listeners=[];let authListener;window.mockUser={uid:'teacher'};window.mockData=data;
+const data=window.mockData||(window.mockData={classes:{ABCDEF123456:{info:{owner:'host',name:'초대 체험방'}}}}),listeners=window.mockListeners||(window.mockListeners=[]);let authListener;window.mockUser={uid:'teacher'};
 const value=p=>p==='.info/connected'?true:p.split('/').reduce((o,k)=>o?.[k],data)??null;
 const snap=p=>({val:()=>value(p),exists:()=>value(p)!==null});
 const emit=()=>listeners.slice().forEach(x=>x.fn(snap(x.p)));

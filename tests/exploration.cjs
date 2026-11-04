@@ -1,0 +1,23 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('node:assert/strict'),path=require('node:path');
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});const p=await browser.newPage({viewport:{width:1200,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
+await p.route('https://school.test/**',r=>{const f=path.resolve(new URL(r.request().url()).pathname.slice(1)||'index.html');return r.fulfill({path:f,contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.html')?'text/html':undefined});});
+await p.goto('https://school.test/');await p.evaluate(()=>{$('#creatorOverlay').classList.remove('open');$('#role').value='student';$('#studentChoice').value='학생 1';currentMap='plaza';goMap('moonforest');schoolPanelOpen(false);});
+const result=await p.evaluate(()=>{const initial=coinsOf(actorName()),n=MoonForest.nodes[0];const far=MoonForest.collect(n.id);player.x=n.x;player.y=n.y;const first=MoonForest.collect(n.id),repeat=MoonForest.collect(n.id);return {far,first,repeat,delta:coinsOf(actorName())-initial};});assert.ok(result.far.error);assert.ok(result.first.message);assert.ok(result.repeat.error);assert.equal(result.delta,5);
+await p.reload();await p.evaluate(()=>{$('#creatorOverlay').classList.remove('open');$('#role').value='student';$('#studentChoice').value='학생 1';currentMap='plaza';goMap('moonforest');schoolPanelOpen(false);});
+assert.ok(await p.evaluate(()=>{player.x=7;player.y=11;return MoonForest.collect('coin1').error;}));
+assert.ok(await p.evaluate(()=>{player.x=19;player.y=3;return MoonForest.collect('bonus').error;}));
+assert.ok(await p.evaluate(()=>{player.x=11;player.y=3;return MoonForest.answer(0).error;}));
+await p.evaluate(()=>{for(const n of MoonForest.nodes.filter(n=>!n.level)){player.x=n.x;player.y=n.y;MoonForest.collect(n.id);}player.x=11;player.y=3;});
+assert.ok(await p.evaluate(()=>MoonForest.answer(1).error));
+for(const answer of [0,1,2])assert.ok(await p.evaluate(a=>MoonForest.answer(a).message,answer));
+assert.ok(await p.evaluate(()=>MoonForest.answer(2).error));assert.equal(await p.evaluate(()=>MoonForest.level()),2);
+assert.ok(await p.evaluate(()=>campusPerson().decor.includes('lamp')));
+assert.ok(await p.evaluate(()=>{player.x=19;player.y=3;return MoonForest.collect('bonus').message;}));
+await p.clock.install({time:new Date(Date.now()+86400000)});
+const checks=await p.evaluate(()=>{const before=campusStats().observation;const n=MoonForest.nodes.find(n=>n.id==='obs1');player.x=n.x;player.y=n.y;const next=MoonForest.collect(n.id);const after=campusStats().observation;return {next,before,after};});assert.ok(checks.next.message);assert.equal(checks.after,checks.before+1);
+await p.evaluate(()=>{player.x=11;player.y=12;});await p.screenshot({path:'../../outputs/exploration-desktop.png'});
+await p.setViewportSize({width:390,height:844});await p.evaluate(()=>MoonForest.show());assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:'../../outputs/exploration-mobile.png'});
+assert.deepEqual(errors,[]);await browser.close();console.log('PASS proximity, daily dedupe/reload/reset, guardian prerequisite/wrong answer/completion/dedupe, level unlock, decor reward, stat growth and mobile width');
+})().catch(e=>{console.error(e);process.exit(1)});
+
