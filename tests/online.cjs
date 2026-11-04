@@ -19,6 +19,7 @@ export const remove=p=>set(p,null);window.mockSet=set;
  await p.route('https://www.gstatic.com/firebasejs/**',r=>r.fulfill({contentType:'text/javascript',headers:{'Access-Control-Allow-Origin':'*'},body:mock}));
  await p.route('https://school.test/**',r=>{const f=path.resolve(decodeURIComponent(new URL(r.request().url()).pathname.slice(1)||'index.html'));return r.fulfill({path:f,contentType:f.endsWith('.js')?'text/javascript':f.endsWith('.html')?'text/html':undefined});});
  await p.goto('https://school.test/');await p.evaluate(()=>{$('#creatorOverlay').classList.remove('open');localStorage.setItem('preserved-test','keep');});
+ if(await p.locator('.campusMore').count())await p.locator('.campusMore > summary').click();
  await p.getByRole('button',{name:'🌐 온라인 학급',exact:true}).click();
  await p.getByRole('button',{name:'Google 계정으로 로그인',exact:true}).click();
  await p.getByText('교사: 새 학급 만들기',{exact:true}).click();await p.getByLabel('새 학급 이름').fill('테스트 학급');await p.getByRole('button',{name:'새 학급 만들기',exact:true}).click();
