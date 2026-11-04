@@ -61,6 +61,7 @@
   else cw09El('p','','수집물 옆에서 E 또는 줍기. 수호자는 숲 북쪽에 있어요.',dialog);
   cw09El('p','forestNote','하루 1회씩 개인별 획득 · 조각 3개 = 능력치 +1(성장 최대 +5). 현재 기기 저장이며 협동 레이드는 아직 지원하지 않아요.',dialog);
   if(!dialog.open)dialog.showModal();
+  document.dispatchEvent(new CustomEvent('forest-menu',{detail:dialog}));
  }
  const button=cw09Button(document.querySelector('.gameTop'),'🌲 탐험',()=>show());button.className='actionBtn';
  const oldInteract=interact;interact=function(){if(currentMap!==MAP)return oldInteract();if(nearby())return oldInteract();const n=nodes.find(n=>!today(campusPerson()).picked.includes(n.id)&&distance(n)<=1.2);if(n){const r=collect(n.id);doorMessage(r.error||r.message);return;}show();};
