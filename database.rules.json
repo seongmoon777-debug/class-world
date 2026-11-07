@@ -137,7 +137,7 @@
                     ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
                     ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').exists() || now - root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').val() >= 1500)",
                     "floor": {
-                      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 6 && newData.val() % 1 === 0"
+                      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10 && newData.val() % 1 === 0"
                     },
                     "stat": {
                       ".validate": "newData.isString() && newData.val().matches(/^(observation|persistence|cooperation|knowledge|creativity|vitality)$/)"
