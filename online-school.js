@@ -53,7 +53,7 @@
   await sdk.setPersistence(auth,sdk.browserSessionPersistence);
   sdk.onAuthStateChanged(auth,async u=>{stop();user=u;code='';meta=null;render();if(u&&hasInvite){try{await enter(invite);}catch{say('초대 학급에 연결하지 못했어요. 온라인 학급에서 다시 시도해 주세요.');}}});
  }
- function stop(){generation++;offs.splice(0).forEach(fn=>fn());if(timer)clearInterval(timer);timer=null;if(presence){sdk.remove(presence).catch(()=>{});presence=null;}approved=false;connected=false;remote={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);open.textContent='🌐 온라인 학급';}
+ function stop(){generation++;offs.splice(0).forEach(fn=>fn());if(timer)clearInterval(timer);timer=null;if(presence){sdk.remove(presence).catch(()=>{});presence=null;}approved=false;connected=false;remote={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);open.textContent='🌐 온라인 학급';window.dispatchEvent(new Event('moon-class-change'));}
  function avatar(){const a=currentAvatar(),out={};for(const k of ['hair','face','hairColor','cloth','acc','shoes'])out[k]=Number.isInteger(a[k])&&a[k]>=0&&a[k]<=20?a[k]:0;out.gender=a.gender==='girl'?'girl':'boy';return out;}
  function drawPeers(){
   const ids=new Set();if(!connected||!member())return;
@@ -72,7 +72,7 @@
   const p=sdk.push(ref(base()+'/presence/'+user.uid));presence=p;
   offs.push(sdk.onValue(ref(base()+'/presence'),s=>{if(token===generation)remote=s.val()||{};},()=>{stop();render();say('학급 연결이 해제됐어요. 다시 입장해 주세요.');}));
   offs.push(sdk.onValue(ref('.info/connected'),async s=>{
-   if(token!==generation)return;connected=s.val()===true;open.textContent=connected?'🟢 학급 연결됨':'🌐 재연결 중';
+   if(token!==generation)return;connected=s.val()===true;open.textContent=connected?'🟢 학급 연결됨':'🌐 재연결 중';window.dispatchEvent(new Event('moon-class-change'));
    if(connected){try{await sdk.onDisconnect(p).remove();if(token===generation)await send();}catch{if(token===generation){connected=false;say('공유 연결을 설정하지 못했어요.');}}}
    else{remote={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);}
   }));
@@ -116,6 +116,16 @@
  }
  open.onclick=()=>{render();root.showModal();if(!sdk)act(async()=>{await init();render();});};root.addEventListener('close',()=>{pressed.clear();});
  window.addEventListener('pagehide',()=>{if(presence)sdk.remove(presence).catch(()=>{});});
+ window.MoonClass={
+  session:()=>({uid:user?.uid||'',code,name:displayName(),owner:owner(),connected:connected&&member()}),
+  roster:()=>Object.entries(remote).map(([uid,sessions])=>{const p=Object.values(sessions||{}).filter(p=>p&&Date.now()-p.at<20000).sort((a,b)=>b.at-a.at)[0];return p?{uid,name:String(p.name||'친구').replace(/^Lv\.\d+ /,'')}:null;}).filter(Boolean),
+  open:()=>open.click(),
+  watchTower:(fn,error)=>{if(!connected||!member())throw Error('먼저 온라인 학급에 연결해 주세요.');return sdk.onValue(ref(base()+'/tower'),s=>fn(s.val()||{}),error);},
+  attack:async(runId,hit)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const key=sdk.push(ref(base()+'/tower/runs/'+runId+'/hits/'+user.uid)).key;
+   if(!key)throw Error('공격 번호를 만들지 못했어요.');const changes={};changes['hits/'+user.uid+'/'+key]={...hit,name:displayName(),at:sdk.serverTimestamp()};changes['cooldowns/'+user.uid]={key,at:sdk.serverTimestamp()};await sdk.update(ref(base()+'/tower/runs/'+runId),changes);},
+  startTower:async()=>{if(!owner()||!connected)throw Error('온라인 학급 운영자만 원정을 시작할 수 있어요.');const runId=sdk.push(ref(base()+'/tower/runs')).key;if(!runId)throw Error('원정 번호를 만들지 못했어요.');await sdk.set(ref(base()+'/tower/config'),{runId,at:sdk.serverTimestamp()});},
+  grantTitle:async(uid,titleId,enabled)=>{if(!owner()||!connected)throw Error('온라인 학급 운영자만 호칭을 수여할 수 있어요.');await sdk.set(ref(base()+'/tower/awards/'+uid+'/'+titleId),enabled===true);}
+ };
  render();
  setInterval(()=>{if(levels.open)renderLevels();},1000);
  if(hasInvite){root.showModal();act(async()=>{await init();render();});}

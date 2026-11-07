@@ -113,6 +113,81 @@
         },
         "$other": {
           ".validate": false
+        },
+        "tower": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          "config": {
+            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
+            ".validate": "newData.hasChildren(['runId','at'])",
+            "runId": {
+              ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() === now"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "runs": {
+            "$run": {
+              "hits": {
+                "$uid": {
+                  "$hit": {
+                    ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
+                    ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').exists() || now - root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').val() >= 1500)",
+                    "floor": {
+                      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 6 && newData.val() % 1 === 0"
+                    },
+                    "stat": {
+                      ".validate": "newData.isString() && newData.val().matches(/^(observation|persistence|cooperation|knowledge|creativity|vitality)$/)"
+                    },
+                    "power": {
+                      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                    },
+                    "name": {
+                      ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
+                    },
+                    "at": {
+                      ".validate": "newData.isNumber() && newData.val() === now"
+                    },
+                    "$other": {
+                      ".validate": false
+                    }
+                  }
+                }
+              },
+              "cooldowns": {
+                "$uid": {
+                  ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && newData.exists()",
+                  ".validate": "newData.hasChildren(['key','at']) && (!data.exists() || now - data.child('at').val() >= 1500) && newData.parent().parent().child('hits').child($uid).child(newData.child('key').val()).child('at').val() === now",
+                  "key": {
+                    ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
+                  },
+                  "at": {
+                    ".validate": "newData.isNumber() && newData.val() === now"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                }
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          },
+          "awards": {
+            "$uid": {
+              "$title": {
+                ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
+                ".validate": "$title.matches(/^mentor-(observation|persistence|cooperation|knowledge|creativity|vitality)$/) && newData.isBoolean()"
+              }
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
         }
       }
     }
