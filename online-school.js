@@ -8,6 +8,32 @@
  const root=document.createElement('dialog');root.id='onlineSchool';root.setAttribute('aria-label','온라인 학급');
  const style=document.createElement('style');style.textContent='#onlineSchool{width:min(440px,90vw);max-height:85vh;overflow:auto;border:2px solid #47654f;border-radius:18px;padding:22px;color:#263d34;background:#fffaf0}#onlineSchool::backdrop{background:#142b4366}#onlineSchool input,#onlineSchool textarea{display:block;box-sizing:border-box;width:100%;margin:8px 0;padding:10px}#onlineSchool button{margin:5px;padding:9px;border-radius:9px}#onlineSchool p{line-height:1.6}#onlineSchool .notice{font-size:13px;color:#526358}#onlineSchool code{user-select:all;font-size:18px}';document.head.append(style);document.body.append(root);
  const open=document.createElement('button');open.type='button';open.textContent='🌐 온라인 학급';document.querySelector('.gameTop').append(open);
+ const levels=document.createElement('dialog');levels.id='classLevels';levels.setAttribute('aria-label','친구 레벨');document.body.append(levels);
+ const levelButton=document.createElement('button');levelButton.type='button';levelButton.textContent='⭐ 친구 레벨';document.querySelector('.gameTop').append(levelButton);
+ const currentLevel=()=>Math.min(999,Math.max(1,1+Math.floor((Number(state.xp[actorName()])||0)/100)));
+ // The existing validated 16-character presence name carries a visible level badge.
+ // This works with the deployed rules and with older clients, without uploading XP records.
+ function presenceName(){const badge='Lv.'+currentLevel()+' ';let name='';for(const char of displayName()){if(badge.length+name.length+char.length>16)break;name+=char;}return badge+name;}
+ function levelRows(){
+  if(!connected||!member())return [];
+  const rows=[{uid:user.uid,name:displayName(),level:currentLevel(),mine:true}];
+  for(const [uid,sessions] of Object.entries(remote)){
+   if(uid===user.uid)continue;
+   const latest=Object.values(sessions||{}).filter(p=>p&&Number.isFinite(p.at)&&Date.now()-p.at<=20000).sort((a,b)=>b.at-a.at)[0];
+   if(!latest)continue;const match=/^Lv\.([1-9]\d{0,2}) (.+)$/.exec(String(latest.name||''));
+   rows.push({uid,name:match?match[2]:String(latest.name||'친구'),level:match?Number(match[1]):null,mine:false});
+  }
+  return rows.sort((a,b)=>(b.level||0)-(a.level||0)||a.name.localeCompare(b.name,'ko'));
+ }
+ function renderLevels(){
+  const list=levels.querySelector('.classLevelList');if(!list)return;list.replaceChildren();
+  const rows=levelRows();levels.querySelector('.classLevelStatus').textContent=connected&&member()?`지금 접속한 친구 ${rows.length}명 · 100 XP마다 레벨업!`:'온라인 학급에 연결하면 서로의 레벨을 볼 수 있어요.';
+  for(const row of rows){const line=el('div','',list);line.className='classLevelRow'+(row.mine?' isMe':'');el('span',row.name+(row.mine?' · 나':''),line);el('strong',row.level===null?'레벨 미공유':'Lv. '+row.level,line);}
+  if(rows.length===1)el('p','친구가 같은 학급에 접속하면 여기에 나타나요.',list);
+ }
+ levelButton.onclick=()=>{pressed.clear();levels.replaceChildren();btn('닫기',()=>levels.close(),levels);el('h2','⭐ 함께 성장하는 우리 반',levels);el('p','',levels).className='classLevelStatus';el('div','',levels).className='classLevelList';el('p','접속 중인 친구의 현재 기기 레벨이에요. 다른 기기에서 진행한 성장은 아직 합산되지 않아요.',levels).className='notice';btn('온라인 학급 연결',()=>{levels.close();open.click();},levels);renderLevels();levels.showModal();};
+ levels.addEventListener('close',()=>pressed.clear());
+ style.textContent+='#classLevels{box-sizing:border-box;width:min(420px,92vw);max-height:80dvh;overflow:auto;padding:20px;border:1px solid #729083;border-radius:18px;background:#fffaf0;color:#284c43}#classLevels::backdrop{background:#142b4388}#classLevels h2{font-size:20px}#classLevels button{padding:10px;margin:5px 0;border-radius:9px}#classLevels p{font-size:12px;line-height:1.7}.classLevelRow{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 10px;border-bottom:1px solid #dce4d8}.classLevelRow span{overflow-wrap:anywhere;min-width:0}.classLevelRow strong{white-space:nowrap;color:#8a641c}.classLevelRow.isMe{background:#e8f0df;border-radius:9px}.classLevelStatus{color:#537265}';
  let sdk,auth,db,user=null,code='',meta=null,approved=false,connected=false,generation=0,offs=[],presence=null,timer=null,remote={},lastSent=0,busy=false;
  const el=(tag,text,parent=root)=>{const n=document.createElement(tag);if(text)n.textContent=text;parent.append(n);return n;};
  const btn=(text,fn,parent=root)=>{const n=el('button',text,parent);n.type='button';n.onclick=()=>act(fn);return n;};
@@ -37,7 +63,7 @@
   }}
   for(const k of CW05.remote.keys())if(k.startsWith('net:')&&!ids.has(k))CW05.remote.delete(k);
  }
- async function send(){if(!connected||!member()||!presence||document.hidden||Date.now()-lastSent<500)return;lastSent=Date.now();await sdk.set(presence,{name:displayName(),map:currentMap,x:player.x,y:player.y,dir:CW05.facing||'down',moving:!!CW05.moving,av:avatar(),page:currentMap==='neighborhood'?campusPage:0,at:sdk.serverTimestamp()});}
+ async function send(){if(!connected||!member()||!presence||document.hidden||Date.now()-lastSent<500)return;lastSent=Date.now();await sdk.set(presence,{name:presenceName(),map:currentMap,x:player.x,y:player.y,dir:CW05.facing||'down',moving:!!CW05.moving,av:avatar(),page:currentMap==='neighborhood'?campusPage:0,at:sdk.serverTimestamp()});}
  function displayName(){return (sessionStorage.getItem('moon-online-name')||'친구').slice(0,16);}
  async function startPresence(token){
   if(timer||token!==generation||!member())return;
@@ -68,7 +94,7 @@
  function watchTeacher(token){offs.push(sdk.onValue(ref(base()+'/requests'),s=>{if(token!==generation)return;const box=root.querySelector('[data-requests]');if(!box)return;box.replaceChildren();for(const [uid,r] of Object.entries(s.val()||{})){const line=el('p',r.name,box);btn('참여 승인',async()=>{await sdk.set(ref(base()+'/members/'+uid),true);await sdk.remove(ref(base()+'/requests/'+uid));say('참여를 승인했어요.');},line);}},()=>{}));}
  function render(){
   root.replaceChildren();btn('닫기',()=>root.close());el('h2','온라인 학급');
-  el('p','공유: 같은 공간의 캐릭터 위치·옷차림, 학급 공지. 출석·문코인·과제·집은 아직 이 기기에 저장됩니다.').className='notice';
+  el('p','공유: 캐릭터 위치·옷차림·레벨, 학급 공지. 출석·문코인·과제·집은 아직 이 기기에 저장됩니다.').className='notice';
   if(!user){if(hasInvite)el('p','구글 로그인하면 초대받은 공간으로 바로 연결돼요. 승인이나 코드 입력은 필요 없어요.');const login=btn('Google 계정으로 로그인',async()=>{await sdk.signInWithPopup(auth,new sdk.GoogleAuthProvider());});login.disabled=!auth;el('p','공용 기기에서는 사용 후 로그아웃해 주세요.').className='notice';return;}
   el('p','구글 로그인됨');btn('로그아웃',async()=>{stop();await sdk.signOut(auth);});
   if(!meta){const n=field('학급에서 쓸 이름',16);n.value=displayName();const c=field('학급 코드',12);btn('학급 입장',async()=>{if(!n.value.trim()){say('학급에서 쓸 이름을 입력해 주세요.');return;}sessionStorage.setItem('moon-online-name',n.value.trim());await enter(c.value);});
@@ -91,5 +117,6 @@
  open.onclick=()=>{render();root.showModal();if(!sdk)act(async()=>{await init();render();});};root.addEventListener('close',()=>{pressed.clear();});
  window.addEventListener('pagehide',()=>{if(presence)sdk.remove(presence).catch(()=>{});});
  render();
+ setInterval(()=>{if(levels.open)renderLevels();},1000);
  if(hasInvite){root.showModal();act(async()=>{await init();render();});}
 })();
