@@ -32,7 +32,7 @@
   const match=cw09El('div','towerMatch','',card);cw09El('span','weak','약점 '+CAMPUS_STATS[f.weak]+' ×2',match);cw09El('span','resist','저항 '+CAMPUS_STATS[f.resist]+' ×0.5',match);
   const stats=campusStats(),skills=cw09El('div','towerSkills','',dialog);for(const key of core.keys){const b=cw09Button(skills,CAMPUS_STATS[key]+' '+stats[key],()=>{selected=key;render();},selected===key?'selected':'');b.setAttribute('aria-pressed',String(selected===key));}
   const hit=cw09Button(dialog,'',()=>attack(),'towerAttack');hit.dataset.attack='';updateAttack();
-  cw09El('p','towerHint','능력치를 선택해 공격해요. 공격 간격 1.5초 · 호칭 효과는 장착한 하나만 적용',dialog);
+  cw09El('p','towerHint','약점 능력치가 높으면 피해가 커져요.',dialog);
   const scores=cw09El('section','towerScores','',dialog);cw09El('h3','','이번 층 기여도',scores);const rows=Object.entries(f.scores).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));if(!rows.length)cw09El('p','','첫 공격으로 원정을 열어 주세요.',scores);for(const [uid,total] of rows){const line=cw09El('div','towerScore','',scores);cw09El('span','',(f.names[uid]||'친구')+(uid===s.uid?' · 나':''),line);cw09El('strong','',total+' 피해',line);}
   const previous=result.floors.filter(x=>x.done);if(previous.length){const details=cw09El('details','towerHistory','',dialog);cw09El('summary','','이전 층 MVP',details);for(const floor of previous)winnerCard(floor,details);}
   if(focus)dialog.querySelector(`[data-focus="${focus}"]`)?.focus();
