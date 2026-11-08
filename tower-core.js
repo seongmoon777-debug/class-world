@@ -15,14 +15,19 @@
  function getTitle(tower,id){return catalog[id]||(validTitle(tower.customTitles?.[id])?{...tower.customTitles[id],source:'교사 제작'}:null);}
  function titleBonuses(t){return Object.fromEntries(keys.map(k=>[k,t?.stat===k?t.bonus:(t?.bonuses?.[k]||0)]));}
  function damage(boss,stat,power){if(!keys.includes(stat)||!Number.isInteger(power)||power<1||power>30)return 0;return Math.max(1,Math.floor((4+power*2)*(stat===boss.weak?2:stat===boss.resist?0.5:1)));}
+ function validStats(stats){return !!stats&&Object.keys(stats).length===6&&keys.every(k=>Number.isInteger(stats[k])&&stats[k]>=1&&stats[k]<=30);}
+ function totalDamage(boss,stats){if(!validStats(stats))return 0;return Math.max(1,Math.floor(4+keys.reduce((sum,k)=>sum+stats[k]*(k===boss.weak?4:k===boss.resist?1:2),0)));}
+ // Server-assigned immutable timestamp supplies the roll: no client critical flag or reroll.
+ function critical(hit){return hit.version===2&&Number.isFinite(hit.at)&&hit.at%100<15;}
+ function hitDamage(boss,hit){if(hit.version!==2)return damage(boss,hit.stat,hit.power);const base=totalDamage(boss,hit.stats);return base*(critical(hit)?3:1);}
  function replay(run={}){
   const results=floors.map(f=>({...f,remaining:f.hp,scores:{},names:{},winners:[],done:false}));
   const credits={};const events=[];for(const [uid,hits] of Object.entries(run.hits||{}))for(const [id,hit] of Object.entries(hits||{}))if(hit&&Number.isFinite(hit.at))events.push({...hit,uid,id});
   const order=(a,b)=>a<b?-1:a>b?1:0;events.sort((a,b)=>a.at-b.at||order(a.id,b.id)||order(a.uid,b.uid));let active=0;
-  for(const hit of events){const f=results[hit.floor-1];if(!f||f.done||hit.floor!==f.floor)continue;const dealt=Math.min(f.remaining,damage(f,hit.stat,hit.power));if(!dealt)continue;(credits[hit.uid]||={})[hit.id]=dealt;f.remaining-=dealt;f.scores[hit.uid]=(f.scores[hit.uid]||0)+dealt;f.names[hit.uid]=String(hit.name||'친구').slice(0,16);
+  for(const hit of events){const f=results[hit.floor-1];if(!f||f.done||hit.floor!==f.floor)continue;const dealt=Math.min(f.remaining,hitDamage(f,hit));if(!dealt)continue;(credits[hit.uid]||={})[hit.id]=dealt;f.remaining-=dealt;f.scores[hit.uid]=(f.scores[hit.uid]||0)+dealt;f.names[hit.uid]=String(hit.name||'친구').slice(0,16);
    if(f.remaining===0){f.done=true;f.clearedAt=hit.at;const top=Math.max(...Object.values(f.scores));f.winners=Object.keys(f.scores).filter(uid=>f.scores[uid]===top).sort();active++;}}
   active=results.findIndex(f=>!f.done);if(active<0)active=results.length;return {floors:results,active,complete:active===floors.length,credits};
  }
  function unlocked(tower,uid){const ids=new Set();for(const run of Object.values(tower.runs||{}))for(const f of replay(run).floors)if(f.done&&f.winners.includes(uid))ids.add('tower-'+(f.floor-1));for(const [id,value] of Object.entries(tower.awards?.[uid]||{}))if(value===true&&!id.startsWith('tower-')&&getTitle(tower,id))ids.add(id);return [...ids];}
- const api={keys,names,floors,catalog,damage,replay,unlocked,dayIndex,usedToday,validTitle,getTitle,titleBonuses};if(typeof module!=='undefined')module.exports=api;else root.MoonTowerCore=api;
+ const api={keys,names,floors,catalog,damage,replay,unlocked,dayIndex,usedToday,validTitle,getTitle,titleBonuses,validStats,totalDamage,critical,hitDamage};if(typeof module!=='undefined')module.exports=api;else root.MoonTowerCore=api;
 })(typeof window!=='undefined'?window:globalThis);
