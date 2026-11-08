@@ -138,15 +138,9 @@
                 "$uid": {
                   "$hit": {
                     ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
-                    ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('key').val() === $hit && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('runId').val() === $run && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').exists() || root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').val() < (now - ((now + 32400000) % 86400000)))",
+                    ".validate": "newData.hasChildren(['floor','version','stats','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('key').val() === $hit && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('runId').val() === $run && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').exists() || root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').val() < (now - ((now + 32400000) % 86400000)))",
                     "floor": {
                       ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10 && newData.val() % 1 === 0"
-                    },
-                    "stat": {
-                      ".validate": "newData.isString() && newData.val().matches(/^(observation|persistence|cooperation|knowledge|creativity|vitality)$/)"
-                    },
-                    "power": {
-                      ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
                     },
                     "name": {
                       ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
@@ -156,6 +150,33 @@
                     },
                     "$other": {
                       ".validate": false
+                    },
+                    "version": {
+                      ".validate": "newData.isNumber() && newData.val() === 2"
+                    },
+                    "stats": {
+                      ".validate": "newData.hasChildren(['observation','persistence','cooperation','knowledge','creativity','vitality'])",
+                      "$other": {
+                        ".validate": false
+                      },
+                      "observation": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      },
+                      "persistence": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      },
+                      "cooperation": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      },
+                      "knowledge": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      },
+                      "creativity": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      },
+                      "vitality": {
+                        ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30 && newData.val() % 1 === 0"
+                      }
                     }
                   }
                 }
