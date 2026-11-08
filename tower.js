@@ -20,10 +20,10 @@
  }
  function render(){
   const focus=dialog.querySelector(':focus')?.dataset.focus;dialog.replaceChildren();heading();if(error)cw09El('p','towerError',error,dialog).setAttribute('role','status');
-  const s=session();if(!s.connected){cw09El('p','','같은 온라인 학급에 연결한 친구들과 보스 체력을 함께 줄여요.',dialog);cw09Button(dialog,'온라인 학급 연결',()=>{dialog.close();MoonClass.open();},'primary');return;}
-  if(!ready){cw09El('p','','학급 탑 기록을 연결하고 있어요.',dialog);return;}
+  const s=session();if(!s.connected)cw09El('p','towerHint','보스 미리보기 · 월드 연결 후 함께 공략해요.',dialog);
+  if(s.connected&&!ready){cw09El('p','','학급 탑 기록을 연결하고 있어요.',dialog);return;}
   if(view==='titles'){renderTitles();return;}if(view==='teacher'&&s.owner){renderTeacher();return;}
-  if(!tower.config?.runId){cw09El('p','','아직 원정이 시작되지 않았어요. 온라인 학급 운영자가 시작할 수 있어요.',dialog);if(s.owner)cw09Button(dialog,'첫 원정 시작',()=>action(()=>MoonClass.startTower()),'primary').disabled=pending;return;}
+  if(s.connected&&!tower.config?.runId){cw09El('p','','아직 원정이 시작되지 않았어요. 온라인 학급 운영자가 시작할 수 있어요.',dialog);if(s.owner)cw09Button(dialog,'첫 원정 시작',()=>action(()=>MoonClass.startTower()),'primary').disabled=pending;return;}
   const result=active(),f=result.floors[selectedFloor-1];
   const steps=cw09El('nav','towerSteps','',dialog);steps.setAttribute('aria-label','공략할 층 선택');for(const floor of result.floors){const b=cw09Button(steps,floor.floor+'층'+(floor.done?' ✓':''),()=>{selectedFloor=floor.floor;render();},floor.floor===selectedFloor?'current':floor.done?'done':'');b.setAttribute('aria-pressed',String(floor.floor===selectedFloor));b.title=floor.name;}
   if(result.complete)cw09El('h3','','🏆 10개 층 공략 완료! 우리 반의 전설이에요.',dialog);if(f.done)winnerCard(f,dialog);
@@ -39,7 +39,7 @@
  }
  function winnerCard(f,parent){const names=f.winners.map(uid=>f.names[uid]||'친구').join(', ');cw09El('p','towerWinner',`${f.floor}층 ${f.winners.length>1?'공동 ':''}MVP · ${names} → 「${f.title}」`,parent);}
  function renderDamage(result){const uid=session().uid,hits=tower.runs?.[tower.config?.runId]?.hits?.[uid]||{};const recent=Object.entries(hits).filter(([,h])=>h&&Number.isFinite(h.at)).sort((a,b)=>b[1].at-a[1].at||(a[0]<b[0]?1:-1)).slice(0,3);if(!recent.length)return;const log=cw09El('div','towerDamageLog','',dialog);log.setAttribute('role','log');log.setAttribute('aria-label','내 공격 로그');for(const [id,h] of recent){const amount=result.credits?.[uid]?.[id]||0;cw09El('p','',amount>0?`${h.floor}층 · ${CAMPUS_STATS[h.stat]} 공격 · 내가 준 피해 +${amount}`:`${h.floor}층 · 보스 처치 후 공격 · 피해 0`,log);}}
- function updateAttack(){const b=dialog.querySelector('[data-attack]');if(!b)return;const result=active(),f=result.floors[selectedFloor-1];if(!f)return;if(f.done){b.disabled=true;b.textContent='이 층 공략 완료 ✓';return;}const wait=Math.max(0,1500-(Date.now()-lastHit));b.disabled=pending||wait>0||!ready||!session().connected;b.textContent=pending?'공격 저장 중…':wait>0?`다음 공격 ${(wait/1000).toFixed(1)}초`:`${CAMPUS_STATS[selected]} 공격 · 예상 ${core.damage(f,selected,Math.min(30,campusStats()[selected]))} 피해`;}
+ function updateAttack(){const b=dialog.querySelector('[data-attack]');if(!b)return;const result=active(),f=result.floors[selectedFloor-1];if(!f)return;if(f.done){b.disabled=true;b.textContent='이 층 공략 완료 ✓';return;}if(!session().connected){b.disabled=true;b.textContent='보스 미리보기 · 월드 연결 대기';return;}const wait=Math.max(0,1500-(Date.now()-lastHit));b.disabled=pending||wait>0||!ready||!session().connected;b.textContent=pending?'공격 저장 중…':wait>0?`다음 공격 ${(wait/1000).toFixed(1)}초`:`${CAMPUS_STATS[selected]} 공격 · 예상 ${core.damage(f,selected,Math.min(30,campusStats()[selected]))} 피해`;}
  async function attack(){if(pending||!ready||!session().connected||Date.now()-lastHit<1500)return;const result=active(),floor=result.floors[selectedFloor-1];if(!floor||floor.done)return;lastHit=Date.now();await action(()=>MoonClass.attack(tower.config.runId,{floor:floor.floor,stat:selected,power:Math.min(30,campusStats()[selected])}));}
  function renderTitles(){const ids=core.unlocked(tower,session().uid),current=equipped();cw09El('p','towerHint','MVP 호칭은 각 층 보스를 처치하면 열려요. 동률은 공동 수여하며, 지난 원정의 호칭도 유지돼요.',dialog);cw09Button(dialog,'호칭 해제',()=>{localStorage.removeItem(equipmentKey());refresh();}).disabled=!current;
   if(!ids.length)cw09El('p','','보스를 함께 공략하거나 교사의 호칭을 받아 보세요.',dialog);
