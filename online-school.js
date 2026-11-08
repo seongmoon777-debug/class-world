@@ -9,7 +9,7 @@
  const style=document.createElement('style');style.textContent='#onlineSchool{width:min(440px,90vw);max-height:85vh;overflow:auto;border:2px solid #47654f;border-radius:18px;padding:22px;color:#263d34;background:#fffaf0}#onlineSchool::backdrop{background:#142b4366}#onlineSchool input,#onlineSchool textarea{display:block;box-sizing:border-box;width:100%;margin:8px 0;padding:10px}#onlineSchool button{margin:5px;padding:9px;border-radius:9px}#onlineSchool p{line-height:1.6}#onlineSchool .notice{font-size:13px;color:#526358}#onlineSchool code{user-select:all;font-size:18px}';document.head.append(style);document.body.append(root);
  const open=document.createElement('button');open.type='button';open.textContent='🌐 온라인 학급';document.querySelector('.gameTop').append(open);
  function presenceName(){return displayName();}
- let sdk,auth,db,user=null,studentProfile=null,code='',meta=null,approved=false,connected=false,generation=0,offs=[],presence=null,timer=null,remote={},lastSent=0,busy=false;
+ let sdk,auth,db,user=null,studentProfile=null,code='',meta=null,approved=false,connected=false,generation=0,offs=[],presence=null,timer=null,remote={},teacherRoster={},lastSent=0,busy=false;
  const el=(tag,text,parent=root)=>{const n=document.createElement(tag);if(text)n.textContent=text;parent.append(n);return n;};
  const btn=(text,fn,parent=root)=>{const n=el('button',text,parent);n.type='button';n.onclick=()=>act(fn);return n;};
  const field=(label,max=30)=>{const l=el('label',label),n=el('input','',l);n.maxLength=max;n.setAttribute('aria-label',label);return n;};
@@ -40,7 +40,7 @@
    }catch(e){if(user?.uid===u.uid){render();if(!root.open)root.showModal();say(e.message?.includes('계정의')?e.message:'학급에 연결하지 못했어요. 다시 로그인하거나 선생님께 알려 주세요.');}}
   });
  }
- function stop(){generation++;offs.splice(0).forEach(fn=>fn());if(timer)clearInterval(timer);timer=null;if(presence){sdk.remove(presence).catch(()=>{});presence=null;}approved=false;connected=false;remote={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);open.textContent='🌐 온라인 학급';window.dispatchEvent(new Event('moon-class-change'));}
+ function stop(){generation++;offs.splice(0).forEach(fn=>fn());if(timer)clearInterval(timer);timer=null;if(presence){sdk.remove(presence).catch(()=>{});presence=null;}approved=false;connected=false;remote={};teacherRoster={};for(const k of CW05.remote.keys())if(k.startsWith('net:'))CW05.remote.delete(k);open.textContent='🌐 온라인 학급';window.dispatchEvent(new Event('moon-class-change'));}
  function avatar(){const a=currentAvatar(),out={};for(const k of ['hair','face','hairColor','cloth','acc','shoes'])out[k]=Number.isInteger(a[k])&&a[k]>=0&&a[k]<=20?a[k]:0;out.gender=a.gender==='girl'?'girl':'boy';return out;}
  function drawPeers(){
   const ids=new Set();if(!connected||!member())return;
@@ -80,7 +80,7 @@
  }
  let noticeOff=null;
  function watchNotice(token){if(noticeOff)return;const off=sdk.onValue(ref(base()+'/notice'),s=>{if(token===generation){const n=root.querySelector('[data-notice]');if(n)n.textContent=s.val()||'아직 공지가 없어요.';}},()=>{});noticeOff=off;offs.push(()=>{off();noticeOff=null;});}
- function watchTeacher(token){offs.push(sdk.onValue(ref(base()+'/requests'),s=>{if(token!==generation)return;const box=root.querySelector('[data-requests]');if(!box)return;box.replaceChildren();for(const [uid,r] of Object.entries(s.val()||{})){const line=el('p',r.name,box);btn('참여 승인',async()=>{await sdk.set(ref(base()+'/members/'+uid),true);await sdk.remove(ref(base()+'/requests/'+uid));say('참여를 승인했어요.');},line);}},()=>{}));}
+ function watchTeacher(token){offs.push(sdk.onValue(ref(base()+'/roster'),s=>{if(token===generation){teacherRoster=s.val()||{};window.dispatchEvent(new Event('moon-roster-change'));}},()=>{}));offs.push(sdk.onValue(ref(base()+'/requests'),s=>{if(token!==generation)return;const box=root.querySelector('[data-requests]');if(!box)return;box.replaceChildren();for(const [uid,r] of Object.entries(s.val()||{})){const line=el('p',r.name,box);btn('참여 승인',async()=>{await sdk.set(ref(base()+'/members/'+uid),true);await sdk.remove(ref(base()+'/requests/'+uid));say('참여를 승인했어요.');},line);}},()=>{}));}
  function render(){
   root.replaceChildren();if(user)btn('닫기',()=>root.close());el('h2',user?'온라인 학급':'문스쿨 로그인');
   if(user)el('p','공유: 캐릭터 위치·옷차림·레벨, 학급 공지. 출석·문코인·과제·집은 아직 이 기기에 저장됩니다.').className='notice';
@@ -116,12 +116,12 @@
  style.textContent+=`body.studentAuthGate #creatorOverlay{visibility:hidden!important}#onlineSchool.studentGate{width:min(420px,92vw);padding:26px;box-shadow:0 18px 60px #112e3b33}#onlineSchool.studentGate h2{font-size:22px!important;margin:0 0 22px}#onlineSchool.studentGate label{display:block;font-size:13px!important;font-weight:700;color:#355346}#onlineSchool.studentGate input{font-size:15px!important;min-height:44px;border:1px solid #bacab2;border-radius:8px;margin:7px 0 16px}#onlineSchool.studentGate .studentLoginButton{width:100%;min-height:44px!important;font-size:14px!important;background:#315d4a;color:#fff5d3;border:0;margin:4px 0 16px}#onlineSchool.studentGate summary{font-size:12px;cursor:pointer;color:#677e68}#onlineSchool.studentGate .notice{font-size:11px!important;color:#73806d}`;
  window.MoonClass={
   session:()=>({uid:user?.uid||'',code,name:displayName(),owner:owner(),connected:connected&&member()}),
-  roster:()=>Object.entries(remote).map(([uid,sessions])=>{const p=Object.values(sessions||{}).filter(p=>p&&Date.now()-p.at<20000).sort((a,b)=>b.at-a.at)[0];return p?{uid,name:String(p.name||'친구').replace(/^Lv\.\d+ /,'')}:null;}).filter(Boolean),
+  roster:()=>Object.entries(remote).map(([uid,sessions])=>{const p=Object.values(sessions||{}).filter(p=>p&&Date.now()-p.at<20000).sort((a,b)=>b.at-a.at)[0];return p?{uid,name:String(p.name||'친구').replace(/^Lv\.\d+ /,'')}:null;}).filter(Boolean).concat(Object.entries(teacherRoster).map(([uid,p])=>({uid,name:p.loginId||'학생 '+p.number}))),
   open:()=>open.click(),
   watchTower:(fn,error)=>{if(!connected||!member())throw Error('먼저 온라인 학급에 연결해 주세요.');return sdk.onValue(ref(base()+'/tower'),s=>fn(s.val()||{}),error);},
-  attack:async(runId,hit)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const key=sdk.push(ref(base()+'/tower/runs/'+runId+'/hits/'+user.uid)).key;
-   if(!key)throw Error('공격 번호를 만들지 못했어요.');const changes={};changes['hits/'+user.uid+'/'+key]={...hit,name:displayName(),at:sdk.serverTimestamp()};changes['cooldowns/'+user.uid]={key,at:sdk.serverTimestamp()};await sdk.update(ref(base()+'/tower/runs/'+runId),changes);},
+  attack:async(runId,hit)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const key=sdk.push(ref(base()+'/tower/runs/'+runId+'/hits/'+user.uid)).key;if(!key)throw Error('공격 번호를 만들지 못했어요.');const changes={};changes['runs/'+runId+'/hits/'+user.uid+'/'+key]={...hit,name:displayName(),at:sdk.serverTimestamp()};changes['runs/'+runId+'/cooldowns/'+user.uid]={key,at:sdk.serverTimestamp()};changes['dailyAttacks/'+user.uid]={key,runId,at:sdk.serverTimestamp()};await sdk.update(ref(base()+'/tower'),changes);},
   startTower:async()=>{if(!owner()||!connected)throw Error('온라인 학급 운영자만 원정을 시작할 수 있어요.');const runId=sdk.push(ref(base()+'/tower/runs')).key;if(!runId)throw Error('원정 번호를 만들지 못했어요.');await sdk.set(ref(base()+'/tower/config'),{runId,at:sdk.serverTimestamp()});},
+  createTitle:async(uid,definition)=>{if(!owner()||!connected)throw Error('학급 운영자만 호칭을 만들 수 있어요.');const id=sdk.push(ref(base()+'/tower/customTitles')).key;const changes={};changes['customTitles/'+id]={...definition,at:sdk.serverTimestamp()};changes['awards/'+uid+'/'+id]=true;await sdk.update(ref(base()+'/tower'),changes);},
   grantTitle:async(uid,titleId,enabled)=>{if(!owner()||!connected)throw Error('온라인 학급 운영자만 호칭을 수여할 수 있어요.');await sdk.set(ref(base()+'/tower/awards/'+uid+'/'+titleId),enabled===true);}
  };
  render();

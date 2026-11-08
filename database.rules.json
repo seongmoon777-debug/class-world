@@ -138,7 +138,7 @@
                 "$uid": {
                   "$hit": {
                     ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
-                    ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').exists() || now - root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').val() >= 1500)",
+                    ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('key').val() === $hit && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('runId').val() === $run && newData.parent().parent().parent().parent().parent().child('dailyAttacks').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').exists() || root.child('classes').child($class).child('tower/dailyAttacks').child($uid).child('at').val() < (now - ((now + 32400000) % 86400000)))",
                     "floor": {
                       ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10 && newData.val() % 1 === 0"
                     },
@@ -163,7 +163,7 @@
               "cooldowns": {
                 "$uid": {
                   ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && newData.exists()",
-                  ".validate": "newData.hasChildren(['key','at']) && (!data.exists() || now - data.child('at').val() >= 1500) && newData.parent().parent().child('hits').child($uid).child(newData.child('key').val()).child('at').val() === now",
+                  ".validate": "newData.hasChildren(['key','at']) && newData.parent().parent().child('hits').child($uid).child(newData.child('key').val()).child('at').val() === now",
                   "key": {
                     ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
                   },
@@ -183,14 +183,75 @@
           "awards": {
             "$uid": {
               "$title": {
-                ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
-                ".validate": "$title.matches(/^mentor-(observation|persistence|cooperation|knowledge|creativity|vitality)$/) && newData.isBoolean()"
+                ".write": "(auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid) && (root.child('classes').child($class).child('members').child($uid).val() === true || $uid === auth.uid) && newData.exists()",
+                ".validate": "newData.isBoolean() && ($title.matches(/^mentor-(observation|persistence|cooperation|knowledge|creativity|vitality|extra-(0[1-9]|[12][0-9]|30))$/) || newData.parent().parent().parent().child('customTitles').child($title).exists())"
               }
             }
           },
           "$other": {
             ".validate": false
+          },
+          "dailyAttacks": {
+            "$uid": {
+              ".write": "((auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)) && auth.uid === $uid && newData.exists()",
+              ".validate": "newData.hasChildren(['runId','key','at']) && (!data.exists() || data.child('at').val() < (now - ((now + 32400000) % 86400000))) && newData.parent().parent().child('config/runId').val() === newData.child('runId').val() && newData.parent().parent().child('runs').child(newData.child('runId').val()).child('hits').child($uid).child(newData.child('key').val()).child('at').val() === now",
+              "runId": {
+                ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
+              },
+              "key": {
+                ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
+              },
+              "at": {
+                ".validate": "newData.isNumber() && newData.val() === now"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          },
+          "customTitles": {
+            "$title": {
+              ".write": "(auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid) && !data.exists() && newData.exists()",
+              ".validate": "$title.matches(/^[-A-Za-z0-9_]{20}$/) && newData.hasChildren(['name','bonuses','at'])",
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 30"
+              },
+              "bonuses": {
+                ".validate": "newData.hasChildren(['observation','persistence','cooperation','knowledge','creativity','vitality']) && (newData.child('observation').val() + newData.child('persistence').val() + newData.child('cooperation').val() + newData.child('knowledge').val() + newData.child('creativity').val() + newData.child('vitality').val()) > 0",
+                "$other": {
+                  ".validate": false
+                },
+                "observation": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                },
+                "persistence": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                },
+                "cooperation": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                },
+                "knowledge": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                },
+                "creativity": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                },
+                "vitality": {
+                  ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10 && newData.val() % 1 === 0"
+                }
+              },
+              "at": {
+                ".validate": "newData.isNumber() && newData.val() === now"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
           }
+        },
+        "roster": {
+          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          ".write": false
         }
       }
     },
