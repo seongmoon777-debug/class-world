@@ -56,10 +56,10 @@
  const dialog=document.createElement('dialog');dialog.id='forestDialog';dialog.setAttribute('aria-label','도서관 숲 탐험');document.body.append(dialog);
  function show(message=''){pressed.clear();dialog.replaceChildren();cw09Button(dialog,'닫기',()=>dialog.close());cw09El('h2','','🌲 도서관 숲 탐험',dialog);const d=today(campusPerson());cw09El('p','',`Lv.${level()} · ${xp()%100}/100 XP · 오늘 수집 ${d.picked.length}/${nodes.length}`,dialog);
   if(message)cw09El('p','',message,dialog).setAttribute('role','status');
-  if(currentMap!==MAP){cw09El('p','','숲에서 수집물 3개를 찾고, 북쪽 도서관 수호자를 만나세요.',dialog);cw09Button(dialog,'탐험 시작',()=>{if($('#role').value!=='student'){show('학생 모드에서 탐험할 수 있어요.');return;}goMap(MAP);if(currentMap===MAP){schoolPanelOpen(false);dialog.close();}else show('교실 안에서는 아래쪽 문으로 먼저 나가 주세요.');});}
+  if(currentMap!==MAP){cw09El('p','','숲의 북쪽 수호자나 동쪽 마녀를 만나 상식 퀴즈를 풀어 보세요. 수집물도 찾아볼 수 있어요.',dialog);cw09Button(dialog,'탐험 시작',()=>{if($('#role').value!=='student'){show('학생 모드에서 탐험할 수 있어요.');return;}goMap(MAP);if(currentMap===MAP){schoolPanelOpen(false);dialog.close();}else show('교실 안에서는 아래쪽 문으로 먼저 나가 주세요.');});}
   else if(distance(guardian)<=1.5){if(d.done)cw09El('p','','오늘의 수호자 도전 완료! 내일 다시 만나요.',dialog);else if(d.picked.length<3)cw09El('p','','수집물 3개를 먼저 찾아 주세요.',dialog);else {const q=questions[d.step];cw09El('h3','',q.title,dialog);cw09El('p','',q.text,dialog);q.options.forEach((a,i)=>cw09Button(dialog,a,()=>{const r=answer(i);show(r.error||r.message);}));const skill=cw09Button(dialog,q.skill+' · '+CAMPUS_STATS[stats[d.step]]+' 3 필요',()=>{const r=answer(null,true);show(r.error||r.message);});skill.disabled=campusStats()[stats[d.step]]<3;}}
   else cw09El('p','','수집물 옆에서 E 또는 줍기. 수호자는 숲 북쪽에 있어요.',dialog);
-  cw09El('p','forestNote','하루 1회씩 개인별 획득 · 조각 3개 = 능력치 +1(성장 최대 +5). 현재 기기 저장이며 협동 레이드는 아직 지원하지 않아요.',dialog);
+  cw09El('p','forestNote','하루 1회씩 개인별 획득 · 조각 3개 = 능력치 +1(성장 최대 +5). 현재 기기에 저장됩니다.',dialog);
   if(!dialog.open)dialog.showModal();
   document.dispatchEvent(new CustomEvent('forest-menu',{detail:dialog}));
  }
