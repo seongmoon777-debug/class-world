@@ -1,0 +1,21 @@
+/* Personal rare chests use the same local transaction as coins and relic inventory. */
+(()=>{'use strict';if(new URLSearchParams(location.search).has('visit'))return;
+ const core=MoonTreasureCore,cache=new Map(),student=()=>$('#role').value==='student',identity=()=>window.MoonClass?.session().uid||actorName();
+ const record=p=>p.treasure?.days?.[schoolToday()]||{};
+ function safeTiles(){const tiles=[],plaza=currentMap==='plaza';for(let y=plaza?8:5;y<=(plaza?51:10);y++)for(let x=plaza?8:3;x<=(plaza?54:19);x++){
+  if([[0,0],[-.4,0],[.4,0],[0,-.4],[0,.4]].some(([dx,dy])=>solid(x+dx,y+dy)))continue;
+  if((portals[currentMap]||[]).some(p=>Math.hypot(x-p.x,y-p.y)<2))continue;
+  if(plaza&&Math.hypot(x-31,y-29)<4)continue;
+  if(currentMap==='moonforest'&&([...MoonForest.nodes,{x:11,y:3}].some(n=>Math.hypot(x-n.x,y-n.y)<1.6)))continue;
+  tiles.push({x,y});
+ }return tiles;}
+ function spots(){if(!student()||!core.maps.includes(currentMap))return [];const key=schoolToday()+'|'+identity()+'|'+currentMap;if(!cache.has(key)){if(cache.size>40)cache.clear();cache.set(key,core.place(core.candidates(schoolToday(),identity(),currentMap),safeTiles()));}const day=record(campusPerson());if(Object.keys(day).length>=core.dailyLimit)return [];return cache.get(key).filter(n=>!day[n.id]);}
+ const near=()=>spots().find(n=>Math.hypot(n.x-player.x,n.y-player.y)<=1.2);
+ function collect(id){if(!student())return {error:'학생 모드에서 열 수 있어요.'};if(document.querySelector('dialog[open]')||$('#creatorOverlay').classList.contains('open'))return {error:'열린 창을 닫고 보물상자에 다가가 주세요.'};const chest=spots().find(n=>n.id===id);if(!chest||Math.hypot(chest.x-player.x,chest.y-player.y)>1.2)return {error:'보물상자 가까이 다가가 주세요.'};const day=schoolToday();const result=campusTransaction((p,s,name)=>{p.treasure||={days:{}};p.treasure.days||={};const opened=p.treasure.days[day]||={};if(opened[id])return {error:'이미 연 보물상자예요.'};if(Object.keys(opened).length>=core.dailyLimit)return {error:'오늘 찾을 수 있는 보물을 모두 찾았어요.'};p.journey||={};p.journey.items||=[];const reward=core.loot(chest.seed,p.journey.items,MoonJourneyCore.items);if(reward.kind==='item'){p.journey.items.push(reward.item);}else s.coins[name]=(Number(s.coins[name])||0)+reward.coins;opened[id]={...reward,at:Date.now()};const item=MoonJourneyCore.items.find(i=>i.id===reward.item);return {reward,message:item?'🎁 '+item.name+' 획득! 모험 보상에서 장착해요.':'🎁 보물상자에서 '+reward.coins+' MC를 찾았어요!'};});if(!result.error)MoonJourney.refresh();doorMessage(result.error||result.message);return result;}
+ const button=cw09Button($('#stage'),'🎁 상자 열기 · E',()=>{const n=near();if(n)collect(n.id);},'treasureOpen');button.hidden=true;
+ const oldWorld=worldBase;worldBase=function(){oldWorld();const visible=spots(),closest=near();button.hidden=!closest||!!document.querySelector('dialog[open]')||$('#creatorOverlay').classList.contains('open');ctx.save();for(const n of visible){const x=(n.x+.5)*TILE,y=(n.y+.5)*TILE;ctx.fillStyle='#17233344';ctx.beginPath();ctx.ellipse(x,y+13,22,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9a643e';ctx.beginPath();ctx.roundRect(x-18,y-9,36,25,4);ctx.fill();ctx.fillStyle='#c08a48';ctx.beginPath();ctx.roundRect(x-19,y-17,38,18,[8,8,2,2]);ctx.fill();ctx.strokeStyle='#edcf7a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e7bf57';ctx.fillRect(x-13,y-16,4,31);ctx.fillRect(x+9,y-16,4,31);ctx.fillStyle='#fff0a1';ctx.fillRect(x-4,y-2,8,9);txt('✦',x+22,y-19,13,'#fff0a1');if(n===closest)txt('보물상자 · E',x,y-30,10,'#fff1bb');}ctx.restore();};
+ const oldInteract=interact;interact=function(){if(!nearby()){const n=near();if(n){collect(n.id);return;}}return oldInteract();};
+ const oldDaily=dailyRender;dailyRender=function(...args){const r=oldDaily(...args);cw09El('p','treasureHint','🎁 마을·교실·숲에 보물상자가 드물게 나타나요. 가까이에서 E로 열어 보세요.',dailyCard);return r;};
+ const style=cw09El('style');style.textContent='.treasureOpen{position:absolute;right:10px;bottom:91px;z-index:9;padding:7px 10px;min-height:32px;font-size:10px;border:1px solid #e3c573;border-radius:8px;background:#5d4b38;color:#fff0b6;box-shadow:0 2px 0 #302e32}.treasureOpen[hidden]{display:none}.treasureHint{font-size:10px;line-height:1.6;color:#88734c;margin:10px 0}';document.head.append(style);
+ window.MoonTreasure={spots,collect,core};
+})();
