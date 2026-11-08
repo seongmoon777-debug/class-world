@@ -35,7 +35,8 @@
  ];
  const conditions={places:'서로 다른 장소 {n}곳 방문',walk:'서로 다른 길 {n}칸 이동',forest:'숲 수호자 도전 {n}일 완료',completed:'과제 {n}개 완료',attendance:'누적 {n}일 출석',streak:'{n}일 연속 출석',reviewed:'과제 {n}개 교사 확인',polls:'학급 투표 {n}개 참여',correct:'학습 퀴즈 {n}개 정답',creative:'글쓰기·독서 과제 {n}개 제출'};
  for(const [index,[id,name,stat,metric,target]] of extra.entries())items.push({id,name,icon:'✦',metric,target,stat,bonus:index%5===4?3:index%3===0?1:2,condition:conditions[metric].replace('{n}',target)});
- for(const item of items)item.rarity=item.bonus===3?'영웅':item.bonus===2?'희귀':'일반';
+ const treasureIds=new Set(['north-star','oracle','seed','iron-heart','twin-moon','astrolabe','wisdom-crown','star-ink','dream-catcher','phoenix-token']);
+ for(const item of items){item.rarity=item.bonus===3?'영웅':item.bonus===2?'희귀':'일반';item.source=treasureIds.has(item.id)?'treasure':'activity';if(item.source==='treasure')item.condition='탐험 유물';}
  function streak(days){let best=0,run=0,last=0;for(const day of [...new Set(days)].sort()){const t=Date.parse(day+'T00:00:00Z');if(!Number.isFinite(t))continue;run=t-last===86400000?run+1:1;best=Math.max(best,run);last=t;}return best;}
  function evidence(person={},submissions={},activities=[],name=''){
   const m={completed:0,correct:0,creative:0,reviewed:0,polls:0,places:Object.keys(person.journey?.places||{}).length,walk:0,streak:streak(Object.keys(person.attendance||{})),attendance:Object.keys(person.attendance||{}).length,forest:Object.values(person.exploration?.days||{}).filter(d=>d.done).length};
@@ -43,7 +44,7 @@
   for(const [id,people] of Object.entries(submissions)){const r=people?.[name];if(!r)continue;const a=activities.find(a=>id===a.id||id.startsWith(a.id+'@'));if(r.correct!==false)m.completed++;if(r.correct===true)m.correct++;if(r.reviewed&&r.correct!==false)m.reviewed++;if(a&&['text','reading'].includes(a.kind))m.creative++;if(a?.kind==='poll')m.polls++;}
   return m;
  }
- function earned(catalog,m){return catalog.filter(t=>(m[t.metric]||0)>=t.target).map(t=>t.id);}
+ function earned(catalog,m){return catalog.filter(t=>t.source!=='treasure'&&(m[t.metric]||0)>=t.target).map(t=>t.id);}
  function growth(m){return {observation:Math.min(3,Math.floor(m.places/3)+Math.floor(m.walk/200)),persistence:Math.min(3,Math.floor(m.completed/5)+Math.floor(m.streak/3)),cooperation:Math.min(3,Math.floor(m.reviewed/3)+Math.floor(m.polls/3)),knowledge:0,creativity:0,vitality:Math.min(2,Math.floor(m.walk/150))};}
  function bonuses(record={}){const b=Object.fromEntries(keys.map(k=>[k,0]));const t=titles.find(t=>t.id===record.title&&record.titles?.includes(t.id));if(t)b[t.stat]+=t.bonus;for(const id of [...new Set(record.equipment||[])].slice(0,2)){const i=items.find(i=>i.id===id&&record.items?.includes(id));if(i)b[i.stat]+=i.bonus;}return b;}
  const api={keys,titles,items,streak,evidence,earned,growth,bonuses};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MoonJourneyCore=api;

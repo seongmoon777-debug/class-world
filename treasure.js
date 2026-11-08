@@ -6,7 +6,7 @@
   if([[0,0],[-.4,0],[.4,0],[0,-.4],[0,.4]].some(([dx,dy])=>solid(x+dx,y+dy)))continue;
   if((portals[currentMap]||[]).some(p=>Math.hypot(x-p.x,y-p.y)<2))continue;
   if(plaza&&Math.hypot(x-31,y-29)<4)continue;
-  if(currentMap==='moonforest'&&([...MoonForest.nodes,{x:11,y:3}].some(n=>Math.hypot(x-n.x,y-n.y)<1.6)))continue;
+  if(currentMap==='moonforest'&&([...MoonForest.nodes,{x:11,y:3},{x:17,y:4}].some(n=>Math.hypot(x-n.x,y-n.y)<1.6)))continue;
   tiles.push({x,y});
  }return tiles;}
  function spots(){if(!student()||!core.maps.includes(currentMap))return [];const key=schoolToday()+'|'+identity()+'|'+currentMap;if(!cache.has(key)){if(cache.size>40)cache.clear();cache.set(key,core.place(core.candidates(schoolToday(),identity(),currentMap),safeTiles()));}const day=record(campusPerson());if(Object.keys(day).length>=core.dailyLimit)return [];return cache.get(key).filter(n=>!day[n.id]);}
@@ -15,7 +15,6 @@
  const button=cw09Button($('#stage'),'🎁 상자 열기 · E',()=>{const n=near();if(n)collect(n.id);},'treasureOpen');button.hidden=true;
  const oldWorld=worldBase;worldBase=function(){oldWorld();const visible=spots(),closest=near();button.hidden=!closest||!!document.querySelector('dialog[open]')||$('#creatorOverlay').classList.contains('open');ctx.save();for(const n of visible){const x=(n.x+.5)*TILE,y=(n.y+.5)*TILE;ctx.fillStyle='#17233344';ctx.beginPath();ctx.ellipse(x,y+13,22,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9a643e';ctx.beginPath();ctx.roundRect(x-18,y-9,36,25,4);ctx.fill();ctx.fillStyle='#c08a48';ctx.beginPath();ctx.roundRect(x-19,y-17,38,18,[8,8,2,2]);ctx.fill();ctx.strokeStyle='#edcf7a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#e7bf57';ctx.fillRect(x-13,y-16,4,31);ctx.fillRect(x+9,y-16,4,31);ctx.fillStyle='#fff0a1';ctx.fillRect(x-4,y-2,8,9);txt('✦',x+22,y-19,13,'#fff0a1');if(n===closest)txt('보물상자 · E',x,y-30,10,'#fff1bb');}ctx.restore();};
  const oldInteract=interact;interact=function(){if(!nearby()){const n=near();if(n){collect(n.id);return;}}return oldInteract();};
- const oldDaily=dailyRender;dailyRender=function(...args){const r=oldDaily(...args);cw09El('p','treasureHint','🎁 마을·교실·숲에 보물상자가 드물게 나타나요. 가까이에서 E로 열어 보세요.',dailyCard);return r;};
  const style=cw09El('style');style.textContent='.treasureOpen{position:absolute;right:10px;bottom:91px;z-index:9;padding:7px 10px;min-height:32px;font-size:10px;border:1px solid #e3c573;border-radius:8px;background:#5d4b38;color:#fff0b6;box-shadow:0 2px 0 #302e32}.treasureOpen[hidden]{display:none}.treasureHint{font-size:10px;line-height:1.6;color:#88734c;margin:10px 0}';document.head.append(style);
  window.MoonTreasure={spots,collect,core};
 })();
