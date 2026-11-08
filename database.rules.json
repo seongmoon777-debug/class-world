@@ -5,7 +5,7 @@
     "classes": {
       "$class": {
         "info": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com'",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class)))",
           ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && !data.exists() && newData.exists() && newData.child('owner').val() === auth.uid && $class.matches(/^[A-F0-9]{12}$/)",
           ".validate": "newData.hasChildren(['owner','name','created'])",
           "owner": {
@@ -19,21 +19,24 @@
           },
           "$other": {
             ".validate": false
+          },
+          "studentLogin": {
+            ".validate": "newData.isBoolean()"
           }
         },
         "members": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid",
           "$uid": {
-            ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && ($uid === auth.uid || (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true))",
-            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || ($uid === auth.uid && newData.val() === true && root.child('classes').child($class).child('info').exists()))",
+            ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && ($uid === auth.uid || (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true))",
+            ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || ($uid === auth.uid && newData.val() === true && root.child('classes').child($class).child('info').exists() && (root.child('classes').child($class).child('info').child('studentLogin').val() !== true || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))))",
             ".validate": "newData.val() === true"
           }
         },
         "requests": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid",
           "$uid": {
-            ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && ($uid === auth.uid || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
-            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info').exists() && (($uid === auth.uid && !root.child('classes').child($class).child('members').child(auth.uid).exists()) || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
+            ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && ($uid === auth.uid || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
+            ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info').exists() && (($uid === auth.uid && !root.child('classes').child($class).child('members').child(auth.uid).exists()) || root.child('classes').child($class).child('info/owner').val() === auth.uid)",
             ".validate": "newData.hasChildren(['name'])",
             "name": {
               ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
@@ -44,15 +47,15 @@
           }
         },
         "notice": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
-          ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid",
           ".validate": "newData.isString() && newData.val().length <= 500"
         },
         "presence": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
           "$uid": {
             "$session": {
-              ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && $uid === auth.uid && ((root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) || !newData.exists())",
+              ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && $uid === auth.uid && ((root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) || !newData.exists())",
               ".validate": "newData.hasChildren(['name','map','x','y','dir','moving','av','page','at'])",
               "name": {
                 ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
@@ -115,9 +118,9 @@
           ".validate": false
         },
         "tower": {
-          ".read": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
+          ".read": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true)",
           "config": {
-            ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
+            ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
             ".validate": "newData.hasChildren(['runId','at'])",
             "runId": {
               ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
@@ -134,7 +137,7 @@
               "hits": {
                 "$uid": {
                   "$hit": {
-                    ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
+                    ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && !data.exists() && newData.exists()",
                     ".validate": "newData.hasChildren(['floor','stat','power','name','at']) && newData.parent().parent().parent().child('cooldowns').child($uid).child('key').val() === $hit && newData.parent().parent().parent().child('cooldowns').child($uid).child('at').val() === now && (!root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').exists() || now - root.child('classes').child($class).child('tower/runs').child($run).child('cooldowns').child($uid).child('at').val() >= 1500)",
                     "floor": {
                       ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 10 && newData.val() % 1 === 0"
@@ -159,7 +162,7 @@
               },
               "cooldowns": {
                 "$uid": {
-                  ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && newData.exists()",
+                  ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && $uid === auth.uid && root.child('classes').child($class).child('tower/config/runId').val() === $run && newData.exists()",
                   ".validate": "newData.hasChildren(['key','at']) && (!data.exists() || now - data.child('at').val() >= 1500) && newData.parent().parent().child('hits').child($uid).child(newData.child('key').val()).child('at').val() === now",
                   "key": {
                     ".validate": "newData.isString() && newData.val().matches(/^[-A-Za-z0-9_]{20}$/)"
@@ -180,7 +183,7 @@
           "awards": {
             "$uid": {
               "$title": {
-                ".write": "auth != null && auth.token.firebase.sign_in_provider === 'google.com' && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
+                ".write": "(auth != null && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))) && root.child('classes').child($class).child('info/owner').val() === auth.uid && newData.exists()",
                 ".validate": "$title.matches(/^mentor-(observation|persistence|cooperation|knowledge|creativity|vitality)$/) && newData.isBoolean()"
               }
             }
@@ -189,6 +192,12 @@
             ".validate": false
           }
         }
+      }
+    },
+    "studentAccounts": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
       }
     }
   }
