@@ -50,7 +50,7 @@
  @media(min-width:851px){.stage{height:calc(100dvh - 370px)!important}}
  `;document.head.append(style);
  const header=document.querySelector('.brand h1');if(header)header.textContent='MOONSCHOOL 모험마을';
- maps.plaza.name='달빛 모험마을';if(currentMap==='plaza')$('#mapName').textContent=maps.plaza.name;
+ maps.plaza.name=window.MoonCity?'문스쿨 달빛 도시':'달빛 모험마을';if(currentMap==='plaza')$('#mapName').textContent=maps.plaza.name;
  dailyRender();if(targetTab==='mission'||targetTab==='dailyWelcome')renderMission();
  // Scenery is drawn off the main roads; collision/portal coordinates remain unchanged.
  const oldWorld=worldBase;let scenery=null;
@@ -78,7 +78,9 @@
   for(const p of ps){const x=(p.x+.5)*TILE,y=(p.y+.7)*TILE;g.strokeStyle='#6f6249';g.lineWidth=2;g.beginPath();g.moveTo(x-62,y-94);g.quadraticCurveTo(x,y-70,x+62,y-94);g.stroke();for(let i=0;i<7;i++){const xx=x-54+i*18,yy=y-89+9*Math.sin(i*Math.PI/6);g.fillStyle=['#d99c73','#e6c579','#75a691'][i%3];g.beginPath();g.moveTo(xx,yy);g.lineTo(xx+12,yy+1);g.lineTo(xx+6,yy+15);g.fill();}}
   window.MoonVillage={decorations:count};return c;
  }
- worldBase=function(){oldWorld();if(currentMap!=='plaza')return;if(!scenery)scenery=makeScenery();ctx.drawImage(scenery,0,0);};
+ worldBase=function(){oldWorld();if(currentMap!=='plaza'||window.MoonCity)return;if(!scenery)scenery=makeScenery();ctx.drawImage(scenery,0,0);};
  window.dispatchEvent(new Event('resize'));
 })();
+
+
 

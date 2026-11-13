@@ -8,7 +8,7 @@ miniToggle.onclick=()=>{cw08MiniCollapsed=!cw08MiniCollapsed;toggle();};toggle()
 const names={classroom:'교실',library:'도서관',gym:'체육관',lab:'배움터',salon:'미용실',outfit:'옷가게',accessory:'소품집',neighborhood:'우리 동네'};
 const cv=$('#v05Mini');cv.width=600;cv.height=570;cv.setAttribute('role','img');cv.setAttribute('aria-label','학교 지도: 건물 이름과 내 위치');
 cw05MiniDraw=function(){if(cw08MiniCollapsed)return;const g=cv.getContext('2d');g.save();g.setTransform(3,0,0,3,0,0);g.clearRect(0,0,200,190);g.fillStyle='#f4f8ef';g.fillRect(0,0,200,190);
-const cx=100,cy=93,scale=3.15;g.fillStyle='#c6e1c4';g.beginPath();g.arc(cx,cy,77,0,Math.PI*2);g.fill();g.strokeStyle='#fff9e8';g.lineWidth=10;g.beginPath();g.arc(cx,cy,56,0,Math.PI*2);g.stroke();
+const cx=100,cy=93,scale=3.15;g.fillStyle='#c6e1c4';g.beginPath();g.arc(cx,cy,77,0,Math.PI*2);g.fill();g.strokeStyle='#fff9e8';g.lineWidth=10;if(window.MoonCity){for(const road of MoonCity.roads){g.beginPath();road.forEach(([x,y],i)=>i?g.lineTo(cx+(x-31)*scale,cy+(y-29)*scale):g.moveTo(cx+(x-31)*scale,cy+(y-29)*scale));g.stroke();}}else{g.beginPath();g.arc(cx,cy,56,0,Math.PI*2);g.stroke();}
 g.fillStyle='#428fa6';g.beginPath();g.arc(cx,cy,9,0,Math.PI*2);g.fill();
 g.textAlign='center';g.textBaseline='middle';
 for(const p of portals.plaza){if(!names[p.to])continue;const x=cx+(p.x-31)*scale,y=cy+(p.y-29)*scale,active=currentMap===p.to;
@@ -28,3 +28,4 @@ const style=cw09El('style');style.textContent=`
 @media(max-width:600px){.v05MiniWrap{right:8px!important;bottom:8px!important;padding:4px!important}.v05MiniWrap #v05Mini{width:136px!important;height:129px!important}.v05MiniWrap .cw08MiniToggle{width:32px!important;height:32px!important}#stage.readableMiniOpen #interact{bottom:156px!important;right:8px!important}}
 `;document.head.append(style);cw05MiniDraw(performance.now());
 })();
+
