@@ -8,12 +8,12 @@ miniToggle.onclick=()=>{cw08MiniCollapsed=!cw08MiniCollapsed;toggle();};toggle()
 const names={classroom:'교실',library:'도서관',gym:'체육관',lab:'배움터',salon:'미용실',outfit:'옷가게',accessory:'소품집',neighborhood:'우리 동네'};
 const cv=$('#v05Mini');cv.width=600;cv.height=570;cv.setAttribute('role','img');cv.setAttribute('aria-label','학교 지도: 건물 이름과 내 위치');
 cw05MiniDraw=function(){if(cw08MiniCollapsed)return;const g=cv.getContext('2d');g.save();g.setTransform(3,0,0,3,0,0);g.clearRect(0,0,200,190);g.fillStyle='#f4f8ef';g.fillRect(0,0,200,190);
-const cx=100,cy=93,scale=3.15;g.fillStyle='#c6e1c4';g.beginPath();g.arc(cx,cy,77,0,Math.PI*2);g.fill();g.strokeStyle='#fff9e8';g.lineWidth=10;if(window.MoonCity){for(const road of MoonCity.roads){g.beginPath();road.forEach(([x,y],i)=>i?g.lineTo(cx+(x-31)*scale,cy+(y-29)*scale):g.moveTo(cx+(x-31)*scale,cy+(y-29)*scale));g.stroke();}}else{g.beginPath();g.arc(cx,cy,56,0,Math.PI*2);g.stroke();}
-g.fillStyle='#428fa6';g.beginPath();g.arc(cx,cy,9,0,Math.PI*2);g.fill();
+const cx=82,cy=77,scale=2.2;g.fillStyle='#c6e1c4';g.beginPath();g.ellipse(102,92,83,73,0,0,Math.PI*2);g.fill();g.strokeStyle='#fff9e8';g.lineWidth=10;if(window.MoonCity){for(const road of MoonCity.roads){g.beginPath();road.forEach(([x,y],i)=>i?g.lineTo(cx+(x-31)*scale,cy+(y-29)*scale):g.moveTo(cx+(x-31)*scale,cy+(y-29)*scale));g.stroke();}}else{g.beginPath();g.arc(cx,cy,56,0,Math.PI*2);g.stroke();}
+if(window.MoonCity){g.strokeStyle='#73b9bd';g.lineWidth=7;g.beginPath();for(let y=8;y<=66;y++){const x=cx+(MoonCity.riverX(y)-31)*scale,py=cy+(y-29)*scale;y===8?g.moveTo(x,py):g.lineTo(x,py);}g.stroke();}g.fillStyle='#428fa6';g.beginPath();g.arc(cx,cy,9,0,Math.PI*2);g.fill();
 g.textAlign='center';g.textBaseline='middle';
 for(const p of portals.plaza){if(!names[p.to])continue;const x=cx+(p.x-31)*scale,y=cy+(p.y-29)*scale,active=currentMap===p.to;
 g.fillStyle=active?'#b34d19':'#345e4d';g.beginPath();g.arc(x,y,4,0,Math.PI*2);g.fill();
-const label=names[p.to],ly=y+(p.y>=29?13:-13);g.font='800 15px sans-serif';const w=g.measureText(label).width+10;g.fillStyle=active?'#fff0d2':'#ffffff';g.strokeStyle=active?'#bb6b2d':'#91b29b';g.lineWidth=1;g.beginPath();g.roundRect(x-w/2,ly-10,w,20,5);g.fill();g.stroke();g.fillStyle='#153b2b';g.fillText(label,x,ly);}
+const label=names[p.to],ly=y+(p.y>=29?13:-13);g.font="600 13px 'Gowun Dodum',sans-serif";const w=g.measureText(label).width+10;g.fillStyle=active?'#fff0d2':'#ffffff';g.strokeStyle=active?'#bb6b2d':'#91b29b';g.lineWidth=1;g.beginPath();g.roundRect(x-w/2,ly-10,w,20,5);g.fill();g.stroke();g.fillStyle='#153b2b';g.fillText(label,x,ly);}
 const spot=currentMap==='plaza'?player:portals.plaza.find(p=>p.to===currentMap);
 if(spot){const x=cx+(spot.x-31)*scale,y=cy+(spot.y-29)*scale;g.fillStyle='#fff';g.beginPath();g.arc(x,y,6,0,Math.PI*2);g.fill();g.fillStyle='#d73935';g.beginPath();g.arc(x,y,4,0,Math.PI*2);g.fill();}
 g.fillStyle='#203f35';g.font='700 11px sans-serif';g.fillText(spot?'● 내 위치':'현재: '+(maps[currentMap]?.name||'탐험'),100,181,188);g.restore();

@@ -50,7 +50,7 @@
  @media(min-width:851px){.stage{height:calc(100dvh - 370px)!important}}
  `;document.head.append(style);
  const header=document.querySelector('.brand h1');if(header)header.textContent='MOONSCHOOL 모험마을';
- maps.plaza.name=window.MoonCity?'문스쿨 달빛 도시':'달빛 모험마을';if(currentMap==='plaza')$('#mapName').textContent=maps.plaza.name;
+ maps.plaza.name=window.MoonCity?'달빛 마을':'달빛 모험마을';if(currentMap==='plaza')$('#mapName').textContent=maps.plaza.name;
  dailyRender();if(targetTab==='mission'||targetTab==='dailyWelcome')renderMission();
  // Scenery is drawn off the main roads; collision/portal coordinates remain unchanged.
  const oldWorld=worldBase;let scenery=null;
