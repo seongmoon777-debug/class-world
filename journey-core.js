@@ -37,6 +37,13 @@
  for(const [index,[id,name,stat,metric,target]] of extra.entries())items.push({id,name,icon:'✦',metric,target,stat,bonus:index%5===4?3:index%3===0?1:2,condition:conditions[metric].replace('{n}',target)});
  const treasureIds=new Set(['north-star','oracle','seed','iron-heart','twin-moon','astrolabe','wisdom-crown','star-ink','dream-catcher','phoenix-token']);
  for(const item of items){item.rarity=item.bonus===3?'영웅':item.bonus===2?'희귀':'일반';item.source=treasureIds.has(item.id)?'treasure':'activity';if(item.source==='treasure')item.condition='탐험 유물';}
+ // Legendary relics use the existing evidence and ownership pipeline, never a new save key.
+ const legendary=[
+  ['legend-star-eye','별을 읽는 눈','observation','walk',2000,'서로 다른 길 2,000칸 탐험'],
+  ['legend-moon-crown','달빛 현자의 왕관','knowledge','correct',60,'학습 퀴즈 60개 정답'],
+  ['legend-bloom-seed','천년꽃의 씨앗','creativity','creative',30,'글쓰기·독서 과제 30개 제출']
+ ];
+ for(const [id,name,stat,metric,target,condition] of legendary)items.push({id,name,icon:'✦',stat,metric,target,bonus:4,condition,rarity:'전설',source:'activity'});
  function streak(days){let best=0,run=0,last=0;for(const day of [...new Set(days)].sort()){const t=Date.parse(day+'T00:00:00Z');if(!Number.isFinite(t))continue;run=t-last===86400000?run+1:1;best=Math.max(best,run);last=t;}return best;}
  function evidence(person={},submissions={},activities=[],name=''){
   const m={completed:0,correct:0,creative:0,reviewed:0,polls:0,places:Object.keys(person.journey?.places||{}).length,walk:0,streak:streak(Object.keys(person.attendance||{})),attendance:Object.keys(person.attendance||{}).length,forest:Object.values(person.exploration?.days||{}).filter(d=>d.done).length};
@@ -49,3 +56,5 @@
  function bonuses(record={}){const b=Object.fromEntries(keys.map(k=>[k,0]));const t=titles.find(t=>t.id===record.title&&record.titles?.includes(t.id));if(t)b[t.stat]+=t.bonus;for(const id of [...new Set(record.equipment||[])].slice(0,2)){const i=items.find(i=>i.id===id&&record.items?.includes(id));if(i)b[i.stat]+=i.bonus;}return b;}
  const api={keys,titles,items,streak,evidence,earned,growth,bonuses};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.MoonJourneyCore=api;
 })(typeof window!=='undefined'?window:globalThis);
+
+

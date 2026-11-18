@@ -1,12 +1,14 @@
 /* Moon School city: cached scenery only; account and activity records stay intact. */
 (()=>{'use strict';
-const names={classroom:'해솔 교실',library:'책숲 도서관',gym:'튼튼 체육관',lab:'생각 배움터',accessory:'별별 소품집',outfit:'알록 옷가게',salon:'단정 미용실'};
+// Keep legacy room IDs and records, but expose exactly one shop on the village map.
+for(let i=portals.plaza.length-1;i>=0;i--)if(['salon','accessory'].includes(portals.plaza[i].to))portals.plaza.splice(i,1);
+const names={classroom:'해솔 교실',library:'책숲 도서관',gym:'튼튼 체육관',lab:'생각 배움터',accessory:'별별 소품집',outfit:'반짝 상점',salon:'단정 미용실'};
 const colors={classroom:'#ce6849',library:'#378c88',gym:'#357cb1',lab:'#7760ad',accessory:'#d69231',outfit:'#bd5881',salon:'#659c52'};
 const cv=document.createElement('canvas');cv.width=82*TILE;cv.height=74*TILE;const g=cv.getContext('2d'),T=TILE;
 function box(x,y,w,h,c,r=0){g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();}
 function oval(x,y,rx,ry,c){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fill();}
 function line(points,c,w){g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.lineJoin='round';g.beginPath();points.forEach(([x,y],i)=>i?g.lineTo(x*T,y*T):g.moveTo(x*T,y*T));g.stroke();}
-function label(s,x,y,size=24,c='#254238'){g.font=`400 ${size}px "Gowun Dodum","Malgun Gothic",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle=c;g.fillText(s,x,y);}
+function label(s,x,y,size=26,c='#254238'){g.font=`700 ${size}px "Jua","Gowun Dodum","Malgun Gothic",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle=c;g.fillText(s,x,y);}
 function tree(x,y,size=1){x*=T;y*=T;oval(x+8,y+8,25*size,12*size,'#254e3820');box(x-4,y-28*size,8,30*size,'#8b6744',3);oval(x,y-43*size,27*size,31*size,'#307251');oval(x-8,y-51*size,18*size,21*size,'#4c9860');}
 function bench(x,y){x*=T;y*=T;box(x-28,y,56,12,'#785337',3);box(x-28,y-13,56,10,'#ba8551',3);box(x-23,y+10,5,10,'#4b5848');box(x+18,y+10,5,10,'#4b5848');}
 function lamp(x,y){x*=T;y*=T;oval(x,y,10,5,'#26453625');box(x-3,y-48,6,48,'#354f50',3);box(x-11,y-61,22,18,'#fff0af',5);box(x-14,y-65,28,6,'#354f50',3);}
@@ -49,7 +51,7 @@ function building(p){const x=(p.x+.5)*T,y=(p.y+.7)*T,c=colors[p.to],w=p.to==='cl
  box(x-w/2-16,y-130,w+32,10,'#384c46',3);
  box(x+w*.25,y-207,18,49,'#a66d54',3);for(const dx of [-w*.32,w*.32]){box(x+dx-20,y-98,40,45,'#fffdf0',4);box(x+dx-16,y-94,32,35,'#6cb6c8',2);box(x+dx-1,y-94,3,35,'#f9f2dc');box(x+dx-16,y-77,32,3,'#f9f2dc');box(x+dx-24,y-49,48,9,'#b67e53',3);for(let i=-1;i<=1;i++){oval(x+dx+i*13,y-51,8,8,'#649957');oval(x+dx+i*13,y-57,5,5,i%2?'#eeac9d':'#fff0b1');}}
  box(x-24,y-61,48,61,'#47655d',5);box(x-17,y-53,34,47,'#a7c8b6',3);oval(x+11,y-24,3,3,'#fbe7a2');box(x-30,y,60,7,'#fffae9',2);
- const title=names[p.to];g.font='400 24px "Gowun Dodum","Malgun Gothic",sans-serif';const tw=Math.max(148,g.measureText(title).width+30);box(x-tw/2,y-123,tw,36,'#fffdf3',7);label(title,x,y-105);
+ const title=names[p.to];g.font='700 28px "Jua","Gowun Dodum","Malgun Gothic",sans-serif';const tw=Math.max(164,g.measureText(title).width+36);box(x-tw/2-3,y-127,tw+6,45,'#92734e',10);box(x-tw/2,y-125,tw,39,'#fff9e9',8);label(title,x,y-105,28,'#294237');
  if(p.to==='classroom'){box(x-25,y-225,50,45,'#fff5d9',6);oval(x,y-203,17,17,'#384f51');oval(x,y-203,14,14,'#fff9e5');line([[x/T,(y-213)/T],[x/T,(y-203)/T],[(x+8)/T,(y-200)/T]],'#384f51',3);}
  if(p.to==='library'){for(let i=0;i<6;i++)box(x-38+i*13,y-167,9,22,['#ffe6a1','#df997c','#abcda5'][i%3],2);}
  if(p.to==='gym'){oval(x,y-158,18,18,'#f1ba64');line([[(x-17)/T,(y-158)/T],[(x+17)/T,(y-158)/T]],'#87604a',2);}
@@ -65,7 +67,7 @@ CW05_DIM.plaza=[82,74];
 const before=worldBase;worldBase=function(){if(currentMap==='plaza'){ctx.drawImage(cv,0,0);return;}before();};
 maps.plaza.name='달빛 마을';maps.plaza.desc='꽃잎 골목 · 반짝 상점길 · 개울 산책길 · 우리 동네';
 for(const p of portals.plaza)if(names[p.to]){p.label=names[p.to];maps[p.to].name=names[p.to];}
-window.MoonCity={version:'0.37.0',names,roads,riverX,dimensions:[82,74],redraw:drawScene};
+window.MoonCity={version:'0.38.0',names,roads,riverX,dimensions:[82,74],redraw:drawScene};
 const cottageLots=[[9,33],[12,43],[20,51],[29,57],[42,55],[52,47],[70,37],[69,48]];
 const priorSolid=solid;
 solid=function(x,y){if(currentMap!=='plaza')return priorSolid(x,y);if(((x-40)/37)**2+((y-36)/33)**2>1||Math.hypot(x-31,y-29)<2.45)return true;if(y>=8&&y<=66&&Math.abs(x-riverX(y))<1.95&&!([28.7,52].some(b=>Math.abs(y-b)<.85)))return true;if(cottageLots.some(([a,b])=>Math.abs(x-a)<1.7&&y>b-2.2&&y<b+.05))return true;return portals.plaza.some(p=>names[p.to]&&Math.abs(x-(p.x+.5))<(p.to==='classroom'?2.57:2.15)&&y>p.y-3.3&&y<p.y-.05);};

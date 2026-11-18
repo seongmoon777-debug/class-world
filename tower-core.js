@@ -2,7 +2,7 @@
 (function(root){
  'use strict';
  const keys=['observation','persistence','cooperation','knowledge','creativity','vitality'];
- const names=['감지','인내','유대','지능','영감','체력'];
+ const names=['관찰','인내','유대','지능','영감','체력'];
  const bosses=['고블린 약탈왕','오크 군주','돌가죽 트롤','미궁의 미노타우로스','독안의 바실리스크','저주의 메두사','지옥문 케르베로스','독룡 히드라','망각의 리치왕','태고의 흑룡'];
  const titles=['고블린 추적자','오크 분쇄자','트롤 사냥꾼','미궁의 정복자','독안의 파훼자','저주를 깬 용사','지옥문의 수호자','히드라 토벌자','망각을 밝힌 별','흑룡을 꺾은 영웅'];
  const floors=bosses.map((name,i)=>({floor:i+1,name,hp:240+i*120,weak:keys[i%6],resist:keys[(i+2)%6],title:titles[i],icon:['👺','🪓','🪨','🐂','🐍','🪞','🐕','🐲','💀','🐉'][i]}));
@@ -31,3 +31,5 @@
  function unlocked(tower,uid){const ids=new Set();for(const run of Object.values(tower.runs||{}))for(const f of replay(run).floors)if(f.done&&f.winners.includes(uid))ids.add('tower-'+(f.floor-1));for(const [id,value] of Object.entries(tower.awards?.[uid]||{}))if(value===true&&!id.startsWith('tower-')&&getTitle(tower,id))ids.add(id);return [...ids];}
  const api={keys,names,floors,catalog,damage,replay,unlocked,dayIndex,usedToday,validTitle,getTitle,titleBonuses,validStats,totalDamage,critical,hitDamage};if(typeof module!=='undefined')module.exports=api;else root.MoonTowerCore=api;
 })(typeof window!=='undefined'?window:globalThis);
+
+

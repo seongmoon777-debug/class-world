@@ -83,7 +83,7 @@
  function watchTeacher(token){offs.push(sdk.onValue(ref(base()+'/roster'),s=>{if(token===generation){teacherRoster=s.val()||{};window.dispatchEvent(new Event('moon-roster-change'));}},()=>{}));offs.push(sdk.onValue(ref(base()+'/requests'),s=>{if(token!==generation)return;const box=root.querySelector('[data-requests]');if(!box)return;box.replaceChildren();for(const [uid,r] of Object.entries(s.val()||{})){const line=el('p',r.name,box);btn('참여 승인',async()=>{await sdk.set(ref(base()+'/members/'+uid),true);await sdk.remove(ref(base()+'/requests/'+uid));say('참여를 승인했어요.');},line);}},()=>{}));}
  function render(){
   root.replaceChildren();if(user)btn('닫기',()=>root.close());el('h2',user?'온라인 학급':'문스쿨 로그인');
-  if(user)el('p','공유: 캐릭터 위치·옷차림·레벨, 학급 공지. 출석·문코인·과제·집은 아직 이 기기에 저장됩니다.').className='notice';
+  if(user)el('p','공유: 캐릭터·학급 공지·새 과제·제출물·게시판. 출석·문코인·집과 이전 과제 기록은 이 기기에 저장됩니다.').className='notice';
   if(!user){
    const id=field('아이디',9);id.autocomplete='username';id.placeholder='MSCHOOL01';id.autocapitalize='characters';id.spellcheck=false;
    const password=field('비밀번호',128);password.type='password';password.autocomplete='current-password';password.placeholder='배부받은 비밀번호';
@@ -118,6 +118,14 @@
   session:()=>({uid:user?.uid||'',code,name:displayName(),owner:owner(),connected:connected&&member()}),
   roster:()=>Object.entries(remote).map(([uid,sessions])=>{const p=Object.values(sessions||{}).filter(p=>p&&Date.now()-p.at<20000).sort((a,b)=>b.at-a.at)[0];return p?{uid,name:String(p.name||'친구').replace(/^Lv\.\d+ /,'')}:null;}).filter(Boolean).concat(Object.entries(teacherRoster).map(([uid,p])=>({uid,name:p.loginId||'학생 '+p.number}))),
   open:()=>open.click(),
+  watchLearningTasks:(fn,error)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const token=generation;const off=sdk.onValue(ref(base()+'/learning/tasks'),s=>{if(token===generation)fn(s.val()||{});},error);offs.push(off);return off;},
+  watchLearningRows:(task,kind,fn,error)=>{if(!connected||!member()||!/^[\w-]+$/.test(task))throw Error('학급과 과제를 확인해 주세요.');const token=generation;const all=owner()||kind==='discussion',path=base()+'/learning/'+(kind==='discussion'?'posts':'submissions')+'/'+task+(all?'':'/'+user.uid);const off=sdk.onValue(ref(path),s=>{if(token===generation)fn(all?s.val()||{}:s.exists()?{[user.uid]:s.val()}:{});},error);offs.push(off);return off;},
+  watchLearningReviews:(task,fn,error)=>{if(!connected||!member()||!/^[\w-]+$/.test(task))throw Error('학급과 과제를 확인해 주세요.');const token=generation,all=owner(),path=base()+'/learning/reviews/'+task+(all?'':'/'+user.uid);const off=sdk.onValue(ref(path),s=>{if(token===generation)fn(all?s.val()||{}:s.exists()?{[user.uid]:s.val()}:{});},error);offs.push(off);return off;},
+  createLearningTask:async(def)=>{if(!connected||!owner())throw Error('학급을 만든 선생님만 게시할 수 있어요.');const title=String(def.title||'').trim(),prompt=String(def.prompt||'').trim(),due=String(def.due||'');if(!title||title.length>60||!prompt||prompt.length>2000||!['assignment','discussion'].includes(def.kind)||!/^\d{4}-\d{2}-\d{2}$/.test(due))throw Error('제목·내용·날짜를 확인해 주세요.');const task=sdk.push(ref(base()+'/learning/tasks'));await sdk.set(task,{title,prompt,due,kind:def.kind,created:sdk.serverTimestamp(),archived:false});return task.key;},
+  submitLearningAnswer:async(task,kind,body)=>{if(!connected||!member()||owner())throw Error('학생 계정으로 접속해 주세요.');body=String(body||'').trim();if(!/^[\w-]+$/.test(task)||!['assignment','discussion'].includes(kind)||!body||body.length>3000)throw Error('내용을 1~3,000자로 적어 주세요.');await sdk.set(ref(base()+'/learning/'+(kind==='discussion'?'posts':'submissions')+'/'+task+'/'+user.uid),{body,name:displayName(),at:sdk.serverTimestamp()});},
+  reviewLearningAnswer:async(task,uid,feedback)=>{if(!connected||!owner()||!/^[\w-]+$/.test(task)||!/^[-\w]+$/.test(uid))throw Error('학급 선생님만 확인할 수 있어요.');feedback=String(feedback||'').trim();if(feedback.length>1000)throw Error('답장은 1,000자까지 적어 주세요.');await sdk.set(ref(base()+'/learning/reviews/'+task+'/'+uid),{feedback,reviewed:true,at:sdk.serverTimestamp()});},
+  archiveLearningTask:async(task)=>{if(!connected||!owner()||!/^[\w-]+$/.test(task))throw Error('학급 선생님만 마감할 수 있어요.');await sdk.update(ref(base()+'/learning/tasks/'+task),{archived:true});},
+
   watchTower:(fn,error)=>{if(!connected||!member())throw Error('먼저 온라인 학급에 연결해 주세요.');return sdk.onValue(ref(base()+'/tower'),s=>fn(s.val()||{}),error);},
   attack:async(runId,hit)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const key=sdk.push(ref(base()+'/tower/runs/'+runId+'/hits/'+user.uid)).key;if(!key)throw Error('공격 번호를 만들지 못했어요.');const changes={};changes['runs/'+runId+'/hits/'+user.uid+'/'+key]={...hit,name:displayName(),at:sdk.serverTimestamp()};changes['runs/'+runId+'/cooldowns/'+user.uid]={key,at:sdk.serverTimestamp()};changes['dailyAttacks/'+user.uid]={key,runId,at:sdk.serverTimestamp()};await sdk.update(ref(base()+'/tower'),changes);},
   startTower:async()=>{if(!owner()||!connected)throw Error('온라인 학급 운영자만 원정을 시작할 수 있어요.');const runId=sdk.push(ref(base()+'/tower/runs')).key;if(!runId)throw Error('원정 번호를 만들지 못했어요.');await sdk.set(ref(base()+'/tower/config'),{runId,at:sdk.serverTimestamp()});},
@@ -128,3 +136,5 @@
  root.addEventListener('cancel',event=>{if(!user)event.preventDefault();});
  act(async()=>{await init();render();});
 })();
+
+
