@@ -16,7 +16,7 @@
  const record=p=>p.exploration||{shards:{},days:{}};
  const today=p=>record(p).days?.[schoolToday()]||{picked:[],step:0,done:false};
  const xp=()=>Math.max(0,Number(state.xp[actorName()])||0);
- const level=()=>1+Math.floor(xp()/100);
+ const level=()=>MoonLevels.current().level;
  const oldStats=campusStats;campusStats=function(name=actorName()){const s=oldStats(name),r=record(campusPerson(name));for(const k of stats)s[k]+=Math.min(5,Math.floor((Number(r.shards?.[k])||0)/3));return s;};
  function transact(change){return campusTransaction((p,s,name)=>{p.exploration||={shards:{},days:{}};p.exploration.shards||={};p.exploration.days||={};const d=p.exploration.days[schoolToday()]||={picked:[],step:0,done:false};return change(p,s,name,d);});}
  const distance=n=>Math.hypot(player.x-n.x,player.y-n.y);
@@ -41,7 +41,7 @@
   rounded(9.5*TILE,2*TILE,3*TILE,1.6*TILE,18,'#253c68');txt(d.done?'🌟':'🦊',11.5*TILE,3.2*TILE,48);txt('숲의 안내자',11.5*TILE,2.25*TILE,15,'#fff4cd');
   rounded(9.5*TILE,12.8*TILE,3*TILE,28,8,'#294b49');txt('광장으로',11*TILE,13.22*TILE,13,'#fff6df');ctx.restore();};
  const dialog=document.createElement('dialog');dialog.id='forestDialog';dialog.setAttribute('aria-label','도서관 숲 탐험');document.body.append(dialog);
- function show(message=''){if(window.MoonLearning&&!MoonLearning.require('숲 탐험'))return;pressed.clear();dialog.replaceChildren();cw09Button(dialog,'닫기',()=>dialog.close());cw09El('h2','','🌲 도서관 숲 탐험',dialog);const d=today(campusPerson());cw09El('p','',`Lv.${level()} · ${xp()%100}/100 XP · 오늘 수집 ${d.picked.length}/${nodes.length}`,dialog);
+ function show(message=''){if(window.MoonLearning&&!MoonLearning.require('숲 탐험'))return;pressed.clear();dialog.replaceChildren();cw09Button(dialog,'닫기',()=>dialog.close());cw09El('h2','','🌲 도서관 숲 탐험',dialog);const d=today(campusPerson());cw09El('p','',`Lv.${level()} · ${MoonLevels.current().current}/${MoonLevels.current().required} XP · 오늘 수집 ${d.picked.length}/${nodes.length}`,dialog);
   if(message)cw09El('p','',message,dialog).setAttribute('role','status');
   if(currentMap!==MAP){cw09El('p','','숲에서 수집물 3개를 모아 북쪽 안내자에게 전해 주세요.',dialog);cw09Button(dialog,'탐험 시작',()=>{if($('#role').value!=='student'){show('학생 모드에서 탐험할 수 있어요.');return;}goMap(MAP);if(currentMap===MAP){schoolPanelOpen(false);dialog.close();}else show('교실 안에서는 아래쪽 문으로 먼저 나가 주세요.');});}
   else if(distance(guardian)<=1.5){if(d.done)cw09El('p','','오늘 수집 도전 완료 ✓',dialog);else if(d.picked.length<3)cw09El('p','','수집물 3개를 먼저 찾아 주세요.',dialog);else cw09Button(dialog,'수집 보고하기',()=>{const r=answer();show(r.error||r.message);});}
@@ -54,10 +54,12 @@
  const oldInteract=interact;interact=function(){if(currentMap!==MAP)return oldInteract();if(nearby())return oldInteract();const n=nodes.find(n=>!today(campusPerson()).picked.includes(n.id)&&distance(n)<=1.2);if(n){const r=collect(n.id);doorMessage(r.error||r.message);return;}show();};
  const oldRefresh=cw09RefreshStage;cw09RefreshStage=function(){oldRefresh();if(currentMap===MAP){cw09StageBtn.textContent='탐험 기록';cw09StageBtn.onclick=()=>show();}};
  const badge=document.createElement('span');badge.className='forestLevel';document.querySelector('.moonGrowth summary').before(badge);
- function refresh(){badge.textContent=`Lv.${level()} · ${xp()%100}/100 XP`;document.querySelector('.moonGrowth summary').append(badge);document.querySelectorAll('.moonStat meter').forEach(m=>m.max=8);const note=document.querySelector('.moonGrowthBody p');if(note)note.textContent='기본 1 + 도구 2 + 수집 성장 최대 5. 조각 3개마다 +1, 능력치 3부터 수호자 기술 사용. 이 기기에 저장됩니다.';}
+ function refresh(){badge.textContent=`Lv.${level()} · ${MoonLevels.current().current}/${MoonLevels.current().required} XP`;document.querySelector('.moonGrowth summary').append(badge);document.querySelectorAll('.moonStat meter').forEach(m=>m.max=8);const note=document.querySelector('.moonGrowthBody p');if(note)note.textContent='기본 1 + 도구 2 + 수집 성장 최대 5. 조각 3개마다 +1, 능력치 3부터 수호자 기술 사용. 이 기기에 저장됩니다.';}
  const oldCoin=updateCoin;updateCoin=function(...args){const r=oldCoin(...args);refresh();return r;};document.addEventListener('change',refresh);document.querySelector('.moonGrowth').addEventListener('toggle',refresh);refresh();
  const style=document.createElement('style');style.textContent='#forestDialog{width:min(440px,88vw);max-height:80vh;overflow:auto;border:2px solid #47856b;border-radius:18px;background:#fffbed;color:#254c43;padding:20px}#forestDialog::backdrop{background:#142b4366}#forestDialog button{display:block;margin:10px 0;padding:10px 14px;border-radius:10px}#forestDialog p{line-height:1.6}.forestNote{font-size:12px;color:#53685b}.forestLevel{float:right;font-weight:800;color:#235585;padding:3px 0}';document.head.append(style);
  window.MoonForest={collect,answer,level,nodes,show};
  style.textContent+='#interact[data-forest-label]{font-size:0}#interact[data-forest-label]::after{content:attr(data-forest-label);font-size:13px}';
  setInterval(()=>{const b=document.querySelector('#interact');if(currentMap===MAP){b.dataset.forestLabel=nearby()?'광장으로 E':'줍기 / 도전 E';b.setAttribute('aria-label',b.dataset.forestLabel);}else if(b.hasAttribute('data-forest-label')){delete b.dataset.forestLabel;b.removeAttribute('aria-label');}},250);
 })();
+
+
