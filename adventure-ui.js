@@ -1,9 +1,9 @@
 /* Presentation only: retain activity IDs, reward transactions and saved records. */
 (() => {
  'use strict';
- const stats={observation:['감지','🔭','관찰력 · 숨은 단서를 찾아요'],persistence:['인내','🛡️','끈기 · 포기하지 않고 도전해요'],cooperation:['유대','🔗','협력 · 친구와 힘을 모아요'],knowledge:['지능','📖','지식 · 퀴즈로 배움을 쌓아요'],creativity:['영감','✨','창의력 · 읽고 쓰며 상상해요'],vitality:['체력','⚡','활력 · 출석과 운동으로 성장해요']};
+ const stats={observation:['관찰','🔭','관찰력 · 숨은 단서를 찾아요'],persistence:['인내','🛡️','끈기 · 포기하지 않고 도전해요'],cooperation:['유대','🔗','협력 · 친구와 힘을 모아요'],knowledge:['지능','📖','지식 · 퀴즈로 배움을 쌓아요'],creativity:['영감','✨','창의력 · 읽고 쓰며 상상해요'],vitality:['체력','⚡','활력 · 출석과 운동으로 성장해요']};
  for(const [key,[name]] of Object.entries(stats))CAMPUS_STATS[key]=name;
- for(const item of CAMPUS_GEAR){item.desc=item.desc.replace('관찰력','감지').replace('끈기','인내').replace('협력','유대');}
+ for(const item of CAMPUS_GEAR){item.desc=item.desc.replace('관찰력','관찰').replace('끈기','인내').replace('협력','유대');}
  const baseGrowth=MoonGrowth.render;
  function decorateGrowth(){
   const cards=document.querySelectorAll('.growthChip');
@@ -80,3 +80,5 @@
  `;document.head.append(style);
  dailyRender();MoonGrowth.render();switchTab('activities');document.title='문스쿨 | 작은 모험, 매일의 성장';
 })();
+
+
