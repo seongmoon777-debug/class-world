@@ -83,7 +83,7 @@
  function watchTeacher(token){offs.push(sdk.onValue(ref(base()+'/roster'),s=>{if(token===generation){teacherRoster=s.val()||{};window.dispatchEvent(new Event('moon-roster-change'));}},()=>{}));offs.push(sdk.onValue(ref(base()+'/requests'),s=>{if(token!==generation)return;const box=root.querySelector('[data-requests]');if(!box)return;box.replaceChildren();for(const [uid,r] of Object.entries(s.val()||{})){const line=el('p',r.name,box);btn('참여 승인',async()=>{await sdk.set(ref(base()+'/members/'+uid),true);await sdk.remove(ref(base()+'/requests/'+uid));say('참여를 승인했어요.');},line);}},()=>{}));}
  function render(){
   root.replaceChildren();if(user)btn('닫기',()=>root.close());el('h2',user?'온라인 학급':'문스쿨 로그인');
-  if(user)el('p','공유: 캐릭터·학급 공지·새 과제·제출물·게시판. 출석·문코인·집과 이전 과제 기록은 이 기기에 저장됩니다.').className='notice';
+  if(user)el('p','공유: 캐릭터·학급 공지·새 과제·제출물·게시판. 집·실내외 꾸미기는 같은 학급에 공유됩니다. 출석·문코인·이전 과제 기록은 이 기기에 저장됩니다.').className='notice';
   if(!user){
    const id=field('아이디',9);id.autocomplete='username';id.placeholder='MSCHOOL01';id.autocapitalize='characters';id.spellcheck=false;
    const password=field('비밀번호',128);password.type='password';password.autocomplete='current-password';password.placeholder='배부받은 비밀번호';
@@ -116,6 +116,9 @@
  style.textContent+=`body.studentAuthGate #creatorOverlay{visibility:hidden!important}#onlineSchool.studentGate{width:min(420px,92vw);padding:26px;box-shadow:0 18px 60px #112e3b33}#onlineSchool.studentGate h2{font-size:22px!important;margin:0 0 22px}#onlineSchool.studentGate label{display:block;font-size:13px!important;font-weight:700;color:#355346}#onlineSchool.studentGate input{font-size:15px!important;min-height:44px;border:1px solid #bacab2;border-radius:8px;margin:7px 0 16px}#onlineSchool.studentGate .studentLoginButton{width:100%;min-height:44px!important;font-size:14px!important;background:#315d4a;color:#fff5d3;border:0;margin:4px 0 16px}#onlineSchool.studentGate summary{font-size:12px;cursor:pointer;color:#677e68}#onlineSchool.studentGate .notice{font-size:11px!important;color:#73806d}`;
  window.MoonClass={
   session:()=>({uid:user?.uid||'',code,name:displayName(),owner:owner(),connected:connected&&member()}),
+  watchHomes:(fn,error)=>{if(!connected||!member())throw Error('학급 연결이 필요해요.');const token=generation;const off=sdk.onValue(ref(base()+'/housing/homes'),s=>{if(token===generation)fn(s.val()||{});},error);offs.push(off);return off;},
+  getHome:async()=>{if(!connected||!member())throw Error('학급 연결이 필요해요.');const token=generation,result=await sdk.get(ref(base()+'/housing/homes/'+user.uid));if(token!==generation)throw Error('학급이 변경됐어요.');return result.val();},
+  saveHome:async(person,revision,operation)=>{if(!connected||!member())throw Error('학급 연결이 필요해요.');const plot=person?.homestead?.plot;if(!/^village-([0-9]|[12][0-9])$/.test(plot)||!Number.isInteger(revision)||revision<0||!/^[\w-]{1,64}$/.test(operation))throw Error('집 저장 정보를 확인해 주세요.');const changes={};changes['homes/'+user.uid]={person,name:displayName(),rev:revision+1,op:operation,at:sdk.serverTimestamp()};changes['plots/'+plot]=user.uid;await sdk.update(ref(base()+'/housing'),changes);},
   roster:()=>Object.entries(remote).map(([uid,sessions])=>{const p=Object.values(sessions||{}).filter(p=>p&&Date.now()-p.at<20000).sort((a,b)=>b.at-a.at)[0];return p?{uid,name:String(p.name||'친구').replace(/^Lv\.\d+ /,'')}:null;}).filter(Boolean).concat(Object.entries(teacherRoster).map(([uid,p])=>({uid,name:p.loginId||'학생 '+p.number}))),
   open:()=>open.click(),
   watchLearningTasks:(fn,error)=>{if(!connected||!member())throw Error('온라인 학급 연결이 필요해요.');const token=generation;const off=sdk.onValue(ref(base()+'/learning/tasks'),s=>{if(token===generation)fn(s.val()||{});},error);offs.push(off);return off;},
