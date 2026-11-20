@@ -368,6 +368,215 @@
               }
             }
           }
+        },
+        "housing": {
+          "homes": {
+            ".read": "auth != null && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))",
+            "$uid": {
+              ".write": "auth != null && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class)) && $uid === auth.uid && newData.exists()",
+              ".validate": "newData.hasChildren(['person','name','rev','op','at']) && newData.parent().parent().child('plots').child(newData.child('person/homestead/plot').val()).val() === $uid && ((!data.exists() && newData.child('rev').val() === 1) || (data.exists() && newData.child('rev').val() === data.child('rev').val()+1 && newData.child('person/homestead/plot').val() === data.child('person/homestead/plot').val()))",
+              "person": {
+                ".validate": "newData.hasChildren(['homestead','houseName','wallColor','interior'])",
+                "homestead": {
+                  ".validate": "newData.hasChildren(['plot','level'])",
+                  "plot": {
+                    ".validate": "newData.isString() && newData.val().matches(/^village-([0-9]|[12][0-9])$/)"
+                  },
+                  "level": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 4"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
+                "houseName": {
+                  ".validate": "newData.isString() && newData.val().length >= 0 && newData.val().length <= 16"
+                },
+                "wallColor": {
+                  ".validate": "newData.isString() && newData.val().matches(/^#[a-fA-F0-9]{6}$/)"
+                },
+                "roof": {
+                  ".validate": "newData.val() === 'roof-blue' || newData.val() === 'roof-pink'"
+                },
+                "decor": {
+                  "0": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "1": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "2": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "3": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "4": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "5": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "6": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "7": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "8": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "9": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "10": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "11": {
+                    ".validate": "newData.isString() && (newData.val() === 'flowers' || newData.val() === 'tree' || newData.val() === 'bench' || newData.val() === 'pond' || newData.val() === 'lamp' || newData.val() === 'books' || newData.val() === 'tent' || newData.val() === 'cat' || newData.val() === 'sign' || newData.val() === 'fountain' || newData.val() === 'roof-blue' || newData.val() === 'roof-pink')"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
+                "layout": {
+                  "flowers": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "tree": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "bench": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "pond": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "lamp": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "books": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "tent": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "cat": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "sign": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "fountain": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "roof-blue": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "roof-pink": {
+                    ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 23"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
+                "interior": {
+                  "items": {
+                    "0": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "1": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "2": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "3": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "4": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "5": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "6": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "7": {
+                      ".validate": "newData.isString() && (newData.val() === 'bed' || newData.val() === 'rug' || newData.val() === 'sofa' || newData.val() === 'desk' || newData.val() === 'shelf' || newData.val() === 'plant' || newData.val() === 'lamp' || newData.val() === 'art')"
+                    },
+                    "$other": {
+                      ".validate": false
+                    }
+                  },
+                  "layout": {
+                    "bed": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "rug": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "sofa": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "desk": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "shelf": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "plant": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "lamp": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "art": {
+                      ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 0 && newData.val() <= 35"
+                    },
+                    "$other": {
+                      ".validate": false
+                    }
+                  },
+                  "wall": {
+                    ".validate": "newData.val() === 'cream' || newData.val() === 'mint' || newData.val() === 'pink'"
+                  },
+                  "$other": {
+                    ".validate": false
+                  }
+                },
+                "$other": {
+                  ".validate": false
+                }
+              },
+              "name": {
+                ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16"
+              },
+              "rev": {
+                ".validate": "newData.isNumber() && newData.val() % 1 === 0 && newData.val() >= 1 && newData.val() <= 10000000"
+              },
+              "op": {
+                ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 64"
+              },
+              "at": {
+                ".validate": "newData.isNumber() && newData.val() === now"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          },
+          "plots": {
+            ".read": "auth != null && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class))",
+            "$plot": {
+              ".write": "auth != null && (root.child('classes').child($class).child('info/owner').val() === auth.uid || root.child('classes').child($class).child('members').child(auth.uid).val() === true) && (auth.token.firebase.sign_in_provider === 'google.com' || (auth.token.firebase.sign_in_provider === 'password' && root.child('studentAccounts').child(auth.uid).child('classCode').val() === $class)) && $plot.matches(/^village-([0-9]|[12][0-9])$/) && (!data.exists() || data.val() === auth.uid) && newData.val() === auth.uid",
+              ".validate": "newData.isString() && newData.parent().parent().child('homes').child(auth.uid).child('person/homestead/plot').val() === $plot"
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
         }
       }
     },
@@ -379,4 +588,3 @@
     }
   }
 }
-
