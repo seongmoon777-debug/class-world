@@ -59,8 +59,8 @@ function building(p){const x=(p.x+.5)*T,y=(p.y+.7)*T,c=colors[p.to],w=p.to==='cl
 }
 for(const p of portals.plaza)if(names[p.to])building(p);
 // Home approach intentionally remains the existing, live neighborhood entrance.
-box(28*T,44.5*T,7*T,1.3*T,'#fff5db',15);label('우리 동네 ↓',31.5*T,45.15*T,25);
-for(const [s,x,y] of [['꽃잎 골목',23,23],['반짝 상점길',17,36],['책숲 산책길',49,21],['달빛 광장',31,33.6],['개울 산책길',68,32],['오솔길',45,58]])label(s,x*T,y*T,25,'#586d55');
+
+for(const [s,x,y] of [['꽃잎 골목',23,23],['반짝 상점길',17,36],['달빛 광장',31,33.6],['개울 산책길',68,32],['오솔길',45,58]])label(s,x*T,y*T,25,'#586d55');
 }
 drawScene();
 CW05_DIM.plaza=[82,74];
