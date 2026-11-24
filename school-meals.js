@@ -11,19 +11,16 @@ const parse=(body,date)=>{
 let day='',items=[],status='불러오는 중…',busy=false,last=0,art=null;
 const cacheKey='moon-school-meal-v1';
 function panel(){
-  const lines=items.length?items.map(s=>s.replace(/\s*\([\d.\s]+\)/g,'')):[status];
-  const c=document.createElement('canvas'),g=c.getContext('2d');c.width=336;
-  g.font='28px "Malgun Gothic", sans-serif';
-  const wrapped=[];
-  for(const line of lines){let row='';for(const char of line){if(g.measureText(row+char).width>292){wrapped.push(row);row='';}row+=char;}wrapped.push(row);}
-  c.height=114+wrapped.length*34;
-  const box=(x,y,w,h,color,r=10)=>{g.fillStyle=color;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();};
-  box(26,c.height-26,12,26,'#765238',2);box(298,c.height-26,12,26,'#765238',2);
-  box(0,0,336,c.height-20,'#856043');box(7,7,322,c.height-34,'#fff7df');
-  box(7,7,322,58,'#38684f');
-  g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff9e8';g.font='28px "Malgun Gothic", sans-serif';g.fillText('의창초 오늘의 식단',168,35);
-  g.fillStyle='#6e6249';g.font='20px "Malgun Gothic", sans-serif';g.fillText(`${day.slice(4,6)}월 ${day.slice(6,8)}일 · 점심`,168,81);
-  g.fillStyle='#284a39';g.font='28px "Malgun Gothic", sans-serif';wrapped.forEach((s,i)=>g.fillText(s,168,113+i*34));art=c;
+ const lines=items.length?items.map(s=>s.replace(/\s*\([\d.\s]+\)/g,'')):[status];
+ const c=document.createElement('canvas'),g=c.getContext('2d'),width=280,font='700 20px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';
+ g.font=font;const wrapped=[];for(const line of lines){let row='';for(const char of line){if(g.measureText(row+char).width>248){wrapped.push(row);row='';}row+=char;}wrapped.push(row);}
+ const height=90+wrapped.length*27;c.width=width*2;c.height=height*2;g.scale(2,2);
+ const box=(x,y,w,h,color,r=8)=>{g.fillStyle=color;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();};
+ box(22,height-24,10,24,'#765238',2);box(248,height-24,10,24,'#765238',2);
+ box(0,0,width,height-18,'#856043');box(5,5,width-10,height-28,'#fffbed');box(5,5,width-10,42,'#294e3a');
+ g.textAlign='center';g.textBaseline='middle';g.font=font;g.fillStyle='#fffbed';g.fillText('의창초 오늘의 식단',140,27);
+ g.font='600 16px "Malgun Gothic","Apple SD Gothic Neo",sans-serif';g.fillStyle='#4c5548';g.fillText(day.slice(4,6)+'월 '+day.slice(6,8)+'일 · 점심',140,62);
+ g.font=font;g.fillStyle='#203b2c';wrapped.forEach((s,i)=>g.fillText(s,140,89+i*27));art=c;
 }
 async function refresh(){
   const today=dateKey();if(busy||today===day&&Date.now()-last<30*60*1000)return;
@@ -39,7 +36,7 @@ async function refresh(){
   }catch{status=items.length?'':'급식을 불러오지 못했어요';}
   finally{clearTimeout(timer);busy=false;panel();}
 }
-const before=worldBase;worldBase=function(){before();if(currentMap==='plaza'&&art)ctx.drawImage(art,34.4*TILE,14.9*TILE-art.height*.7,art.width*.7,art.height*.7);};
+const before=worldBase;worldBase=function(){before();if(currentMap==='plaza'&&art)ctx.drawImage(art,34.4*TILE,14.9*TILE-art.height*.35,art.width*.35,art.height*.35);};
 setInterval(refresh,1500);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 Promise.resolve(window.MoonSignReady).then(panel);refresh();
