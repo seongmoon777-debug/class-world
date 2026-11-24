@@ -39,7 +39,7 @@ async function refresh(){
   }catch{status=items.length?'':'급식을 불러오지 못했어요';}
   finally{clearTimeout(timer);busy=false;panel();}
 }
-const before=worldBase;worldBase=function(){before();if(currentMap==='plaza'&&art)ctx.drawImage(art,34.4*TILE,14.9*TILE-art.height);};
+const before=worldBase;worldBase=function(){before();if(currentMap==='plaza'&&art)ctx.drawImage(art,34.4*TILE,14.9*TILE-art.height*.7,art.width*.7,art.height*.7);};
 // A compact detail control appears only near the classroom, preserving allergy numbers.
 const button=document.createElement('button');button.textContent='🍚 급식 자세히';button.hidden=true;button.style.cssText='position:absolute;right:14px;top:64px;z-index:4;background:#fff7df;color:#284a39';
 document.querySelector('#stage').append(button);
