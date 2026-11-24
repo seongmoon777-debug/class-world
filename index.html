@@ -479,7 +479,7 @@ let width=850,height=540,scale=1;const TILE=46,MW=22,MH=15;
 function resize(){let r=$('#stage').getBoundingClientRect();width=r.width;height=r.height;scale=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);ctx.setTransform(scale,0,0,scale,0,0);ctx.imageSmoothingEnabled=false}
 window.addEventListener('resize',resize);resize();
 function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.ceil(w),Math.ceil(h))}
-function txt(t,x,y,size=13,color='#465676',align='center'){ctx.fillStyle=color;ctx.textAlign=align;ctx.font=`800 ${size}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans CJK KR","Nanum Gothic",sans-serif`;ctx.fillText(t,x,y)}
+function txt(t,x,y,size=13,color='#465676',align='center'){ctx.fillStyle=color;ctx.textAlign=align;ctx.font=`400 ${size}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans CJK KR","Nanum Gothic",sans-serif`;ctx.fillText(t,x,y)}
 function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
 function flower(x,y,c){rect(x-3,y,6,6,c);rect(x,y-3,6,6,c);rect(x,y,3,3,'#ffe4a3')}
 function tree(x,y){ctx.fillStyle='#6b957c';ctx.beginPath();ctx.ellipse(x,y+7,25,10,0,0,Math.PI*2);ctx.fill();rect(x-5,y-22,10,25,'#906c65');rect(x-25,y-55,50,35,'#69a58d');rect(x-17,y-68,34,25,'#86c7a4');rect(x-17,y-49,6,5,'#b4e0b2')}
@@ -2776,7 +2776,7 @@ window.MOON_STYLE1_TEST={version:'0.9.3-style1',ready:()=>MOON_STYLE1.loaded,fai
 <script src="assets/rounded-atlas.js"></script>
 <script src="rounded-avatar.js"></script>
 <script src="doors.js"></script>
-<script src="city.js?v=0.38.0"></script>
+<script src="city.js?v=0.43.0"></script>
 <script src="home-share.js"></script>
 <script src="daily-welcome.js"></script>
 <script src="home-map.js"></script>
@@ -2790,8 +2790,8 @@ window.MOON_STYLE1_TEST={version:'0.9.3-style1',ready:()=>MOON_STYLE1.loaded,fai
 <script src="adventure-ui.js?v=0.38.0"></script>
 <script src="village-ui.js?v=0.37.0"></script>
 <script src="tower-core.js?v=0.38.0"></script>
-<script src="tower.js?v=0.32.0"></script>
-<script src="world-polish.js?v=0.31.0"></script>
+<script src="tower.js?v=0.43.0"></script>
+<script src="world-polish.js?v=0.43.0"></script>
 <script src="journey-core.js?v=0.38.0"></script>
 <script src="journey.js?v=0.38.0"></script>
 <script src="relic-collection.js?v=0.38.0"></script>
@@ -2812,6 +2812,9 @@ window.MOON_STYLE1_TEST={version:'0.9.3-style1',ready:()=>MOON_STYLE1.loaded,fai
 <script src="classroom-hub.js?v=0.38.1"></script>
 <script src="interior.js?v=0.41.0"></script>
 <script src="shared-homes.js?v=0.41.0"></script>
-<script src="school-meals.js?v=0.42.1"></script>
+<script src="school-meals.js?v=0.43.0"></script>
+<style>
+:root :is(#moon-font-scope,body),:root :is(#moon-font-scope,body) *{font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans CJK KR","Nanum Gothic",sans-serif!important;font-weight:400!important;text-shadow:none!important;font-synthesis:none!important}
+</style>
 </body>
 </html>
