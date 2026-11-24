@@ -13,7 +13,7 @@ const cacheKey='moon-school-meal-v1';
 function panel(){
   const lines=items.length?items.map(s=>s.replace(/\s*\([\d.\s]+\)/g,'')):[status];
   const c=document.createElement('canvas'),g=c.getContext('2d');c.width=336;
-  g.font='28px Jua, "Malgun Gothic", sans-serif';
+  g.font='28px "Malgun Gothic", sans-serif';
   const wrapped=[];
   for(const line of lines){let row='';for(const char of line){if(g.measureText(row+char).width>292){wrapped.push(row);row='';}row+=char;}wrapped.push(row);}
   c.height=114+wrapped.length*34;
@@ -21,9 +21,9 @@ function panel(){
   box(26,c.height-26,12,26,'#765238',2);box(298,c.height-26,12,26,'#765238',2);
   box(0,0,336,c.height-20,'#856043');box(7,7,322,c.height-34,'#fff7df');
   box(7,7,322,58,'#38684f');
-  g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff9e8';g.font='28px Jua, "Malgun Gothic", sans-serif';g.fillText('의창초 오늘의 식단',168,35);
-  g.fillStyle='#6e6249';g.font='20px Jua, "Malgun Gothic", sans-serif';g.fillText(`${day.slice(4,6)}월 ${day.slice(6,8)}일 · 점심`,168,81);
-  g.fillStyle='#284a39';g.font='28px Jua, "Malgun Gothic", sans-serif';wrapped.forEach((s,i)=>g.fillText(s,168,113+i*34));art=c;
+  g.textAlign='center';g.textBaseline='middle';g.fillStyle='#fff9e8';g.font='28px "Malgun Gothic", sans-serif';g.fillText('의창초 오늘의 식단',168,35);
+  g.fillStyle='#6e6249';g.font='20px "Malgun Gothic", sans-serif';g.fillText(`${day.slice(4,6)}월 ${day.slice(6,8)}일 · 점심`,168,81);
+  g.fillStyle='#284a39';g.font='28px "Malgun Gothic", sans-serif';wrapped.forEach((s,i)=>g.fillText(s,168,113+i*34));art=c;
 }
 async function refresh(){
   const today=dateKey();if(busy||today===day&&Date.now()-last<30*60*1000)return;
@@ -40,11 +40,7 @@ async function refresh(){
   finally{clearTimeout(timer);busy=false;panel();}
 }
 const before=worldBase;worldBase=function(){before();if(currentMap==='plaza'&&art)ctx.drawImage(art,34.4*TILE,14.9*TILE-art.height*.7,art.width*.7,art.height*.7);};
-// A compact detail control appears only near the classroom, preserving allergy numbers.
-const button=document.createElement('button');button.textContent='🍚 급식 자세히';button.hidden=true;button.style.cssText='position:absolute;right:14px;top:64px;z-index:4;background:#fff7df;color:#284a39';
-document.querySelector('#stage').append(button);
-button.onclick=()=>{const d=document.createElement('dialog');d.style.cssText='max-width:360px;border:2px solid #856043;border-radius:18px;background:#fff7df;padding:24px;color:#284a39';const h=document.createElement('h2');h.textContent='의창초 오늘의 식단';d.append(h);const p=document.createElement('p');p.style.whiteSpace='pre-line';p.textContent=`${day.slice(0,4)}.${day.slice(4,6)}.${day.slice(6,8)}\n\n${items.length?items.join('\n'):status}\n\n출처: 나이스 교육정보 개방 포털\n괄호 안 숫자는 알레르기 유발 식품 번호입니다.\n학교 사정에 따라 식단이 바뀔 수 있어요.`;d.append(p);const close=document.createElement('button');close.textContent='닫기';close.onclick=()=>d.close();d.append(close);d.addEventListener('close',()=>d.remove());document.body.append(d);d.showModal();};
-setInterval(()=>{button.hidden=currentMap!=='plaza'||Math.hypot(player.x-31.5,player.y-12.7)>9;refresh();},1500);
+setInterval(refresh,1500);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 Promise.resolve(window.MoonSignReady).then(panel);refresh();
 window.MoonMeals={dateKey,parse,refresh};

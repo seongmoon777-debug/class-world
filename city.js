@@ -8,7 +8,7 @@ const cv=document.createElement('canvas');cv.width=82*TILE;cv.height=74*TILE;con
 function box(x,y,w,h,c,r=0){g.fillStyle=c;g.beginPath();g.roundRect(x,y,w,h,r);g.fill();}
 function oval(x,y,rx,ry,c){g.fillStyle=c;g.beginPath();g.ellipse(x,y,rx,ry,0,0,Math.PI*2);g.fill();}
 function line(points,c,w){g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.lineJoin='round';g.beginPath();points.forEach(([x,y],i)=>i?g.lineTo(x*T,y*T):g.moveTo(x*T,y*T));g.stroke();}
-function label(s,x,y,size=26,c='#254238'){g.font=`700 ${size}px "Jua","Gowun Dodum","Malgun Gothic",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle=c;g.fillText(s,x,y);}
+function label(s,x,y,size=26,c='#254238'){g.font=`400 ${size}px "Malgun Gothic","Apple SD Gothic Neo","Noto Sans CJK KR","Nanum Gothic",sans-serif`;g.textAlign='center';g.textBaseline='middle';g.fillStyle=c;g.fillText(s,x,y);}
 function tree(x,y,size=1){x*=T;y*=T;oval(x+8,y+8,25*size,12*size,'#254e3820');box(x-4,y-28*size,8,30*size,'#8b6744',3);oval(x,y-43*size,27*size,31*size,'#307251');oval(x-8,y-51*size,18*size,21*size,'#4c9860');}
 function bench(x,y){x*=T;y*=T;box(x-28,y,56,12,'#785337',3);box(x-28,y-13,56,10,'#ba8551',3);box(x-23,y+10,5,10,'#4b5848');box(x+18,y+10,5,10,'#4b5848');}
 function lamp(x,y){x*=T;y*=T;oval(x,y,10,5,'#26453625');box(x-3,y-48,6,48,'#354f50',3);box(x-11,y-61,22,18,'#fff0af',5);box(x-14,y-65,28,6,'#354f50',3);}

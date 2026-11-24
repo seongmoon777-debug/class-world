@@ -13,7 +13,7 @@
   off=MoonClass.watchTower(data=>{if(signature!==sig)return;tower=data;ready=true;error='';refresh();},()=>{if(signature!==sig)return;ready=false;error='탑 연결이 아직 준비되지 않았어요. 선생님께 알려 주세요.';refresh();});
  }
  window.addEventListener('moon-class-change',connect);window.addEventListener('moon-roster-change',refresh);
- function open(teleport=true){if(teleport&&window.MoonLearning&&!MoonLearning.require('탑'))return;pressed.clear();if(teleport){if(currentMap!=='plaza'){if(schoolIndoor.has(currentMap)){const door=(portals[currentMap]||[]).find(p=>p.to==='plaza');if(door)player={x:door.x,y:door.y};}goMap('plaza');}if(currentMap==='plaza'){player={x:31,y:31.5};cw05LastCamera=null;schoolPanelOpen(false);}}connect();render();if(!dialog.open)dialog.showModal();}
+ function open(teleport=true){if(teleport&&window.MoonLearning&&!MoonLearning.require('탑'))return;pressed.clear();if(teleport){if(currentMap!=='plaza'){if(schoolIndoor.has(currentMap)){const door=(portals[currentMap]||[]).find(p=>p.to==='plaza');if(door)player={x:door.x,y:door.y};}goMap('plaza');}if(currentMap==='plaza'){player={x:31,y:31.5};cw05LastCamera=null;schoolPanelOpen(false);}if(dialog.open)dialog.close();return;}connect();render();if(!dialog.open)dialog.showModal();}
  async function action(fn){if(pending)return;pending=true;error='';render();try{await fn();}catch(e){const msg=String(e.code||e.message||'');error=/permission|PERMISSION/.test(msg)?'권한이 없거나 서버 규칙이 준비되지 않았어요.':msg||'저장하지 못했어요. 다시 연결해 주세요.';}finally{pending=false;refresh();}}
  function heading(){cw09Button(dialog,'닫기',()=>dialog.close(),'towerClose');cw09El('span','towerEyebrow','CLASS RAID · 열 개의 전설',dialog);cw09El('h2','','달빛 협동의 탑',dialog);
   const nav=cw09El('nav','towerTabs','',dialog);for(const [id,name] of [['battle','탑 공략'],['quiz','탑 퀴즈'],['titles','내 호칭'],...(session().owner?[['teacher','교사 수여']]:[])]){const b=cw09Button(nav,name,()=>{view=id;render();},view===id?'selected':'');b.setAttribute('aria-pressed',String(view===id));}
@@ -61,7 +61,7 @@
  dialog.addEventListener('close',()=>pressed.clear());setInterval(()=>{if(dialog.open)updateAttack();},100);
  // A journal entry and a real entrance at the foot of the central tower.
  const oldMission=renderMission;renderMission=function(){const r=oldMission();const panel=document.querySelector('#mission');if(!panel.querySelector('.towerJournal')){const box=cw09El('div','towerJournal','',panel);cw09El('strong','','🏰 달빛 협동의 탑',box);cw09El('p','','반 친구와 보스를 공략하고 호칭을 모아요.',box);cw09Button(box,'탑 원정 보기',open);}return r;};
- const oldInteract=interact;interact=function(){if(currentMap==='plaza'&&Math.hypot(player.x-31,player.y-31)<2){open();return;}return oldInteract();};
+ const oldInteract=interact;interact=function(){if(currentMap==='plaza'&&Math.hypot(player.x-31,player.y-31)<2){if(window.MoonLearning&&!MoonLearning.require('탑'))return;open(false);return;}return oldInteract();};
  const oldSolid=solid;solid=function(x,y){return currentMap==='plaza'&&x>29.5&&x<32.5&&y>26&&y<29.5?true:oldSolid(x,y);};
  const towerArt=document.createElement('canvas');towerArt.width=180;towerArt.height=245;const g=towerArt.getContext('2d');
  g.fillStyle='#20372c44';g.beginPath();g.ellipse(90,226,65,14,0,0,Math.PI*2);g.fill();g.fillStyle='#c6bfaa';g.fillRect(36,75,108,144);g.fillStyle='#ddd5b9';g.fillRect(43,75,47,144);g.fillStyle='#69876f';g.fillRect(25,64,130,22);
