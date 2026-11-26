@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),core=require('./animal-friends-core.js');
+assert.equal(core.catalog.length,30);assert.equal(new Set(core.catalog.map(i=>i.id)).size,30);assert.equal(new Set(core.catalog.map(i=>i.name)).size,30);assert.equal(core.catalog.filter(i=>i.rarity==='전설').length,3);
+const now=Date.parse('2026-11-26T00:00:00Z'),seen=new Set();for(let d=0;d<10;d++)for(let slot=0;slot<3;slot++)seen.add(core.encounter('학생1',slot,now+d*86400000).id);assert.equal(seen.size,30);
+const record={};assert.equal(core.claim(record,core.catalog[0],0,now).duplicate,false);assert.ok(core.claim(record,core.catalog[0],0,now).error);assert.equal(core.claim(record,core.catalog[0],0,now+86400000).duplicate,true);assert.equal(Object.keys(record.owned).length,1);
+const element=()=>({style:{},classList:{},setAttribute(){},append(){},open:false});let p={},state={coins:{student:0},xp:{student:0}},role={value:'student'};
+const env={window:null,MoonAnimalCore:core,document:{createElement:element,body:element(),head:element(),querySelector:element,addEventListener(){}},cw09Button:()=>element(),campusPerson:()=>p,actorName:()=> 'student',$:()=>role,campusTransaction:fn=>role.value==='student'?fn(p,state,'student'):{error:'student only'},currentMap:'moonforest',player:{...core.spots[0]},MoonLearning:{require:()=>true},interact(){},worldBase(){},updateCoin(){},Date,performance:{now:()=>0}};env.window=env;
+vm.runInNewContext(fs.readFileSync(__dirname+'/animal-friends.js','utf8'),env);
+const friend=core.encounter('student',0);assert.ok(env.MoonAnimals.befriend(0,(friend.food+1)%3).error);assert.equal(p.animalFriends,undefined);
+assert.ok(env.MoonAnimals.befriend(0,friend.food).message);assert.equal(Object.keys(p.animalFriends.owned).length,1);assert.ok(env.MoonAnimals.befriend(0,friend.food).error);assert.equal(state.coins.student,0);
+env.player={...core.spots[1]};role.value='teacher';assert.ok(env.MoonAnimals.befriend(1,core.encounter('student',1).food).error);role.value='student';env.player={x:0,y:0};assert.ok(env.MoonAnimals.befriend(1,0).error);
+console.log('PASS: 30 unique friends, 3 legendary, 10-day coverage, daily limits, duplicate ownership, food/role/distance guards');
