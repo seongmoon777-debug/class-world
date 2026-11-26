@@ -34,9 +34,13 @@
      const s=await sdk.get(ref('studentAccounts/'+u.uid));if(token!==generation)return;
      const profile=MoonStudentAccounts.binding(u.email,s.val());if(!profile)throw Error('계정의 학급 연결이 아직 준비되지 않았어요.');
      studentProfile=profile;lockStudent(profile);sessionStorage.setItem('moon-online-name',profile.id);await enter(profile.classCode);if(user?.uid===u.uid&&root.open)root.close();
-    }else if(hasInvite){await enter(invite);}
-    else{const s=await sdk.get(ref('classes/'+MoonStudentAccounts.defaultClass+'/info'));if(token!==generation)return;if(s.val()?.owner===u.uid){await enter(MoonStudentAccounts.defaultClass);if(root.open)root.close();}
-     else{const previous=sessionStorage.getItem('moon-online-class');if(previous){await enter(previous);if(user?.uid===u.uid&&root.open)root.close();}else if(!root.open)root.showModal();}}
+    }else{
+     // A verified classroom owner must not be routed to a demo invite as a guest.
+     let ownedDefault=false;try{const info=await sdk.get(ref('classes/'+MoonStudentAccounts.defaultClass+'/info'));ownedDefault=info.val()?.owner===u.uid;}catch{}
+     if(token!==generation)return;
+     const destination=ownedDefault?MoonStudentAccounts.defaultClass:hasInvite?invite:sessionStorage.getItem('moon-online-class');
+     if(destination){await enter(destination);if(user?.uid===u.uid&&root.open)root.close();}else if(!root.open)root.showModal();
+    }
    }catch(e){if(user?.uid===u.uid){render();if(!root.open)root.showModal();say(e.message?.includes('계정의')?e.message:'학급에 연결하지 못했어요. 다시 로그인하거나 선생님께 알려 주세요.');}}
   });
  }
@@ -75,7 +79,7 @@
   meta=s.val();sessionStorage.setItem('moon-online-class',next);
   if(!owner()){await sdk.set(ref(base()+'/members/'+user.uid),true);if(token!==generation)return;}
   render();
-  if(owner()){approved=true;await startPresence(token);watchTeacher(token);watchNotice(token);render();}
+  if(owner()){const role=document.querySelector('#role');role.value='teacher';role.dispatchEvent(new Event('change'));approved=true;await startPresence(token);watchTeacher(token);watchNotice(token);render();}
   else offs.push(sdk.onValue(ref(base()+'/members/'+user.uid),s=>{if(token!==generation)return;const ok=s.val()===true;if(approved&&!ok){stop();meta=null;render();say('학급 참여가 해제됐어요.');return;}approved=ok;if(ok){startPresence(token);watchNotice(token);}render();},()=>{stop();meta=null;render();}));
  }
  let noticeOff=null;
