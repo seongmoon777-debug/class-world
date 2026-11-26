@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),core=require('./village-life-core.js');
+assert.equal(core.clock(new Date('2026-11-30T15:00:00Z')).season,'겨울');assert.equal(core.clock(new Date('2026-11-30T15:00:00Z')).day,'2026-12-01');assert.equal(core.clock(new Date('2026-11-26T09:00:00Z')).night,true);assert.equal(core.clock(new Date('2026-11-26T00:00:00Z')).night,false);
+const at=Date.parse('2026-11-26T00:00:00Z');assert.equal(core.progress({runs:{a:{hits:{u:{x:{at},y:{at:at+100}}}},b:{hits:{u:{z:{at}},v:{z:{at}}}}}}).count,2);
+const hits={};for(let i=0;i<50;i++)hits['u'+i]={x:{at}};assert.equal(core.progress({runs:{a:{hits}}}).level,3);assert.equal(core.progress({}).level,0);
+const elem=()=>({classList:{toggle(){}},setAttribute(){},append(){},prepend(){},querySelector(){return null},replaceChildren(){},style:{},open:false,showModal(){this.open=true},close(){this.open=false}});
+let person={attendance:{}},state={coins:{student:0},xp:{student:0}},role={value:'student'};
+const env={window:null,MoonVillageLifeCore:core,Date,Set,Intl,document:{createElement:elem,body:elem(),head:elem(),querySelector:elem,addEventListener(){}},cw09Button:()=>elem(),cw09El:()=>elem(),campusPerson:()=>person,actorName:()=> 'student',cw09Data:{submissions:{}},schoolToday:()=>core.clock().day,$:()=>role,MoonClass:{session:()=>({connected:false}),submitLearningAnswer:async()=>{}},campusTransaction:fn=>fn(person,state,'student'),currentMap:'moonforest',player:{x:3,y:11},CAMPUS_STATS:{observation:'관찰',cooperation:'유대',persistence:'인내'},MoonLearning:{require:()=>true},interact(){},worldBase(){},updateCoin(){},setInterval(){},addEventListener(){},pressed:new Set()};env.window=env;
+vm.runInNewContext(fs.readFileSync(__dirname+'/village-life.js','utf8'),env);
+let r=env.MoonVillageLife.resolve(core.events[0],0);assert.ok(r.message);assert.equal(state.coins.student,3);assert.equal(person.exploration.shards.observation,1);
+r=env.MoonVillageLife.resolve(core.events[0],1);assert.ok(r.error);assert.equal(state.coins.student,3);
+assert.ok(env.MoonVillageLife.resolve(core.events[1],0).error);env.player={x:17,y:8};role.value='teacher';assert.ok(env.MoonVillageLife.resolve(core.events[1],0).error);role.value='student';env.MoonLearning.require=()=>false;assert.ok(env.MoonVillageLife.resolve(core.events[1],0).error);
+console.log('PASS: KST day/season/night, shared deduplication/milestones, choice rewards, duplicate/distance/role/learning guards');
