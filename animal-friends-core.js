@@ -1,0 +1,10 @@
+(function(root){'use strict';
+const foods=['열매','씨앗','잎사귀'];
+const rows=[['콩토리','토끼','#eac9aa','long',0],['솔다람','다람쥐','#b98255','round',1],['잎냥이','고양이','#a6c993','point',2],['밤멍이','강아지','#c39872','flop',0],['구름양','양','#e8e1dc','round',2],['도토곰','곰','#957158','round',1],['귤여우','여우','#e79953','point',0],['눈송여우','북극여우','#dbe7ea','point',0],['별수달','수달','#a88470','round',0],['몽실판다','판다','#e5e6df','round',2],['햇쥐','햄스터','#e6c181','round',1],['쪼꼬고슴','고슴도치','#95786e','spike',0],['새싹사슴','사슴','#cbb48b','antler',2],['단풍너굴','너구리','#a79885','round',0],['모래미어','미어캣','#d7bd8d','round',1],['파도펭','펭귄','#7b9baa','small',0],['달부엉','부엉이','#b29dba','point',1],['햇병이','병아리','#eed36f','small',1],['꽃앵이','앵무새','#b7d084','crest',0],['물방울오리','오리','#f1d989','small',1],['연못개굴','개구리','#8fbd86','eyes',2],['이끼거북','거북이','#90ad83','small',2],['뭉게물범','물범','#bacfd6','small',0],['분홍돼지','돼지','#e7afb0','point',2],['풀빛코알','코알라','#b4c5bd','round',2],['포근알파','알파카','#e5d5bb','long',2],['반짝박쥐','박쥐','#a79bc5','point',0],['달뿔이','달빛 사슴','#c5b6e0','antler',2],['별꼬리','별빛 여우','#edc971','point',0],['숲의용콩','작은 숲용','#91c8b2','spike',0]];
+const catalog=rows.map(([name,species,color,ears,food],i)=>({id:'friend-'+String(i+1).padStart(2,'0'),name,species,color,ears,food,rarity:i>=27?'전설':i>=20?'희귀':'일반',pattern:i%5}));
+const spots=[{x:5,y:12},{x:19,y:10},{x:6,y:4}];
+const dayNumber=(now=Date.now())=>Math.floor((now+32400000)/86400000);
+function encounter(identity,slot,now=Date.now()){let h=0;for(const c of String(identity))h=(h*31+c.charCodeAt(0))>>>0;return catalog[(dayNumber(now)*3+h%30+slot)%30];}
+function claim(record,item,slot,now=Date.now()){const d=String(dayNumber(now));record.owned||={};record.days||={};record.days[d]||={};if(record.days[d][slot])return {error:'오늘 이 자리의 친구는 이미 만났어요.'};const duplicate=!!record.owned[item.id];record.days[d][slot]=item.id;record.owned[item.id]||={metAt:now};record.active||=item.id;return {duplicate};}
+const api={foods,catalog,spots,dayNumber,encounter,claim};if(typeof module!=='undefined')module.exports=api;else root.MoonAnimalCore=api;
+})(typeof window!=='undefined'?window:globalThis);
